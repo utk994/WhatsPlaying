@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.TextView;
 
@@ -17,8 +18,6 @@ import com.parse.FindCallback;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
-import java.text.Format;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +36,7 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
     String[] time = new String[30];
     int size;
-    Format formatter = new SimpleDateFormat("HH:mm");
+    TextView tv;
 
 
     CustomAdapter adapter;
@@ -53,20 +52,28 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
     public void onActivityCreated(Bundle savedInstanceState) {
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) getActivity().findViewById(R.id.swipe_container);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.purple);
 
 
         super.onActivityCreated(savedInstanceState);
         getListView().setVisibility(View.INVISIBLE);
 
-        rowItems = fetchData();
-        TextView tv =(TextView) getActivity().findViewById(R.id.empty);
-        tv.setText("Please Swipe Up to Refresh");
 
-        adapter = new CustomAdapter(getActivity(), rowItems);
-        adapter.notifyDataSetChanged();
+        rowItems = fetchData();
+        tv = (TextView) getActivity().findViewById(R.id.empty);
+        tv.setText("Please Swipe Up to Refresh");
+        tv.setVisibility(View.VISIBLE);
+
+        if (savedInstanceState == null) {
+            adapter = new CustomAdapter(getActivity(), rowItems);
+
+
+        }
+        // adapter.notifyDataSetChanged();
         setListAdapter(adapter);
+
         getListView().setOnItemClickListener(this);
-        tv.setVisibility(View.INVISIBLE);
+
         getListView().setVisibility(View.VISIBLE);
 
 
@@ -82,11 +89,40 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
                 setListAdapter(adapter);
 
                 mSwipeRefreshLayout.setRefreshing(false);
+                tv.setVisibility(View.INVISIBLE);
 
                 getListView().setVisibility(View.VISIBLE);
 
             }
         });
+
+        getListView().setOnScrollListener(new AbsListView.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem,
+                                 int visibleItemCount, int totalItemCount) {
+                boolean enable = false;
+                if (getListView() != null && getListView().getChildCount() > 0) {
+                    // check if the first item of the list is visible
+                    boolean firstItemVisible = getListView().getFirstVisiblePosition() == 0;
+                    // check if the top of the first item is visible
+                    boolean topOfFirstItemVisible = getListView().getChildAt(0).getTop() == 0;
+                    // enabling or disabling the refresh layout
+                    enable = firstItemVisible && topOfFirstItemVisible;
+                    mSwipeRefreshLayout.setEnabled(enable);
+                    return;
+                }
+
+                mSwipeRefreshLayout.setEnabled(true);
+
+
+            }
+        });
+
 
     }
 
@@ -136,7 +172,7 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
                         album[i] = (p.getString("Album"));
 
 
-                        time[i] = DateUtils.getRelativeTimeSpanString(p.getCreatedAt().getTime(), System.currentTimeMillis(), DateUtils.DAY_IN_MILLIS).toString();
+                        time[i] = DateUtils.getRelativeTimeSpanString(p.getCreatedAt().getTime(), System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
 
 
                     }

@@ -59,7 +59,7 @@ public class SongDialog extends  android.support.v4.app.DialogFragment {
                 String acttrck = track1.replace(" ","%20");
                 String actart = artist1.replace(" ","%20");
 
-                final String url = "http://www.grooveshark.com/#!/search/"+acttrck+"%20"+actart ;
+                final String url = "https://soundcloud.com/search/sounds?q="+acttrck+"%20"+actart ;
 
 
 
