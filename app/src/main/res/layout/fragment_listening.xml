@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:id="@+id/relativelaout1"
+    android:focusable="false"
+    android:clickable="true">
+
+
+    <Button
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:id="@+id/listenbut1"
+        android:background="@drawable/listen2"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:clickable="false"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="TapToStopListening"
+        android:id="@+id/textView"
+        android:layout_below="@+id/listenbut1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:textSize="20sp" />
+
+</RelativeLayout>

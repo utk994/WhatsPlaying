@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/song"
+    android:layout_width="match_parent" android:layout_height="500dp"
+    android:layout_gravity="center" android:orientation="horizontal"
+    android:padding="15dp"
+    android:weightSum="1">
+
+
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:id="@+id/imageView2"
+        android:background="@drawable/albumart"
+        android:layout_gravity="center" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:paddingLeft="20dp"
+        android:layout_weight="0.55"
+        android:layout_gravity="center_vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Song Name"
+            android:id="@+id/songname"
+            android:padding="5dp"
+            android:textSize="18dp"
+            android:textColor="@color/purple" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Artist"
+            android:id="@+id/artist"
+            android:padding="5dp"
+            android:textSize="16dp"
+            android:textColor="@color/purple1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Album Name"
+            android:id="@+id/album"
+            android:padding="5dp"
+            android:textSize="10dp"
+            android:textColor="@color/purple1" />
+
+        <Button
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:id="@+id/listenonline"
+            android:background="@drawable/listenonline1"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal" />
+    </LinearLayout>
+</LinearLayout>
