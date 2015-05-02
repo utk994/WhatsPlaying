@@ -47,7 +47,7 @@
             android:layout_marginTop="15dp"
             android:layout_below="@+id/username"
             android:singleLine="true"
-            android:imeOptions="actionNext"
+            android:imeOptions="actionGo"
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
             android:hint="Password"
