@@ -24,7 +24,34 @@
         android:id="@+id/logout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="@string/LogoutBtn" />
+        android:text="@string/LogoutBtn"
+        android:layout_below="@+id/hidetext2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="Swipe Right to Start Sharing your Songs."
+        android:id="@+id/hidetext1"
+        android:gravity="center"
+        android:padding="10dp"
+        android:layout_below="@+id/txtuser"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="Or Swipe Left to see what other Users are listening to."
+        android:id="@+id/hidetext2"
+        android:gravity="center"
+        android:padding="10dp"
+        android:layout_below="@+id/hidetext1"
+        android:layout_centerHorizontal="true"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Small" />
 
 </RelativeLayout>

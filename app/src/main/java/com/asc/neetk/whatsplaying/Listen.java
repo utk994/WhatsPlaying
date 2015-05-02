@@ -1,9 +1,11 @@
 package com.asc.neetk.whatsplaying;
 
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -18,6 +20,8 @@ import android.widget.ImageView;
  * Created by utk994 on 05/04/15.
  */
 public class Listen extends Fragment {
+
+    int ispressed =0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -50,35 +54,53 @@ public class Listen extends Fragment {
                 public void onClick(View view) {
 
 
-                    getActivity().startService(new Intent(getActivity(), MyService.class));
+                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+                    alertDialogBuilder.setMessage("Play Songs as you Normally would.WhatsPlayin will Listen for new Songs.");
 
-                    FragmentTransaction trans = getFragmentManager()
-                            .beginTransaction();
+
+
+
+                    alertDialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+
+                            getActivity().startService(new Intent(getActivity(), MyService.class));
+
+                            FragmentTransaction trans = getFragmentManager()
+                                    .beginTransaction();
                 /*
 				 * IMPORTANT: We use the "root frame" defined in
 				 * "root_fragment.xml" as the reference to replace fragment
 				 */
-                    trans.replace(R.id.root_frame, new Listen2());
+                            trans.replace(R.id.root_frame, new Listen2());
 
 				/*
 				 * IMPORTANT: The following lines allow us to add the fragment
 				 * to the stack and return to it later, by pressing back
 				 */
-                    // trans.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                    // trans.addToBackStack(null);
+                            // trans.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                            // trans.addToBackStack(null);
 
-                    trans.commit();
-
-
-                    Intent startMain = new Intent(Intent.ACTION_MAIN);
-                    startMain.addCategory(Intent.CATEGORY_HOME);
-                    startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-                    Notification("What's Playin?", "Listening for new songs.");
+                            trans.commit();
 
 
-                    prefs.edit().putInt("listenmode", 1);
-                    startActivity(startMain);
+                            Intent startMain = new Intent(Intent.ACTION_MAIN);
+                            startMain.addCategory(Intent.CATEGORY_HOME);
+                            startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                            Notification("What's Playin?", "Listening for new songs.");
+
+
+
+                            startActivity(startMain);
+                        }
+                    });
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+                    alertDialog.show();
+
+
                 }
 
 

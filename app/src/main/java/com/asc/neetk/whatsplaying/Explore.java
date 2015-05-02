@@ -59,16 +59,20 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
         getListView().setVisibility(View.INVISIBLE);
 
 
-        rowItems = fetchData();
+        //rowItems = fetchData();
         tv = (TextView) getActivity().findViewById(R.id.empty);
         tv.setText("Please Swipe Up to Refresh");
         tv.setVisibility(View.VISIBLE);
 
         if (savedInstanceState == null) {
+            rowItems=fetchData();
             adapter = new CustomAdapter(getActivity(), rowItems);
 
 
         }
+
+
+
         // adapter.notifyDataSetChanged();
         setListAdapter(adapter);
 
@@ -123,6 +127,11 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
             }
         });
 
+
+    }
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
 
     }
 

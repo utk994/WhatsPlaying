@@ -1,8 +1,10 @@
 package com.asc.neetk.whatsplaying;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +17,7 @@ import com.parse.ParseUser;
 public class Welcome extends Fragment {
 
     Button logout;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -54,15 +57,40 @@ public class Welcome extends Fragment {
         logout.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View arg0) {
-                // Logout current user
-                ParseUser.logOut();
-                Intent intent = new Intent(getActivity(), LoginSignupActivity.class);
-                startActivity(intent);
-
-    }
 
 
+                final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), "", "Logging Out...");
 
+                new Thread() {
+
+                    public void run() {
+
+
+                        try {
+
+                            // Logout current user
+                            ParseUser.logOut();
+                            Intent intent = new Intent(getActivity(), LoginSignupActivity.class);
+                            startActivity(intent);
+                            getActivity().finish();
+                        } catch (Exception e) {
+
+                            Log.e("tag", e.getMessage());
+
+                        }
+
+
+                        progressDialog.dismiss();
+
+                    }
+
+                }.start();
+
+
+                // Retrieve the text entered from the EditText
+
+            }
         });
+
     }
 }
