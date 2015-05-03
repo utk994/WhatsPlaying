@@ -210,9 +210,6 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
         }
 
-        // menutitles = getResources().getStringArray(R.array.titles);
-
-
         rowItems = new ArrayList<RowItem>();
 
         for (int i = 0; i < size; i++) {

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.Vibrator;
 import android.util.Log;
@@ -17,7 +18,9 @@ public class MyService extends Service {
     private static final String TAG = "MyService";
 
     private static final String BCAST_CONFIGCHANGED = "android.intent.action.CONFIGURATION_CHANGED";
-    public static final String MY_SERVICE =  "com.parse.WhatsPlaying.MyService";
+    public static final String MY_SERVICE = "com.parse.WhatsPlaying.MyService";
+
+    Handler handler = new Handler();
 
 
     private static Context mContext;
@@ -31,8 +34,6 @@ public class MyService extends Service {
     @Override
     public void onCreate() {
         Log.d(TAG, "onCreate()");
-
-
 
 
         IntentFilter iF = new IntentFilter();
@@ -52,13 +53,14 @@ public class MyService extends Service {
         //iF.addAction("org.videolan.vlc.metachanged");
         registerReceiver(mReceiver, iF);
 
+
     }
 
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
 
 
         @Override
-        public void onReceive(Context context, Intent intent) {
+        public void onReceive(final Context context, Intent intent) {
 
 
             final String artist1 = intent.getStringExtra("artist");
@@ -67,26 +69,33 @@ public class MyService extends Service {
             Log.v("tag", artist1 + ":" + album1 + ":" + track1);
             //Toast.makeText(MyService.this, track1 + " " + artist1 + " " + album1, Toast.LENGTH_SHORT).show();
 
-            Log.v("tag1",song1);
+            Log.v("tag1", song1);
 
 
-            AudioManager manager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
-            if(manager.isMusicActive())
-            {
 
-                Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-                // Vibrate for 500 milliseconds
-                v.vibrate(500);
+                AudioManager manager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+                if (manager.isMusicActive()) {
 
-                // do something - or do it not
-                Intent i = new Intent(getBaseContext(), fouract.class);
 
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                i.putExtra("Track",track1);
-                i.putExtra("Artist",artist1);
-                i.putExtra("Album",album1);
-                getApplication().startActivity(i);
-            }
+                    Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+                    // Vibrate for 500 milliseconds
+                    v.vibrate(500);
+
+                    // do something - or do it not
+                    Intent i = new Intent(getBaseContext(), fouract.class);
+
+                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    i.putExtra("Track", track1);
+                    i.putExtra("Artist", artist1);
+                    i.putExtra("Album", album1);
+                    getApplication().startActivity(i);
+
+                }
+
+
+
+
+
 
 
 
@@ -106,12 +115,12 @@ public class MyService extends Service {
     ;
 
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
 
 
         unregisterReceiver(mReceiver);
 
-        Log.v("SERVICE","Service killed");
+        Log.v("SERVICE", "Service killed");
 
         super.onDestroy();
     }

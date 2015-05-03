@@ -7,7 +7,9 @@ import android.os.Handler;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 
@@ -23,7 +25,7 @@ public class fouract extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
-
+ 
 
 
         super.onCreate(savedInstanceState);
@@ -33,10 +35,17 @@ public class fouract extends Activity {
 
         this.setTitle("");
 
+        Window window = this.getWindow();
+        window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
+       window.setFlags(WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
+
+
 
 
 
         WindowManager.LayoutParams params = getWindow().getAttributes();
+
 
         params.gravity= Gravity.BOTTOM;
 
@@ -66,7 +75,11 @@ public class fouract extends Activity {
                         testObject.put("User",currentUser);
                 testObject.put("Username",user);
                 testObject.saveInBackground();
-                fouract.this.finish();
+
+
+
+                    fouract.this.finish();
+
 
                         ContentValues values = new ContentValues();
                         values.put(SongsDb.KEY_SONGNAME, track1);
@@ -74,6 +87,10 @@ public class fouract extends Activity {
                         values.put(SongsDb.KEY_ALBUM,album1);
 
                         getContentResolver().insert(MyContentProvider.CONTENT_URI, values);
+
+
+
+
 
 
 
@@ -93,7 +110,8 @@ public class fouract extends Activity {
         });
 
 
-        int finishTime = 5; //10 secs
+
+        int finishTime = 3;
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
@@ -102,6 +120,18 @@ public class fouract extends Activity {
             }
         }, finishTime * 1000);
     }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        // If we've received a touch notification that the user has touched
+        // outside the app, finish the activity.
+        if (MotionEvent.ACTION_OUTSIDE == event.getAction()) {
+            finish();
+            return true;
+        }
+        return super.onTouchEvent(event);
+    }
+
 
 
 
@@ -129,4 +159,16 @@ public class fouract extends Activity {
         return super.onOptionsItemSelected(item);*/
         return true;
     }
-}
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+
+
+    }
+
+
+    }
+
+
+
