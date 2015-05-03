@@ -43,6 +43,15 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
     private List<RowItem> rowItems;
 
     @Override
+    public void onCreate(Bundle savedState) {
+        super.onCreate(savedState);
+        setRetainInstance(true); // handle rotations gracefully
+
+      
+    }
+
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.list_fragment, null, false);
