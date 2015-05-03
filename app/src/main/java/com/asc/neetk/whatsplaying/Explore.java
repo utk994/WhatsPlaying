@@ -29,12 +29,12 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
     SwipeRefreshLayout mSwipeRefreshLayout;
 
 
-    String[] songname = new String[30];
-    String[] artist = new String[30];
-    String[] user = new String[30];
-    String[] album = new String[30];
+    String[] songname = new String[60];
+    String[] artist = new String[60];
+    String[] user = new String[60];
+    String[] album = new String[60];
 
-    String[] time = new String[30];
+    String[] time = new String[60];
     int size;
     TextView tv;
 
@@ -47,7 +47,7 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
         super.onCreate(savedState);
         setRetainInstance(true); // handle rotations gracefully
 
-      
+
     }
 
 
@@ -167,7 +167,7 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Songs");
         query.orderByDescending("updatedAt");
-        query.setLimit(15);
+        query.setLimit(50);
 
 
         query.findInBackground(new FindCallback<ParseObject>() {
