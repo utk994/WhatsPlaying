@@ -78,8 +78,6 @@ public class MyService extends Service {
             Log.v("tag1", song1);
 
 
-
-
                 Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
                 // Vibrate for 500 milliseconds
                 v.vibrate(500);
@@ -92,7 +90,7 @@ public class MyService extends Service {
                 i.putExtra("Artist", artist1);
                 i.putExtra("Album", album1);
                 getApplication().startActivity(i);
-
+           
 
 
 

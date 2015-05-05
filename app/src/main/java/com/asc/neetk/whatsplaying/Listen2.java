@@ -17,6 +17,15 @@ import android.widget.Button;
 public class Listen2 extends Fragment {
 
     @Override
+    public void onCreate(Bundle savedState) {
+        super.onCreate(savedState);
+        setRetainInstance(true); // handle rotations gracefully
+
+
+    }
+
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 

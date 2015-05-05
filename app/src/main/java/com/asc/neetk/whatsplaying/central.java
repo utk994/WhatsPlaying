@@ -38,8 +38,12 @@ public class central extends ActionBarActivity implements ActionBar.TabListener 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.centrallayout);
+
+
 
 
         // Set up the action bar.
@@ -138,6 +142,8 @@ public class central extends ActionBarActivity implements ActionBar.TabListener 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
+
+
 
 
 
@@ -251,6 +257,8 @@ public class central extends ActionBarActivity implements ActionBar.TabListener 
             View rootView = inflater.inflate(R.layout.fragment_explore, container, false);
             return rootView;
         }
+
+
     }
 
     @Override
