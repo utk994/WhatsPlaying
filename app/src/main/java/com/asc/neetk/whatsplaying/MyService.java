@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.media.AudioManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Vibrator;
@@ -46,6 +45,7 @@ public class MyService extends Service {
         iF.addAction("com.sec.android.app.music.metachanged");
         iF.addAction("com.spotify.music.metadatachanged");
         iF.addAction("com.miui.player.metachanged");
+
         iF.addAction("com.sonyericsson.music.metachanged");
         iF.addAction("com.sec.android.app.music.metachanged");
         iF.addAction("com.samsung.sec.android.MusicPlayer.metachanged");
@@ -78,8 +78,6 @@ public class MyService extends Service {
             Log.v("tag1", song1);
 
 
-            AudioManager manager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-            if (manager.isMusicActive()) {
 
 
                 Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
@@ -95,7 +93,7 @@ public class MyService extends Service {
                 i.putExtra("Album", album1);
                 getApplication().startActivity(i);
 
-            }
+
 
 
 
