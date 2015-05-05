@@ -41,8 +41,7 @@ public class Listen2 extends Fragment {
                 FragmentTransaction trans = getFragmentManager()
                         .beginTransaction();
                 trans.replace(R.id.root_frame, new Listen());
-              //  trans.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-            //    trans.addToBackStack(null);
+
                 trans.commit();
 
 
