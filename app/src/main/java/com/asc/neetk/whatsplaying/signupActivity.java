@@ -7,9 +7,11 @@ import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -30,7 +32,7 @@ public class signupActivity extends ActionBarActivity {
         final TextView passmatch = (TextView) findViewById(R.id.passconfirm);
 
         final TextView email = (TextView) findViewById(R.id.email);
-        Button signup = (Button) findViewById(R.id.signupbutton);
+        final Button signup = (Button) findViewById(R.id.signupbutton);
 
         passmatch.addTextChangedListener(new TextWatcher() {
             @Override
@@ -53,6 +55,18 @@ public class signupActivity extends ActionBarActivity {
 
                 String passtxt = password.getText().toString();
                  String passmatchtxt = passmatch.getText().toString();
+
+                email.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                    public boolean onEditorAction(TextView v, int actionId,
+                                                  KeyEvent event) {
+                        if (actionId == EditorInfo.IME_ACTION_GO) {
+
+                            signup.performClick();
+                        }
+                        return false;
+                    }
+                });
+
 
 
                 if (!(passtxt.equals(passmatchtxt)))
@@ -114,6 +128,7 @@ public class signupActivity extends ActionBarActivity {
                                             Intent intent = new Intent(
                                                     signupActivity.this,
                                                     LoginSignupActivity.class);
+                                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                             startActivity(intent);
 
 

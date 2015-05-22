@@ -59,6 +59,7 @@ public class forgotPass extends ActionBarActivity {
                                         Intent intent = new Intent(
                                                 forgotPass.this,
                                                 LoginSignupActivity.class);
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                         startActivity(intent);
                                         // An email was successfully sent with reset instructions.
                                     } else {

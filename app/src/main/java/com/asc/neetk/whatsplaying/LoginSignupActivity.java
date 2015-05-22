@@ -71,6 +71,7 @@ public class LoginSignupActivity extends Activity {
                                                 Intent intent = new Intent(
                                                         LoginSignupActivity.this,
                                                         central.class);
+                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                                 startActivity(intent);
 
                                                 finish();
@@ -88,7 +89,6 @@ public class LoginSignupActivity extends Activity {
                             Log.e("tag", e.getMessage());
 
                         }
-
 
 
                     }
@@ -136,16 +136,19 @@ public class LoginSignupActivity extends Activity {
 
         Button forgotPassButt = (Button) findViewById(R.id.forgotpass);
 
-         forgotPassButt.setOnClickListener(new View.OnClickListener() {
-             @Override
-             public void onClick(View view) {
-                 Intent intent = new Intent(
-                         LoginSignupActivity.this,
-                         forgotPass.class);
-                 startActivity(intent);
+        if (forgotPassButt != null) {
 
-             }
-         });
+            forgotPassButt.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(
+                            LoginSignupActivity.this,
+                            forgotPass.class);
+                    startActivity(intent);
+
+                }
+            });
+        }
 
 
             }
