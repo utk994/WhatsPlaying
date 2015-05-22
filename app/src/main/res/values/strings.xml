@@ -88,4 +88,6 @@
     <string name="title_activity_welcome">Welcome</string>
     <string name="Welcome">You are Logged In !</string>
     <string name="LogoutBtn">Log Out</string>
+    <string name="title_activity_signup">signupActivity</string>
+    <string name="title_activity_forgot_pass">forgotPass</string>
 </resources>

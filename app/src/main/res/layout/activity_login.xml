@@ -5,13 +5,13 @@
      >
 
     <ImageView
-        android:layout_width="300dp"
-        android:layout_height="290dp"
+        android:layout_width="290dp"
+        android:layout_height="280dp"
         android:id="@+id/imageView"
         android:background="@drawable/plogo"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp" />
+        android:layout_marginTop="10dp" />
 
     <LinearLayout
         android:orientation="vertical"
@@ -19,7 +19,8 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/imageView"
         android:layout_centerHorizontal="true"
-        android:padding="10dp">
+        android:padding="10dp"
+        android:weightSum="1">
 
         <EditText
             android:layout_width="fill_parent"
@@ -27,7 +28,7 @@
             android:id="@+id/username"
             android:layout_below="@+id/imageView"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="5dp"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:hint="Username"
@@ -44,7 +45,7 @@
             android:inputType="textPassword"
             android:ems="10"
             android:id="@+id/password"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="5dp"
             android:layout_below="@+id/username"
             android:singleLine="true"
             android:imeOptions="actionGo"
@@ -84,6 +85,16 @@
                 android:background="@drawable/psignup" />
 
         </LinearLayout>
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="90dp"
+            android:layout_height="35dp"
+            android:id="@+id/forgotpass"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/forgotpss"
+            android:layout_weight="0.13" />
 
     </LinearLayout>
 

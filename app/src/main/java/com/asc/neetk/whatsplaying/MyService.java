@@ -10,6 +10,8 @@ import android.os.IBinder;
 import android.os.Vibrator;
 import android.util.Log;
 
+import java.util.Calendar;
+
 
 public class MyService extends Service {
 
@@ -65,6 +67,11 @@ public class MyService extends Service {
 
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
 
+        Calendar c = Calendar.getInstance();
+        int seconds = c.get(Calendar.SECOND);
+
+
+
         @Override
         public void onReceive(final Context context, Intent intent) {
 
@@ -77,8 +84,13 @@ public class MyService extends Service {
 
             Log.v("tag1", song1);
 
+             c = Calendar.getInstance();
+             seconds = c.get(Calendar.SECOND)-seconds;
 
-                Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+            if (seconds>5)
+
+
+            {Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
                 // Vibrate for 500 milliseconds
                 v.vibrate(500);
 
@@ -89,8 +101,17 @@ public class MyService extends Service {
                 i.putExtra("Track", track1);
                 i.putExtra("Artist", artist1);
                 i.putExtra("Album", album1);
+                c = Calendar.getInstance();
+                seconds = c.get(Calendar.SECOND);
                 getApplication().startActivity(i);
-           
+
+            }
+
+            else {
+                c = Calendar.getInstance();
+                seconds =  c.get(Calendar.SECOND);
+            }
+
 
 
 

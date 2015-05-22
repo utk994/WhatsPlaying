@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import com.parse.LogInCallback;
 import com.parse.ParseUser;
-import com.parse.SignUpCallback;
 
 
 public class LoginSignupActivity extends Activity {
@@ -66,6 +65,8 @@ public class LoginSignupActivity extends Activity {
                                         public void done(ParseUser parseUser, com.parse.ParseException e) {
 
                                             if (parseUser != null) {
+
+                                                progressDialog.dismiss();
                                                 // If user exist and authenticated, send user to Welcome.class
                                                 Intent intent = new Intent(
                                                         LoginSignupActivity.this,
@@ -89,7 +90,6 @@ public class LoginSignupActivity extends Activity {
                         }
 
 
-                        progressDialog.dismiss();
 
                     }
 
@@ -108,7 +108,7 @@ public class LoginSignupActivity extends Activity {
                                           KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_GO) {
 
-                     loginbutton.performClick();
+                    loginbutton.performClick();
                 }
                 return false;
             }
@@ -124,63 +124,30 @@ public class LoginSignupActivity extends Activity {
 
             public void onClick(View arg0) {
 
+                Intent intent = new Intent(
+                        LoginSignupActivity.this,
+                        signupActivity.class);
+                startActivity(intent);
+
+            }
 
 
-
-                        usernametxt = username.getText().toString();
-                        passwordtxt = password.getText().toString();
-
-
-                        // Force user to fill up the form
-                        if (usernametxt.equals("") || passwordtxt.equals("")) {
-                            Toast.makeText(getApplicationContext(),
-                                    "Please entered the desired username and password and click Signup",
-                                    Toast.LENGTH_LONG).show();
-                        } else {
-                            final ProgressDialog progressDialog1 = ProgressDialog.show(LoginSignupActivity.this, "", "Signing Up...");
-                            new Thread() {
-
-                                public void run() {
-
-                                    try {
-
-                                        // Save new user data into Parse.com Data Storage
-                                        ParseUser user = new ParseUser();
-                                        user.setUsername(usernametxt);
-                                        user.setPassword(passwordtxt);
-                                        user.signUpInBackground(new SignUpCallback() {
-
-                                            @Override
-                                            public void done(com.parse.ParseException e) {
-                                                if (e == null) {
-                                                    // Show a simple Toast message upon successful registration
-                                                    Toast.makeText(getApplicationContext(),
-                                                            "Successfully Signed up, please log in.",
-                                                            Toast.LENGTH_LONG).show();
-                                                } else {
-                                                    Toast.makeText(getApplicationContext(),
-                                                            "Sign up Error", Toast.LENGTH_LONG)
-                                                            .show();
-                                                }
-
-                                            }
-                                        });
-
-
-                                    } catch (Exception e) {
-
-                                        Log.e("tag", e.getMessage());
-
-                                    }
-
-                                    progressDialog1.dismiss();
-
-                                }
-
-                            }.start();
-                        }
-                    }
                 });
+
+        Button forgotPassButt = (Button) findViewById(R.id.forgotpass);
+
+         forgotPassButt.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+                 Intent intent = new Intent(
+                         LoginSignupActivity.this,
+                         forgotPass.class);
+                 startActivity(intent);
+
+             }
+         });
+
+
             }
 
 
