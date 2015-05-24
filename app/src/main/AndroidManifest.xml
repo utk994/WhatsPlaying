@@ -28,6 +28,8 @@
             </intent-filter>
         </service>
 
+        <activity android:name="com.soundcloud.android.crop.CropImageActivity" />
+
         <activity
             android:name=".fouract"
             android:excludeFromRecents="true"
@@ -75,6 +77,13 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.asc.neetk.whatsplaying.LoginSignupActivity" />
+        </activity>
+        <activity
+            android:name=".profilePic"
+            android:label="Your Profile Picture" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.asc.neetk.whatsplaying.central" />
         </activity>
     </application>
 

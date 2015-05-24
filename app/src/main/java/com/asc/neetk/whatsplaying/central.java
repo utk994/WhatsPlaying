@@ -109,6 +109,11 @@ public class central extends ActionBarActivity implements ActionBar.TabListener 
                 Intent intent = new Intent(getApplicationContext(), MySongs.class);
                 startActivity(intent);
 
+            case R.id.action_profilepic:
+                Intent intent1 = new Intent(getApplicationContext(), profilePic.class);
+                startActivity(intent1);
+
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -24,12 +24,16 @@
             android:paddingLeft="@dimen/feed_item_padding_left_right"
             android:paddingRight="@dimen/feed_item_padding_left_right" >
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/profilePic"
-                android:layout_width="@dimen/feed_item_profile_pic"
-                android:layout_height="@dimen/feed_item_profile_pic"
-                android:scaleType="fitCenter" >
-            </ImageView>
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+
+                app:border_width="2dp"
+                app:border_color="#ff5f5f5f"/>
+
+
 
             <LinearLayout
                 android:layout_width="fill_parent"

@@ -59,8 +59,8 @@ public class Welcome extends Fragment {
             public void onClick(View arg0) {
 
 
-                final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), "", "Logging Out...");
 
+                final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), "", "Logging Out...");
                 new Thread() {
 
                     public void run() {
@@ -90,7 +90,10 @@ public class Welcome extends Fragment {
                 // Retrieve the text entered from the EditText
 
             }
-        });
 
+            });
+
+
+        }
     }
-}
+

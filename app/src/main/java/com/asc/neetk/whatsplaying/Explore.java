@@ -1,5 +1,8 @@
 package com.asc.neetk.whatsplaying;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -15,8 +18,11 @@ import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,10 +39,15 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
     String[] artist = new String[60];
     String[] user = new String[60];
     String[] album = new String[60];
+    String [] done = new String[20];
 
     String[] time = new String[60];
     int size;
     TextView tv;
+
+    Drawable [] profiles = new Drawable[60];
+
+
 
 
     CustomAdapter adapter;
@@ -44,6 +55,7 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
     @Override
     public void onCreate(Bundle savedState) {
+
         super.onCreate(savedState);
         setRetainInstance(true); // handle rotations gracefully
 
@@ -164,10 +176,11 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
 
     public List<RowItem> fetchData() {
+        final Drawable defdrawable = getResources().getDrawable(R.drawable.profile);
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Songs");
         query.orderByDescending("updatedAt");
-        query.setLimit(50);
+        query.setLimit(20);
 
 
         query.findInBackground(new FindCallback<ParseObject>() {
@@ -193,27 +206,91 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
                         time[i] = DateUtils.getRelativeTimeSpanString(p.getCreatedAt().getTime(), System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
 
 
+
+
                     }
 
 
                 } else {
+
                     Log.d("score", "Error: " + e.getMessage());
                 }
 
 
             }
+
+
+
         });
 
-        Drawable drawable = getResources().getDrawable(R.drawable.profile);
+        outloop :for (int i=0;i<user.length;i++) {
+
+
+            for (int j=0;j<i&& user[i]!=null;j++)
+            {
+                if (user[i].equals(user[j]))
+                {profiles[i]=profiles[j];
+                continue outloop;}
+
+
+            }
+
+
+            if (user[i] != null)
+
+            {
+                ParseQuery<ParseUser> query1 = ParseUser.getQuery();
+                query1.whereEqualTo("username", user[i]);
+                query1.setLimit(1);
+
+
+                final int finalI = i;
+                query1.findInBackground(new FindCallback<ParseUser>() {
+                    public void done(List<ParseUser> objects, ParseException e) {
+                        if (e == null) {
+
+                            ParseFile user1 = objects.get(0).getParseFile("profilePic");
+
+                            if (user1 != null)
+
+                            {
+
+                                byte[] bitmapdata = new byte[0];
+                                try {
+                                    bitmapdata = user1.getData();
+                                } catch (ParseException e1) {
+                                    e1.printStackTrace();
+                                }
+                                Bitmap bitmap1 = BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
+                                Bitmap bitmapsimplesize = Bitmap.createScaledBitmap(bitmap1, 50, 50, true);
+                                bitmap1.recycle();
+
+                                Drawable d = new BitmapDrawable(getResources(), bitmapsimplesize);
+
+                                profiles[finalI] = d;
+                            } else profiles[finalI] = defdrawable;
+                            // Something went wrong.
+                        }
+                    }
+                });
+            }
+        }
+
+
+
+
+
+
+
         for (int j = 0; j < size; j++) {
             songname[j] = " is listening to " + songname[j] + " by " + artist[j];
 
         }
 
-        rowItems = new ArrayList<RowItem>();
+        rowItems =  new ArrayList<RowItem>();
 
         for (int i = 0; i < size; i++) {
-            RowItem items = new RowItem(user[i], songname[i], time[i], drawable);
+            RowItem items = new RowItem(user[i], songname[i], time[i], profiles[i]);
 
             rowItems.add(items);
         }
