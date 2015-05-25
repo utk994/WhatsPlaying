@@ -85,6 +85,7 @@ public class central extends ActionBarActivity implements ActionBar.TabListener 
 
         mViewPager.setCurrentItem(1, false);
 
+
     }
 
 
