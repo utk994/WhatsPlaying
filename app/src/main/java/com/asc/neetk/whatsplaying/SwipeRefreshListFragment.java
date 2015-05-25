@@ -31,7 +31,7 @@ import android.widget.ListView;
  * providing the 'swipe-to-refresh' UX gesture by wrapping the the content view in a
  * {@link android.support.v4.widget.SwipeRefreshLayout}.
  */
-public class SwipeRefreshListFragment extends ListFragment {
+public abstract class SwipeRefreshListFragment extends ListFragment {
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
@@ -105,6 +105,8 @@ public class SwipeRefreshListFragment extends ListFragment {
     public SwipeRefreshLayout getSwipeRefreshLayout() {
         return mSwipeRefreshLayout;
     }
+
+    protected abstract void onPostExecute(Void result);
 
     /**
      * Sub-class of {@link android.support.v4.widget.SwipeRefreshLayout} for use in this

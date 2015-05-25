@@ -1,5 +1,7 @@
 package com.asc.neetk.whatsplaying;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,11 +12,14 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.ParseException;
@@ -46,6 +51,122 @@ public class profilePic extends ActionBarActivity {
 
         ImageView profilePic = (ImageView) findViewById(R.id.pictureView);
         Drawable drawable = getResources().getDrawable(R.drawable.profile);
+
+        TextView username = (TextView) findViewById(R.id.profile_user);
+
+        final TextView email = (TextView) findViewById(R.id.profile_email);
+
+
+
+
+        username.setText(ParseUser.getCurrentUser().getUsername());
+
+        email.setText(ParseUser.getCurrentUser().getEmail());
+
+
+        TextView changepass = (TextView) findViewById(R.id.change_password);
+        final TextView changeemail = (TextView) findViewById(R.id.change_email);
+
+
+        changepass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LayoutInflater li = LayoutInflater.from(com.asc.neetk.whatsplaying.profilePic.this );
+                View promptsView = li.inflate(R.layout.prompts, null);
+
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                        com.asc.neetk.whatsplaying.profilePic.this);
+
+                // set prompts.xml to alertdialog builder
+                alertDialogBuilder.setView(promptsView);
+
+                final EditText userInput = (EditText) promptsView
+                        .findViewById(R.id.editTextDialog1);
+
+                // set dialog message
+                alertDialogBuilder
+                        .setCancelable(false)
+                        .setPositiveButton("OK",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,int id) {
+                                        // get user input and set it to result
+                                        // edit text
+                                        String userpass = userInput.getText().toString();
+                                        ParseUser currentUser = ParseUser.getCurrentUser();
+                                        currentUser.setPassword(userpass);
+                                        currentUser.saveInBackground();
+                                    }
+                                })
+                        .setNegativeButton("Cancel",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+
+                // create alert dialog
+                AlertDialog alertDialog = alertDialogBuilder.create();
+
+                // show it
+                alertDialog.show();
+
+            }
+
+            });
+
+        changeemail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LayoutInflater li = LayoutInflater.from(com.asc.neetk.whatsplaying.profilePic.this);
+                View promptsView = li.inflate(R.layout.prompts1, null);
+
+                AlertDialog.Builder alertDialogBuilder1 = new AlertDialog.Builder(
+                        com.asc.neetk.whatsplaying.profilePic.this);
+
+                // set prompts.xml to alertdialog builder
+                alertDialogBuilder1.setView(promptsView);
+
+                final EditText userInput1 = (EditText) promptsView
+                        .findViewById(R.id.editTextDialog2);
+
+                // set dialog message
+                alertDialogBuilder1
+                        .setCancelable(false)
+                        .setPositiveButton("OK",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,int id) {
+                                        // get user input and set it to result
+                                        // edit text
+                                        String useremail = userInput1.getText().toString();
+
+                                        email.setText(useremail);
+
+                                        ParseUser currentUser = ParseUser.getCurrentUser();
+                                        currentUser.setEmail(useremail);
+                                        currentUser.saveInBackground();
+                                    }
+                                })
+                        .setNegativeButton("Cancel",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+
+                // create alert dialog
+                AlertDialog alertDialog1 = alertDialogBuilder1.create();
+
+                // show it
+                alertDialog1.show();
+
+            }
+
+        });
+
+
+
+
+
 
 
 

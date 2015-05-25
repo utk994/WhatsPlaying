@@ -3,6 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
     <item android:id="@+id/action_history" android:title="Your History"
         android:orderInCategory="100" app:showAsAction="never" />
-    <item android:id="@+id/action_profilepic" android:title="Profile Picture"
+    <item android:id="@+id/action_profilepic" android:title="Your Profile"
         android:orderInCategory="0" app:showAsAction="never" />
 </menu>

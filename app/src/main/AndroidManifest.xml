@@ -80,7 +80,7 @@
         </activity>
         <activity
             android:name=".profilePic"
-            android:label="Your Profile Picture" >
+            android:label="Your Profile" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.asc.neetk.whatsplaying.central" />

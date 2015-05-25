@@ -180,7 +180,7 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Songs");
         query.orderByDescending("updatedAt");
-        query.setLimit(20);
+        query.setLimit(30);
 
 
         query.findInBackground(new FindCallback<ParseObject>() {
@@ -192,7 +192,7 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
                     size = Songs.size();
 
-                    for (int i = 0; i < size; i++) {
+                    outloop :for (int i = 0; i < size; i++) {
 
 
                         ParseObject p = Songs.get(i);
@@ -206,6 +206,56 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
                         time[i] = DateUtils.getRelativeTimeSpanString(p.getCreatedAt().getTime(), System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
 
 
+
+                       /* for (int j=0;j<i&& user[i]!=null;j++)
+                        {
+                            if (user[i].equals(user[j]))
+                            {profiles[i]=profiles[j];
+                                continue outloop;
+                             }
+
+
+                        } */
+
+
+                        if (user[i] != null)
+
+                        {
+                            ParseQuery<ParseUser> query1 = ParseUser.getQuery();
+                            query1.whereEqualTo("username", user[i]);
+                            query1.setLimit(1);
+
+
+                            final int finalI = i;
+                            query1.findInBackground(new FindCallback<ParseUser>() {
+                                public void done(List<ParseUser> objects, ParseException e) {
+                                    if (e == null) {
+
+                                        ParseFile user1 = objects.get(0).getParseFile("profilePic");
+
+                                        if (user1 != null)
+
+                                        {
+
+                                            byte[] bitmapdata = new byte[0];
+                                            try {
+                                                bitmapdata = user1.getData();
+                                            } catch (ParseException e1) {
+                                                e1.printStackTrace();
+                                            }
+                                            Bitmap bitmap1 = BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
+                                            Bitmap bitmapsimplesize = Bitmap.createScaledBitmap(bitmap1, 50, 50, true);
+                                            bitmap1.recycle();
+
+                                            Drawable d = new BitmapDrawable(getResources(), bitmapsimplesize);
+
+                                            profiles[finalI] = d;
+                                        } else profiles[finalI] = defdrawable;
+                                        // Something went wrong.
+                                    }
+                                }
+                            });
+                        }
 
 
                     }
@@ -223,58 +273,6 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
         });
 
-        outloop :for (int i=0;i<user.length;i++) {
-
-
-            for (int j=0;j<i&& user[i]!=null;j++)
-            {
-                if (user[i].equals(user[j]))
-                {profiles[i]=profiles[j];
-                continue outloop;}
-
-
-            }
-
-
-            if (user[i] != null)
-
-            {
-                ParseQuery<ParseUser> query1 = ParseUser.getQuery();
-                query1.whereEqualTo("username", user[i]);
-                query1.setLimit(1);
-
-
-                final int finalI = i;
-                query1.findInBackground(new FindCallback<ParseUser>() {
-                    public void done(List<ParseUser> objects, ParseException e) {
-                        if (e == null) {
-
-                            ParseFile user1 = objects.get(0).getParseFile("profilePic");
-
-                            if (user1 != null)
-
-                            {
-
-                                byte[] bitmapdata = new byte[0];
-                                try {
-                                    bitmapdata = user1.getData();
-                                } catch (ParseException e1) {
-                                    e1.printStackTrace();
-                                }
-                                Bitmap bitmap1 = BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
-                                Bitmap bitmapsimplesize = Bitmap.createScaledBitmap(bitmap1, 50, 50, true);
-                                bitmap1.recycle();
-
-                                Drawable d = new BitmapDrawable(getResources(), bitmapsimplesize);
-
-                                profiles[finalI] = d;
-                            } else profiles[finalI] = defdrawable;
-                            // Something went wrong.
-                        }
-                    }
-                });
-            }
-        }
 
 
 
@@ -293,6 +291,7 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
             RowItem items = new RowItem(user[i], songname[i], time[i], profiles[i]);
 
             rowItems.add(items);
+            adapter.notifyDataSetChanged();
         }
         return rowItems;
 
@@ -300,4 +299,13 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
     }
 
 
+    @Override
+    protected void onPostExecute(Void result){
+        if(isAdded()){
+            getResources().getString(R.string.app_name);
+        }
+    }
+
+
 }
+
