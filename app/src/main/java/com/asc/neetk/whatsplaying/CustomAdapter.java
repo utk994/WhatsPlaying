@@ -44,14 +44,44 @@ public class CustomAdapter extends BaseAdapter {
         return rowItem.indexOf(getItem(position));
     }
 
+
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
         if (convertView == null) {
             LayoutInflater mInflater = (LayoutInflater) context
                     .getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-            convertView = mInflater.inflate(R.layout.list_item, null);
-        }
+            convertView = mInflater.inflate(R.layout.list_item, null);}
+
+
+            final ImageView likes = (ImageView) convertView.findViewById(R.id.likeimg);
+            final TextView likenum =(TextView) convertView.findViewById(R.id.likenum);
+            final int[] like = {Integer.parseInt(likenum.getText().toString())};
+        final RowItem row_pos = rowItem.get(position);
+        // setting the image resource and title
+
+
+        if (like[0] ==0) likes.setImageResource(R.drawable.likegra);
+            likes.setOnClickListener(new View.OnClickListener() {
+
+
+                public void onClick(View v) {
+
+                    like[0] = like[0] + 1;
+
+
+                    likes.setImageResource(R.drawable.like);
+
+
+                    likenum.setText(String.valueOf(like[0]));
+
+
+                    row_pos.setLikes(like[0]);
+                }
+            });
+
+
         TextView name = (TextView) convertView.findViewById(R.id.name);
         TextView timestamp = (TextView) convertView
                 .findViewById(R.id.timestamp);
@@ -64,14 +94,14 @@ public class CustomAdapter extends BaseAdapter {
 
 
 
-        RowItem row_pos = rowItem.get(position);
-        // setting the image resource and title
-
 
         name.setText(row_pos.getName());
         /*CharSequence timeAgo = DateUtils.getRelativeTimeSpanString(
                 Long.parseLong(row_pos.getTimeStamp()),
                 System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS); */
+
+            likenum.setText(row_pos.getLikes().toString());
+
 
         timestamp.setText(row_pos.getTimeStamp());
 

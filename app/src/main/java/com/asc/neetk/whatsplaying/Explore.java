@@ -1,5 +1,7 @@
 package com.asc.neetk.whatsplaying;
 
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -15,8 +17,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
+import com.oguzdev.circularfloatingactionmenu.library.FloatingActionMenu;
+import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -31,7 +38,7 @@ import java.util.List;
  * Created by utk994 on 05/04/15.
  */
 
-public class Explore extends SwipeRefreshListFragment implements AdapterView.OnItemClickListener {
+public class Explore extends SwipeRefreshListFragment implements AdapterView.OnItemClickListener{
     SwipeRefreshLayout mSwipeRefreshLayout;
 
 
@@ -39,22 +46,77 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
     String[] artist = new String[60];
     String[] user = new String[60];
     String[] album = new String[60];
-    String [] done = new String[20];
+    String[] done = new String[20];
+    Integer[] likes = new Integer[60];
+    String[] objId = new String[60];
 
     String[] time = new String[60];
     int size;
     TextView tv;
 
-    Drawable [] profiles = new Drawable[60];
-
-
+    Drawable[] profiles = new Drawable[60];
 
 
     CustomAdapter adapter;
     private List<RowItem> rowItems;
 
+
     @Override
+
     public void onCreate(Bundle savedState) {
+
+        FloatingActionButton.LayoutParams fabIconStarParams = new FloatingActionButton.LayoutParams(108, 108);
+
+        final ImageView fabIconNew = new ImageView(getActivity());
+        fabIconNew.setImageDrawable(getResources().getDrawable(R.drawable.fab));
+        final FloatingActionButton rightLowerButton = new FloatingActionButton.Builder(getActivity())
+                .setContentView(fabIconNew, fabIconStarParams)
+                .build();
+
+
+        ImageView rlIcon1 = new ImageView(getActivity());
+        ImageView rlIcon2 = new ImageView(getActivity());
+
+
+        rlIcon1.setImageDrawable(getResources().getDrawable(R.drawable.freindsicon));
+        rlIcon2.setImageDrawable(getResources().getDrawable(R.drawable.viewall));
+
+        SubActionButton.Builder lCSubBuilder = new SubActionButton.Builder(getActivity());
+
+        FrameLayout.LayoutParams blueContentParams = new FrameLayout.LayoutParams(80, 80);
+
+        lCSubBuilder.setLayoutParams(blueContentParams);
+
+        // Build the menu with default options: light theme, 90 degrees, 72dp radius.
+        // Set 4 default SubActionButtons
+        final FloatingActionMenu rightLowerMenu = new FloatingActionMenu.Builder(getActivity())
+                .addSubActionView(lCSubBuilder.setContentView(rlIcon1, blueContentParams).build())
+                .addSubActionView(lCSubBuilder.setContentView(rlIcon2, blueContentParams).build())
+
+                .attachTo(rightLowerButton)
+                .build();
+
+
+        // Listen menu open and close events to animate the button content view
+        rightLowerMenu.setStateChangeListener(new FloatingActionMenu.MenuStateChangeListener() {
+            @Override
+            public void onMenuOpened(FloatingActionMenu menu) {
+                // Rotate the icon of rightLowerButton 45 degrees clockwise
+                fabIconNew.setRotation(0);
+                PropertyValuesHolder pvhR = PropertyValuesHolder.ofFloat(View.ROTATION, 45);
+                ObjectAnimator animation = ObjectAnimator.ofPropertyValuesHolder(fabIconNew, pvhR);
+                animation.start();
+            }
+
+            @Override
+            public void onMenuClosed(FloatingActionMenu menu) {
+                // Rotate the icon of rightLowerButton 45 degrees counter-clockwise
+                fabIconNew.setRotation(45);
+                PropertyValuesHolder pvhR = PropertyValuesHolder.ofFloat(View.ROTATION, 0);
+                ObjectAnimator animation = ObjectAnimator.ofPropertyValuesHolder(fabIconNew, pvhR);
+                animation.start();
+            }
+        });
 
         super.onCreate(savedState);
         setRetainInstance(true); // handle rotations gracefully
@@ -62,11 +124,15 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.list_fragment, null, false);
+    }
+
+    @Override
+    protected void onPostExecute(Void result) {
+
     }
 
     @Override
@@ -86,12 +152,11 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
         tv.setVisibility(View.VISIBLE);
 
         if (savedInstanceState == null) {
-            rowItems=fetchData();
+            rowItems = fetchData();
             adapter = new CustomAdapter(getActivity(), rowItems);
 
 
         }
-
 
 
         // adapter.notifyDataSetChanged();
@@ -142,6 +207,8 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
                     return;
                 }
 
+
+
                 mSwipeRefreshLayout.setEnabled(true);
 
 
@@ -150,6 +217,7 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
 
     }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -192,15 +260,19 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
                     size = Songs.size();
 
-                    outloop :for (int i = 0; i < size; i++) {
+                    outloop:
+                    for (int i = 0; i < size; i++) {
 
 
                         ParseObject p = Songs.get(i);
+                        objId[i] = p.getObjectId();
                         songname[i] = (p.getString("Track"));
                         artist[i] = (p.getString("Artist"));
                         user[i] = (p.getString("Username"));
 
                         album[i] = (p.getString("Album"));
+
+                        likes[i] = (p.getInt("Likes"));
 
 
                         time[i] = DateUtils.getRelativeTimeSpanString(p.getCreatedAt().getTime(), System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
@@ -270,14 +342,7 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
             }
 
 
-
         });
-
-
-
-
-
-
 
 
         for (int j = 0; j < size; j++) {
@@ -285,27 +350,49 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
         }
 
-        rowItems =  new ArrayList<RowItem>();
+        rowItems = new ArrayList<RowItem>();
 
         for (int i = 0; i < size; i++) {
-            RowItem items = new RowItem(user[i], songname[i], time[i], profiles[i]);
+            RowItem items = new RowItem(user[i], songname[i], time[i], profiles[i], likes[i]);
+
 
             rowItems.add(items);
             adapter.notifyDataSetChanged();
         }
+
+
+
         return rowItems;
 
 
     }
 
-
     @Override
-    protected void onPostExecute(Void result){
-        if(isAdded()){
-            getResources().getString(R.string.app_name);
-        }
+    public void onDestroy() {
+        super.onDestroy();
+
+
     }
 
 
+    public  void update()
+    {for (int i=0 ;i<size;i++)
+    {
+        int likez = rowItems.get(i).getLikes();
+
+        ParseObject point = ParseObject.createWithoutData("Songs", objId[i]);
+
+        Log.d("Helo0",String.valueOf(likez));
+        point.put("Likes", likez);
+        point.saveInBackground();
+
+
+
+    }
+    }
+
 }
+
+
+
 

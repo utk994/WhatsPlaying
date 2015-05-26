@@ -77,6 +77,15 @@
 
         </LinearLayout>
 
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="90dp"
+            android:layout_height="35dp"
+            android:id="@+id/forgotpass"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/forgotpss" />
+
     </LinearLayout>
 
 </RelativeLayout>

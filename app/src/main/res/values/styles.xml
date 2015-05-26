@@ -34,6 +34,8 @@
 
         <item name="colorPrimaryDark">@color/darkpurple</item>
         <item name="actionBarTabStyle">@style/MyActionBarTabs</item>
+        <item name="colorAccent">@color/purple</item>
+        <item name="android:editTextStyle">@style/EditTextStyle</item>
 
 
         <!-- The rest of your attribute s -->
@@ -43,6 +45,7 @@
         <item name="android:layout_height">1dp</item>
         <item name="android:background">?android:attr/listDivider</item>
     </style>
+    <style name="EditTextStyle" parent="Widget.AppCompat.EditText"/>
 
     <style name="MyActionBarTabs"
         parent="@style/Widget.AppCompat.ActionBar.TabView">
@@ -51,6 +54,11 @@
 
         <!-- Support library compatibility -->
         <item name="background">@drawable/tab_selector</item>
+    </style>
+
+    <style name="menu_labels_style">
+        <item name="android:background">@drawable/fab_label_background</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
 

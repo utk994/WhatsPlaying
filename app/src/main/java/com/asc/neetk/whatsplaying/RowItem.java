@@ -12,20 +12,28 @@ public class RowItem {
     private String status;
     private String timeStamp;
     private Drawable profilePic;
+    private Integer likes;
 
-    public RowItem(String name,String status,String timeStamp,Drawable profilePic ) {
+                   public RowItem(String name,String status,String timeStamp,Drawable profilePic,Integer likes) {
 
         this.name = name;
         this.status = status;
         this.timeStamp=timeStamp;
         this.profilePic=profilePic;
+        this.likes=likes;
 
 
     }
 
 
+
     public String getName() {
         return name;
+    }
+    public Integer getLikes() {
+
+
+        return likes;
     }
     public String getStatus() {
         return  status;
@@ -38,9 +46,15 @@ public class RowItem {
     }
 
 
+
     public void setName(String name) {
         this.name = name;
     }
+
+    public void setLikes(Integer likes1) {
+        this.likes= likes1;
+    }
+
 
 
     public void setTimeStamp(String timeStamp) {

@@ -25,6 +25,10 @@ public class Welcome extends Fragment {
         View rootView = inflater.inflate(R.layout.activity_welcome, container, false);
 
 
+
+
+
+
         return rootView;
 
 
@@ -59,7 +63,6 @@ public class Welcome extends Fragment {
             public void onClick(View arg0) {
 
 
-
                 final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), "", "Logging Out...");
                 new Thread() {
 
@@ -91,9 +94,9 @@ public class Welcome extends Fragment {
 
             }
 
-            });
+        });
 
 
-        }
     }
+}
 
