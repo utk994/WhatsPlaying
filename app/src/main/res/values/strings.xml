@@ -91,4 +91,5 @@
     <string name="title_activity_signup">signupActivity</string>
     <string name="title_activity_forgot_pass">forgotPass</string>
     <string name="title_activity_profile_pic">profilePic</string>
+    <string name="title_activity_checking">checking</string>
 </resources>

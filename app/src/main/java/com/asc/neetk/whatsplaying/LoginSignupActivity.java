@@ -76,15 +76,17 @@ public class LoginSignupActivity extends Activity {
 
                                                 finish();
                                             } else {
+                                                progressDialog.dismiss();
                                                 Toast.makeText(
                                                         getApplicationContext(),
-                                                        "Please check the details entered or Signup by entering desired username and password ",
+                                                        "Please check the details entered. ",
                                                         Toast.LENGTH_LONG).show();
                                             }
                                         }
                                     });
 
                         } catch (Exception e) {
+                            progressDialog.dismiss();
 
                             Log.e("tag", e.getMessage());
 

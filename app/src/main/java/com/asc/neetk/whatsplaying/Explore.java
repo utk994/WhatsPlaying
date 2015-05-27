@@ -143,10 +143,10 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
 
         super.onActivityCreated(savedInstanceState);
-        getListView().setVisibility(View.INVISIBLE);
+        getListView().setVisibility(View.GONE);
 
 
-        //rowItems = fetchData();
+
         tv = (TextView) getActivity().findViewById(R.id.empty);
         tv.setText("Please Swipe Up to Refresh");
         tv.setVisibility(View.VISIBLE);
@@ -164,13 +164,19 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
         getListView().setOnItemClickListener(this);
 
-        getListView().setVisibility(View.VISIBLE);
+        getListView().setEmptyView(getActivity().findViewById(R.id.empty));
+
+
 
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getListView().setVisibility(View.INVISIBLE);
+
+                getListView().setVisibility(View.GONE);
+                tv.setText("Refreshing....");
+                tv.setVisibility(View.VISIBLE);
+
                 mSwipeRefreshLayout.setRefreshing(true);
                 rowItems = fetchData();
 
@@ -179,7 +185,7 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
                 setListAdapter(adapter);
 
                 mSwipeRefreshLayout.setRefreshing(false);
-                tv.setVisibility(View.INVISIBLE);
+                tv.setVisibility(View.GONE);
 
                 getListView().setVisibility(View.VISIBLE);
 
@@ -202,11 +208,12 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
                     // check if the top of the first item is visible
                     boolean topOfFirstItemVisible = getListView().getChildAt(0).getTop() == 0;
                     // enabling or disabling the refresh layout
+
                     enable = firstItemVisible && topOfFirstItemVisible;
+
                     mSwipeRefreshLayout.setEnabled(enable);
                     return;
                 }
-
 
 
                 mSwipeRefreshLayout.setEnabled(true);
@@ -353,7 +360,7 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
         rowItems = new ArrayList<RowItem>();
 
         for (int i = 0; i < size; i++) {
-            RowItem items = new RowItem(user[i], songname[i], time[i], profiles[i], likes[i]);
+            RowItem items = new RowItem(user[i], songname[i], time[i], profiles[i], likes[i],objId[i]);
 
 
             rowItems.add(items);
@@ -374,22 +381,6 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
     }
 
-
-    public  void update()
-    {for (int i=0 ;i<size;i++)
-    {
-        int likez = rowItems.get(i).getLikes();
-
-        ParseObject point = ParseObject.createWithoutData("Songs", objId[i]);
-
-        Log.d("Helo0",String.valueOf(likez));
-        point.put("Likes", likez);
-        point.saveInBackground();
-
-
-
-    }
-    }
 
 }
 

@@ -64,8 +64,9 @@ public class forgotPass extends ActionBarActivity {
                                         // An email was successfully sent with reset instructions.
                                     } else {
                                         // Something went wrong. Look at the ParseException to see what's up.
-
+                                        progressDialog.dismiss();
                                         Toast.makeText(
+
                                                 getApplicationContext(),
                                                 "Sorry an error occured",
                                                 Toast.LENGTH_SHORT).show();
@@ -76,6 +77,7 @@ public class forgotPass extends ActionBarActivity {
 
                             });
                         } catch (Exception e) {
+                            progressDialog.dismiss();
 
                             Log.e("tag", e.getMessage());
 

@@ -117,6 +117,7 @@ public class signupActivity extends ActionBarActivity {
                                 user.setPassword(passtxt);
                                 user.setEmail(emailtxt);
 
+
                                 user.signUpInBackground(new SignUpCallback() {
                                     @Override
                                     public void done(com.parse.ParseException e) {
@@ -136,6 +137,7 @@ public class signupActivity extends ActionBarActivity {
                                             Toast.makeText(getApplicationContext(),
                                                     "Sign up Error", Toast.LENGTH_SHORT)
                                                     .show();
+                                                    progressDialog1.dismiss();
 
                                         }
 
@@ -145,6 +147,7 @@ public class signupActivity extends ActionBarActivity {
                             } catch (Exception e) {
 
                                 Log.e("tag", e.getMessage());
+                                progressDialog1.dismiss();
 
                             }
 

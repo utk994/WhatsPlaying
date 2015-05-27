@@ -29,7 +29,6 @@
         </service>
 
         <activity android:name="com.soundcloud.android.crop.CropImageActivity" />
-
         <activity
             android:name=".fouract"
             android:excludeFromRecents="true"
@@ -37,7 +36,9 @@
             android:launchMode="singleInstance"
             android:taskAffinity=""
             android:theme="@style/Theme.Transparent" />
-        <activity android:name=".central" >
+        <activity
+            android:name=".central"
+            android:launchMode="singleTop" >
         </activity>
         <activity
             android:name=".LoginActivity"
@@ -53,7 +54,12 @@
             android:label="@string/title_activity_login_signup" />
         <activity
             android:name=".MySongs"
-            android:label="Your History" />
+            android:label="Your History"
+            android:parentActivityName=".central" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.asc.neetk.whatsplaying.central" />
+        </activity>
 
         <provider
             android:name=".MyContentProvider"
@@ -80,10 +86,16 @@
         </activity>
         <activity
             android:name=".profilePic"
-            android:label="Your Profile" >
+            android:label="Your Profile"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:parentActivityName=".central" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.asc.neetk.whatsplaying.central" />
+        </activity>
+        <activity
+            android:name=".checking"
+            android:label="@string/title_activity_checking" >
         </activity>
     </application>
 

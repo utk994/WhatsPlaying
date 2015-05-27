@@ -45,6 +45,12 @@ public class Welcome extends Fragment {
         // Retrieve current user from Parse.com
         ParseUser currentUser = ParseUser.getCurrentUser();
 
+        if (currentUser.get("genLikes") == null)
+        {currentUser.add("genLikes", "");}
+
+        if (currentUser.get("artLikes") == null)
+        {currentUser.add("artLikes","");}
+
         // Convert currentUser into String
         String struser = currentUser.getUsername().toString();
 
@@ -63,7 +69,7 @@ public class Welcome extends Fragment {
             public void onClick(View arg0) {
 
 
-                final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), "", "Logging Out...");
+                 final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), "", "Logging Out...");
                 new Thread() {
 
                     public void run() {

@@ -109,16 +109,25 @@ public class central extends ActionBarActivity implements ActionBar.TabListener 
             case R.id.action_history:
                 Intent intent = new Intent(getApplicationContext(), MySongs.class);
                 startActivity(intent);
+                break;
+
+
 
             case R.id.action_profilepic:
                 Intent intent1 = new Intent(getApplicationContext(), profilePic.class);
                 startActivity(intent1);
 
+                break;
 
-                return true;
+
+
             default:
                 return super.onOptionsItemSelected(item);
+
+
+
         }
+        return true;
 
     }
 

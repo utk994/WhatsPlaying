@@ -13,14 +13,16 @@ public class RowItem {
     private String timeStamp;
     private Drawable profilePic;
     private Integer likes;
+    private String objID;
 
-                   public RowItem(String name,String status,String timeStamp,Drawable profilePic,Integer likes) {
+                   public RowItem(String name,String status,String timeStamp,Drawable profilePic,Integer likes,String objID) {
 
         this.name = name;
         this.status = status;
         this.timeStamp=timeStamp;
         this.profilePic=profilePic;
         this.likes=likes;
+        this.objID=objID;
 
 
     }
@@ -34,6 +36,10 @@ public class RowItem {
 
 
         return likes;
+    }
+
+    public String getObjID() {
+        return objID;
     }
     public String getStatus() {
         return  status;

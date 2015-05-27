@@ -3,12 +3,15 @@ package com.asc.neetk.whatsplaying;
 import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.parse.ParseObject;
 
 import java.util.List;
 
@@ -33,7 +36,7 @@ public class CustomAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int position) {
+    public RowItem getItem(int position) {
 
         return rowItem.get(position);
     }
@@ -47,7 +50,7 @@ public class CustomAdapter extends BaseAdapter {
 
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
 
         if (convertView == null) {
             LayoutInflater mInflater = (LayoutInflater) context
@@ -55,31 +58,11 @@ public class CustomAdapter extends BaseAdapter {
             convertView = mInflater.inflate(R.layout.list_item, null);}
 
 
-            final ImageView likes = (ImageView) convertView.findViewById(R.id.likeimg);
-            final TextView likenum =(TextView) convertView.findViewById(R.id.likenum);
-            final int[] like = {Integer.parseInt(likenum.getText().toString())};
+
         final RowItem row_pos = rowItem.get(position);
         // setting the image resource and title
-
-
-        if (like[0] ==0) likes.setImageResource(R.drawable.likegra);
-            likes.setOnClickListener(new View.OnClickListener() {
-
-
-                public void onClick(View v) {
-
-                    like[0] = like[0] + 1;
-
-
-                    likes.setImageResource(R.drawable.like);
-
-
-                    likenum.setText(String.valueOf(like[0]));
-
-
-                    row_pos.setLikes(like[0]);
-                }
-            });
+        final ImageView likes = (ImageView) convertView.findViewById(R.id.likeimg);
+        final TextView likenum =(TextView) convertView.findViewById(R.id.likenum);
 
 
         TextView name = (TextView) convertView.findViewById(R.id.name);
@@ -95,6 +78,10 @@ public class CustomAdapter extends BaseAdapter {
 
 
 
+
+
+
+
         name.setText(row_pos.getName());
         /*CharSequence timeAgo = DateUtils.getRelativeTimeSpanString(
                 Long.parseLong(row_pos.getTimeStamp()),
@@ -105,6 +92,11 @@ public class CustomAdapter extends BaseAdapter {
 
         timestamp.setText(row_pos.getTimeStamp());
 
+          final Integer like = row_pos.getLikes();
+
+
+
+
         if (!TextUtils.isEmpty(row_pos.getStatus())) {
             statusMsg.setText(row_pos.getStatus());
             statusMsg.setVisibility(View.VISIBLE);
@@ -114,6 +106,36 @@ public class CustomAdapter extends BaseAdapter {
         }
 
         profilePic.setImageDrawable(row_pos.getProfilePic());
+
+        //if (like  ==0){ likes.setImageResource(R.drawable.likegra);}
+        likes.setOnClickListener(new View.OnClickListener() {
+
+            Integer templ = like;
+
+
+            public void onClick(View v) {
+
+                templ = templ + 1;
+
+
+                likes.setImageResource(R.drawable.like);
+
+
+                likenum.setText(String.valueOf(templ));
+
+                RowItem temp = getItem(position);
+
+                String id = temp.getObjID();
+
+                Log.d("Hello1", id);
+                ParseObject p = ParseObject.createWithoutData("Songs", id);
+                p.put("Likes", templ);
+                p.saveInBackground();
+
+
+            }
+        });
+
 
 
 
