@@ -30,8 +30,10 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.soundcloud.android.crop.Crop;
 import com.wefika.flowlayout.FlowLayout;
@@ -40,14 +42,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class profilePic extends ActionBarActivity {
 
 
     Bitmap bitmap;
-    private FlowLayout mFlowLayout1, mFlowLayout2;
-    ArrayList<String> genLikeList, artLikeList;
+    private FlowLayout mFlowLayout1, mFlowLayout2,mFlowLayout3;
+    ArrayList<String> genLikeList, artLikeList,userfollows;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +67,7 @@ public class profilePic extends ActionBarActivity {
 
         mFlowLayout1 = (FlowLayout) findViewById(R.id.flowgen);
         mFlowLayout2 = (FlowLayout) findViewById(R.id.flowartist);
+        mFlowLayout3 = (FlowLayout) findViewById(R.id.flowuser);
 
 
 
@@ -106,8 +112,9 @@ public class profilePic extends ActionBarActivity {
                             Toast.LENGTH_SHORT).show();
                 } else {
                     dispBio.setText(actbio);
-                    getBio.setText(actbio);
+                    getBio.setText("");
                     hideSoftKeyboard(com.asc.neetk.whatsplaying.profilePic.this);
+
                     ParseUser currentUser = ParseUser.getCurrentUser();
                     currentUser.put("Bio", actbio);
                     currentUser.saveInBackground();
@@ -268,8 +275,24 @@ public class profilePic extends ActionBarActivity {
 
             }
         });
+        userfollows = (ArrayList<String>) ParseUser.getCurrentUser().get("Follows");
         genLikeList = (ArrayList<String>) ParseUser.getCurrentUser().get("genLikes");
         artLikeList = (ArrayList<String>) ParseUser.getCurrentUser().get("artLikes");
+
+
+        if (userfollows != null){
+
+
+            for (int i = 0; i < userfollows.size(); i++) {
+                String deletebllank = userfollows.get(i);
+                if (deletebllank.equals("")) {
+                    userfollows.remove(i);
+                    continue;
+                }
+                addImage(mFlowLayout3, deletebllank);
+
+            }
+        }
 
         if (genLikeList != null) {
 
@@ -481,6 +504,97 @@ public class profilePic extends ActionBarActivity {
         } else if (resultCode == Crop.RESULT_ERROR) {
             Toast.makeText(this, Crop.getError(result).getMessage(), Toast.LENGTH_SHORT).show();
         }
+    }
+
+
+    public void addImage(final FlowLayout mFlowLayout, String user1) {
+
+
+        final CircleImageView newView = new CircleImageView(this);
+
+
+        newView.setImageDrawable(getResources().getDrawable(R.drawable.profile));
+
+        newView.setPadding(2, 2, 2, 2);
+        newView.setBorderWidth(2);
+
+        FlowLayout.LayoutParams params1 = new FlowLayout.LayoutParams(80, 80);
+        params1.rightMargin = 10;
+        params1.bottomMargin = 10;
+        newView.setLayoutParams(params1);
+
+        ParseQuery<ParseUser> querytemp = ParseUser.getQuery();
+        querytemp.whereEqualTo("objectId", user1);
+        querytemp.setLimit(1);
+
+
+        querytemp.findInBackground(new FindCallback<ParseUser>() {
+            public void done(List<ParseUser> objects, ParseException e) {
+                if (e == null) {
+
+
+                    ParseUser usertemp = objects.get(0);
+
+                    final String username = usertemp.getUsername();
+
+
+                    final ParseFile user2 = usertemp.getParseFile("profilePic");
+
+
+                    if (user2 != null)
+
+                    {
+
+                        byte[] bitmapdata = new byte[0];
+                        try {
+                            bitmapdata = user2.getData();
+                        } catch (ParseException e1) {
+                            e1.printStackTrace();
+                        }
+                        Bitmap bitmap1 = BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
+
+
+                        Bitmap bitmapsimplesize = Bitmap.createScaledBitmap(bitmap1, 60, 60, true);
+                        bitmap1.recycle();
+
+                        Drawable d = new BitmapDrawable(getResources(), bitmapsimplesize);
+                        newView.setImageDrawable(d);
+                        mFlowLayout.addView(newView);
+
+
+                    } else {
+                        newView.setImageDrawable(getResources().getDrawable(R.drawable.editicon));
+                        mFlowLayout.addView(newView);
+
+                    }
+
+                    newView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            int index = mFlowLayout.indexOfChild(view);
+
+
+                            userfollows.remove(index);
+                            ParseUser user = ParseUser.getCurrentUser();
+                            user.put("Follows", userfollows );
+                            user.saveInBackground();
+
+                            mFlowLayout.removeViewAt(index);
+
+                            Toast.makeText(getApplicationContext(),"You unfollowed "+username,Toast.LENGTH_SHORT).show();
+                        }
+
+
+                    });
+
+
+                }
+            }
+        });
+
+
+
     }
 
 

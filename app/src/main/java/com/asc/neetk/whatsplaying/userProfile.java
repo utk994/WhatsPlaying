@@ -31,9 +31,11 @@ import com.wefika.flowlayout.FlowLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 
 public class userProfile extends ActionBarActivity {
-    FlowLayout mFlowLayout1, mFlowLayout2;
+    FlowLayout mFlowLayout1, mFlowLayout2, mFlowLayout3;
     ArrayList<String> genLikeList, artLikeList;
     String actbio;
     ParseUser user;
@@ -56,11 +58,14 @@ public class userProfile extends ActionBarActivity {
 
         mFlowLayout1 = (FlowLayout) findViewById(R.id.flowviewgen);
         mFlowLayout2 = (FlowLayout) findViewById(R.id.flowviewart);
+        mFlowLayout3 = (FlowLayout) findViewById(R.id.flowviewUSER);
+
 
         TextView viewuser = (TextView) findViewById(R.id.viewuname);
         final TextView viewbio = (TextView) findViewById(R.id.viewuserbio);
         TextView filler1 = (TextView) findViewById(R.id.filler1);
         TextView filler2 = (TextView) findViewById(R.id.filler2);
+        TextView filler3= (TextView) findViewById(R.id.filler3);
 
 
         ParseQuery<ParseUser> query1 = ParseUser.getQuery();
@@ -75,13 +80,16 @@ public class userProfile extends ActionBarActivity {
 
                     user = objects.get(0);
 
+                    final String userId = user.getObjectId();
+
                     actbio = user.getString("Bio");
 
                     genLikeList = (ArrayList<String>) user.get("genLikes");
 
 
-                    userfollows = (ArrayList<String>) ParseUser.getCurrentUser().get("Follows");
+                    userfollows = (ArrayList<String>) user.get("Follows");
                     Button follow = (Button) findViewById(R.id.follow);
+
 
                     follow.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -101,8 +109,8 @@ public class userProfile extends ActionBarActivity {
                                 } else if (userfollows.contains(actuser)) {
                                     Toast.makeText(getApplicationContext(), "You are already following " + actuser, Toast.LENGTH_SHORT).show();
                                 } else {
-                                    Log.d("Follows", userfollows.toString());
-                                    currentUser.addUnique("Follows", actuser);
+                                    // Log.d("Follows", userfollows.toString());
+                                    currentUser.addUnique("Follows", userId);
                                     currentUser.saveInBackground();
                                     Toast.makeText(getApplicationContext(), "Following " + actuser + "!", Toast.LENGTH_SHORT).show();
                                 }
@@ -143,6 +151,19 @@ public class userProfile extends ActionBarActivity {
 
                             addItem(mFlowLayout2, myString);
 
+
+                        }
+
+                        Log.d("Follows",userfollows.toString());
+
+
+                        for (int i = 0; i < userfollows.size(); i++) {
+                            String deletebllank = userfollows.get(i);
+                            if (deletebllank.equals("")) {
+                                userfollows.remove(i);
+                                continue;
+                            }
+                            addImage(mFlowLayout3, deletebllank);
 
                         }
                     }
@@ -190,9 +211,10 @@ public class userProfile extends ActionBarActivity {
 
         filler2.setText("Artists that " + actuser + " listens to");
 
+        filler3.setText("Users that "+actuser+" follows");
+
 
         viewuser.setText(actuser);
-
 
 
     }
@@ -243,4 +265,93 @@ public class userProfile extends ActionBarActivity {
         mFlowLayout.addView(newView);
     }
 
-}
+
+    public void addImage(final FlowLayout mFlowLayout, String user1) {
+
+
+        final CircleImageView newView = new CircleImageView(this);
+
+
+        newView.setImageDrawable(getResources().getDrawable(R.drawable.profile));
+
+        newView.setPadding(2, 2, 2, 2);
+        newView.setBorderWidth(2);
+
+        FlowLayout.LayoutParams params1 = new FlowLayout.LayoutParams(80, 80);
+        params1.rightMargin = 10;
+        params1.bottomMargin = 10;
+        newView.setLayoutParams(params1);
+
+        ParseQuery<ParseUser> querytemp = ParseUser.getQuery();
+        querytemp.whereEqualTo("objectId", user1);
+        querytemp.setLimit(1);
+
+
+        querytemp.findInBackground(new FindCallback<ParseUser>() {
+            public void done(List<ParseUser> objects, ParseException e) {
+                if (e == null) {
+
+
+                    ParseUser usertemp = objects.get(0);
+                    final String username= usertemp.getUsername();
+
+
+                    final ParseFile user2 = usertemp.getParseFile("profilePic");
+
+
+                    if (user2 != null)
+
+                    {
+
+                        byte[] bitmapdata = new byte[0];
+                        try {
+                            bitmapdata = user2.getData();
+                        } catch (ParseException e1) {
+                            e1.printStackTrace();
+                        }
+                        Bitmap bitmap1 = BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
+
+
+
+                        Bitmap bitmapsimplesize = Bitmap.createScaledBitmap(bitmap1, 60, 60, true);
+                        bitmap1.recycle();
+
+                        Drawable d = new BitmapDrawable(getResources(), bitmapsimplesize);
+                        newView.setImageDrawable(d);
+                        mFlowLayout.addView(newView);
+
+
+
+                    } else {
+                        newView.setImageDrawable(getResources().getDrawable(R.drawable.editicon));
+                        mFlowLayout.addView(newView);
+
+                    }
+
+                    newView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            Intent i = new Intent(userProfile.this, userProfile.class);
+                            i.putExtra("User", username);
+                            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+                            startActivity(i);
+                            finish();
+
+
+
+                        }
+                    });
+
+
+
+                }
+            }
+        });
+
+
+
+        }
+
+    }

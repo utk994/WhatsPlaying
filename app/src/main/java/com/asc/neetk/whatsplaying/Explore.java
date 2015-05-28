@@ -38,7 +38,7 @@ import java.util.List;
  * Created by utk994 on 05/04/15.
  */
 
-public class Explore extends SwipeRefreshListFragment implements AdapterView.OnItemClickListener{
+public class Explore extends SwipeRefreshListFragment implements AdapterView.OnItemClickListener {
     SwipeRefreshLayout mSwipeRefreshLayout;
 
 
@@ -146,7 +146,6 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
         getListView().setVisibility(View.GONE);
 
 
-
         tv = (TextView) getActivity().findViewById(R.id.empty);
         tv.setText("Please Swipe Up to Refresh");
         tv.setVisibility(View.VISIBLE);
@@ -165,8 +164,6 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
         getListView().setOnItemClickListener(this);
 
         getListView().setEmptyView(getActivity().findViewById(R.id.empty));
-
-
 
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -244,7 +241,7 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
         args.putString("Album", album[position]);
 
         args.putString("Artist", artist[position]);
-        args.putString("User",user[position]);
+        args.putString("User", user[position]);
         dialog.setArguments(args);
 
         dialog.show(getFragmentManager().beginTransaction(), "MyProgressDialog");
@@ -255,7 +252,7 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
         final Drawable defdrawable = getResources().getDrawable(R.drawable.profile);
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Songs");
-        query.orderByDescending("updatedAt");
+        query.orderByDescending("createdAt");
         query.setLimit(30);
 
 
@@ -361,13 +358,12 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
         rowItems = new ArrayList<RowItem>();
 
         for (int i = 0; i < size; i++) {
-            RowItem items = new RowItem(user[i], songname[i], time[i], profiles[i], likes[i],objId[i]);
+            RowItem items = new RowItem(user[i], songname[i], time[i], profiles[i], likes[i], objId[i]);
 
 
             rowItems.add(items);
             adapter.notifyDataSetChanged();
         }
-
 
 
         return rowItems;
