@@ -37,6 +37,7 @@ public class userProfile extends ActionBarActivity {
     ArrayList<String> genLikeList, artLikeList;
     String actbio;
     ParseUser user;
+    ArrayList<String> userfollows;
 
 
     @Override
@@ -49,6 +50,8 @@ public class userProfile extends ActionBarActivity {
 
         Intent intent = getIntent();
         final String actuser = intent.getStringExtra("User");
+
+        this.setTitle(actuser);
         final ImageView profilePic = (ImageView) findViewById(R.id.viewpropic);
 
         mFlowLayout1 = (FlowLayout) findViewById(R.id.flowviewgen);
@@ -77,7 +80,38 @@ public class userProfile extends ActionBarActivity {
                     genLikeList = (ArrayList<String>) user.get("genLikes");
 
 
-                    Log.d("List", genLikeList.toString());
+                    userfollows = (ArrayList<String>) ParseUser.getCurrentUser().get("Follows");
+                    Button follow = (Button) findViewById(R.id.follow);
+
+                    follow.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+
+                            if (userfollows != null)
+
+                            {
+
+
+                                ParseUser currentUser = ParseUser.getCurrentUser();
+
+
+                                if (currentUser.getUsername().equals(actuser)) {
+                                    Toast.makeText(getApplicationContext(), "You cannot follow yourself !", Toast.LENGTH_SHORT).show();
+                                } else if (userfollows.contains(actuser)) {
+                                    Toast.makeText(getApplicationContext(), "You are already following " + actuser, Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Log.d("Follows", userfollows.toString());
+                                    currentUser.addUnique("Follows", actuser);
+                                    currentUser.saveInBackground();
+                                    Toast.makeText(getApplicationContext(), "Following " + actuser + "!", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }
+                    });
+
+
+                    //  Log.d("List", genLikeList.toString());
                     artLikeList = (ArrayList<String>) user.get("artLikes");
 
 
@@ -159,31 +193,6 @@ public class userProfile extends ActionBarActivity {
 
         viewuser.setText(actuser);
 
-
-        Button follow = (Button) findViewById(R.id.follow);
-
-        follow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                ArrayList<String> userfollows = (ArrayList<String>) user.get("Follows");
-
-
-                ParseUser currentUser = ParseUser.getCurrentUser();
-
-
-                if (currentUser.getUsername().equals(actuser)) {
-                    Toast.makeText(getApplicationContext(), "You cannoy follow yourself !", Toast.LENGTH_SHORT).show();
-                }
-                else if (userfollows.contains(actuser)){Toast.makeText(getApplicationContext(), "You are already following " +userfollows, Toast.LENGTH_SHORT).show();}
-
-                else {
-                    currentUser.add("Follows", actuser);
-                    currentUser.saveInBackground();
-                    Toast.makeText(getApplicationContext(), "Following " + actuser + "!", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
 
 
     }

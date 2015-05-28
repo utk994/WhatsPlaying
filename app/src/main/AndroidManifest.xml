@@ -99,6 +99,7 @@
         </activity>
         <activity
             android:name=".adapter.userProfile"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_user_profile" >
         </activity>
         <activity
