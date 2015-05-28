@@ -244,6 +244,7 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
         args.putString("Album", album[position]);
 
         args.putString("Artist", artist[position]);
+        args.putString("User",user[position]);
         dialog.setArguments(args);
 
         dialog.show(getFragmentManager().beginTransaction(), "MyProgressDialog");

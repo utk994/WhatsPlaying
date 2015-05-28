@@ -64,6 +64,8 @@ public class profilePic extends ActionBarActivity {
         mFlowLayout2 = (FlowLayout) findViewById(R.id.flowartist);
 
 
+
+
         final ImageView profilePic = (ImageView) findViewById(R.id.pictureView);
         Drawable drawable = getResources().getDrawable(R.drawable.profile);
 
@@ -79,6 +81,43 @@ public class profilePic extends ActionBarActivity {
 
         TextView changepass = (TextView) findViewById(R.id.change_password);
         final TextView changeemail = (TextView) findViewById(R.id.change_email);
+
+        final EditText getBio = (EditText) findViewById(R.id.enterbio);
+        final TextView dispBio = (TextView) findViewById(R.id.bioview);
+        Button changeBio = (Button) findViewById(R.id.bioadd);
+
+        String bio = (String) ParseUser.getCurrentUser().get("Bio");
+        if (bio == null) dispBio.setText("Enter a bio to interact better with other users. ");
+
+        else dispBio.setText(bio);
+
+
+        changeBio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                String actbio = getBio.getText().toString();
+
+                if (actbio.equals("")) {
+
+                    Toast.makeText(getApplicationContext(),
+                            "Enter some text",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    dispBio.setText(actbio);
+                    getBio.setText(actbio);
+                    hideSoftKeyboard(com.asc.neetk.whatsplaying.profilePic.this);
+                    ParseUser currentUser = ParseUser.getCurrentUser();
+                    currentUser.put("Bio", actbio);
+                    currentUser.saveInBackground();
+                }
+
+
+            }
+
+
+        });
 
 
         changepass.setOnClickListener(new View.OnClickListener() {
@@ -105,9 +144,19 @@ public class profilePic extends ActionBarActivity {
                                         // get user input and set it to result
                                         // edit text
                                         String userpass = userInput.getText().toString();
-                                        ParseUser currentUser = ParseUser.getCurrentUser();
-                                        currentUser.setPassword(userpass);
-                                        currentUser.saveInBackground();
+                                        if (userpass.equals("")) {
+
+                                            Toast.makeText(getApplicationContext(),
+                                                    "Enter some text",
+                                                    Toast.LENGTH_SHORT).show();
+
+
+                                        } else {
+
+                                            ParseUser currentUser = ParseUser.getCurrentUser();
+                                            currentUser.setPassword(userpass);
+                                            currentUser.saveInBackground();
+                                        }
                                     }
                                 })
                         .setNegativeButton("Cancel",
@@ -152,11 +201,21 @@ public class profilePic extends ActionBarActivity {
                                         // edit text
                                         String useremail = userInput1.getText().toString();
 
-                                        email.setText(useremail);
+                                        if (useremail.equals("")) {
 
-                                        ParseUser currentUser = ParseUser.getCurrentUser();
-                                        currentUser.setEmail(useremail);
-                                        currentUser.saveInBackground();
+                                                Toast.makeText(getApplicationContext(),
+                                                        "Enter some text",
+                                                        Toast.LENGTH_SHORT).show();
+
+
+                                        } else {
+
+                                            email.setText(useremail);
+
+                                            ParseUser currentUser = ParseUser.getCurrentUser();
+                                            currentUser.setEmail(useremail);
+                                            currentUser.saveInBackground();
+                                        }
                                     }
                                 })
                         .setNegativeButton("Cancel",

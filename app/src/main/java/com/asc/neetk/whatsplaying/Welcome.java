@@ -48,6 +48,10 @@ public class Welcome extends Fragment {
         if (currentUser.get("genLikes") == null)
         {currentUser.add("genLikes", "");}
 
+
+        if (currentUser.get("Follows") == null)
+        {currentUser.add("Follows", "");}
+
         if (currentUser.get("artLikes") == null)
         {currentUser.add("artLikes","");}
 

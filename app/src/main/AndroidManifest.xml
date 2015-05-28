@@ -86,8 +86,8 @@
         </activity>
         <activity
             android:name=".profilePic"
-            android:label="Your Profile"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="Your Profile"
             android:parentActivityName=".central" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -96,6 +96,17 @@
         <activity
             android:name=".checking"
             android:label="@string/title_activity_checking" >
+        </activity>
+        <activity
+            android:name=".adapter.userProfile"
+            android:label="@string/title_activity_user_profile" >
+        </activity>
+        <activity
+            android:name=".userProfile"
+            android:label="@string/title_activity_user_profile" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.asc.neetk.whatsplaying.central" />
         </activity>
     </application>
 
