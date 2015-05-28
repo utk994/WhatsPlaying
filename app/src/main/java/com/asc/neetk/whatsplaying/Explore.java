@@ -1,7 +1,5 @@
 package com.asc.neetk.whatsplaying;
 
-import android.animation.ObjectAnimator;
-import android.animation.PropertyValuesHolder;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -15,15 +13,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
-import com.oguzdev.circularfloatingactionmenu.library.FloatingActionMenu;
-import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
+import com.gc.materialdesign.views.ButtonFloat;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -49,6 +45,10 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
     String[] done = new String[20];
     Integer[] likes = new Integer[60];
     String[] objId = new String[60];
+    final String[] username = new String[20];
+
+
+    ArrayList<String> userfollows;
 
     String[] time = new String[60];
     int size;
@@ -59,64 +59,13 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
     CustomAdapter adapter;
     private List<RowItem> rowItems;
+    ButtonFloat swap;
 
 
     @Override
 
     public void onCreate(Bundle savedState) {
 
-        FloatingActionButton.LayoutParams fabIconStarParams = new FloatingActionButton.LayoutParams(108, 108);
-
-        final ImageView fabIconNew = new ImageView(getActivity());
-        fabIconNew.setImageDrawable(getResources().getDrawable(R.drawable.fab));
-        final FloatingActionButton rightLowerButton = new FloatingActionButton.Builder(getActivity())
-                .setContentView(fabIconNew, fabIconStarParams)
-                .build();
-
-
-        ImageView rlIcon1 = new ImageView(getActivity());
-        ImageView rlIcon2 = new ImageView(getActivity());
-
-
-        rlIcon1.setImageDrawable(getResources().getDrawable(R.drawable.freindsicon));
-        rlIcon2.setImageDrawable(getResources().getDrawable(R.drawable.viewall));
-
-        SubActionButton.Builder lCSubBuilder = new SubActionButton.Builder(getActivity());
-
-        FrameLayout.LayoutParams blueContentParams = new FrameLayout.LayoutParams(80, 80);
-
-        lCSubBuilder.setLayoutParams(blueContentParams);
-
-        // Build the menu with default options: light theme, 90 degrees, 72dp radius.
-        // Set 4 default SubActionButtons
-        final FloatingActionMenu rightLowerMenu = new FloatingActionMenu.Builder(getActivity())
-                .addSubActionView(lCSubBuilder.setContentView(rlIcon1, blueContentParams).build())
-                .addSubActionView(lCSubBuilder.setContentView(rlIcon2, blueContentParams).build())
-
-                .attachTo(rightLowerButton)
-                .build();
-
-
-        // Listen menu open and close events to animate the button content view
-        rightLowerMenu.setStateChangeListener(new FloatingActionMenu.MenuStateChangeListener() {
-            @Override
-            public void onMenuOpened(FloatingActionMenu menu) {
-                // Rotate the icon of rightLowerButton 45 degrees clockwise
-                fabIconNew.setRotation(0);
-                PropertyValuesHolder pvhR = PropertyValuesHolder.ofFloat(View.ROTATION, 45);
-                ObjectAnimator animation = ObjectAnimator.ofPropertyValuesHolder(fabIconNew, pvhR);
-                animation.start();
-            }
-
-            @Override
-            public void onMenuClosed(FloatingActionMenu menu) {
-                // Rotate the icon of rightLowerButton 45 degrees counter-clockwise
-                fabIconNew.setRotation(45);
-                PropertyValuesHolder pvhR = PropertyValuesHolder.ofFloat(View.ROTATION, 0);
-                ObjectAnimator animation = ObjectAnimator.ofPropertyValuesHolder(fabIconNew, pvhR);
-                animation.start();
-            }
-        });
 
         super.onCreate(savedState);
         setRetainInstance(true); // handle rotations gracefully
@@ -125,9 +74,25 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
     }
 
     @Override
+    public void setMenuVisibility(final boolean visible) {
+        super.setMenuVisibility(visible);
+        if (visible && swap != null) {
+            swap.setVisibility(View.VISIBLE);
+
+
+            Animation animation1 = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.slide_up_fab);
+            swap.setAnimation(animation1);
+
+        }
+    }
+
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.list_fragment, null, false);
+
+
     }
 
     @Override
@@ -137,6 +102,9 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
+
+        swap = (ButtonFloat) getActivity().findViewById(R.id.buttonFloat);
+
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) getActivity().findViewById(R.id.swipe_container);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.purple);
@@ -157,6 +125,14 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
         }
 
+        swap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+            }
+        });
+
 
         // adapter.notifyDataSetChanged();
         setListAdapter(adapter);
@@ -169,6 +145,7 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+
 
                 getListView().setVisibility(View.GONE);
                 tv.setText("Refreshing....");
@@ -183,8 +160,12 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
                 mSwipeRefreshLayout.setRefreshing(false);
                 tv.setVisibility(View.GONE);
+                Animation animation1 = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.slide_up_fab);
+                swap.setAnimation(animation1);
+
 
                 getListView().setVisibility(View.VISIBLE);
+
 
             }
         });
@@ -193,11 +174,29 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL || scrollState == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
+
+                    Animation animation1 = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.slide_down_fab);
+                    swap.setAnimation(animation1);
+                    swap.setVisibility(View.INVISIBLE);
+
+
+                } else {
+                    swap.setVisibility(View.VISIBLE);
+
+                    Animation animation1 = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.slide_up_fab);
+                    swap.setAnimation(animation1);
+
+
+                }
+
             }
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem,
                                  int visibleItemCount, int totalItemCount) {
+
+
                 boolean enable = false;
                 if (getListView() != null && getListView().getChildCount() > 0) {
                     // check if the first item of the list is visible

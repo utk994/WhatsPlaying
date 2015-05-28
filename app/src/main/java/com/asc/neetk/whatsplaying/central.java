@@ -121,6 +121,17 @@ public class central extends ActionBarActivity implements ActionBar.TabListener 
 
 
 
+            case R.id.action_preferences:
+                Intent intent2 = new Intent(getApplicationContext(), Preferences.class);
+                startActivity(intent2);
+
+                break;
+
+
+
+
+
+
             default:
                 return super.onOptionsItemSelected(item);
 

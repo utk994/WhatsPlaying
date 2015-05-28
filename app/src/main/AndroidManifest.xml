@@ -109,6 +109,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.asc.neetk.whatsplaying.central" />
         </activity>
+        <activity
+            android:name=".Preferences"
+            android:label="@string/title_activity_preferences"
+            android:parentActivityName=".central" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.asc.neetk.whatsplaying.central" />
+        </activity>
     </application>
 
 </manifest>
