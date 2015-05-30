@@ -60,13 +60,19 @@ public class userProfile extends ActionBarActivity {
         mFlowLayout2 = (FlowLayout) findViewById(R.id.flowviewart);
         mFlowLayout3 = (FlowLayout) findViewById(R.id.flowviewUSER);
 
+        final Button follow = (Button) findViewById(R.id.follow);
+
 
         TextView viewuser = (TextView) findViewById(R.id.viewuname);
+        ;
         final TextView viewbio = (TextView) findViewById(R.id.viewuserbio);
+        viewbio.setVisibility(View.INVISIBLE);
         TextView filler1 = (TextView) findViewById(R.id.filler1);
-        TextView filler2 = (TextView) findViewById(R.id.filler2);
-        TextView filler3= (TextView) findViewById(R.id.filler3);
 
+        TextView filler2 = (TextView) findViewById(R.id.filler2);
+        TextView filler3 = (TextView) findViewById(R.id.filler3);
+
+        follow.setVisibility(View.INVISIBLE);
 
         ParseQuery<ParseUser> query1 = ParseUser.getQuery();
         query1.whereEqualTo("username", actuser);
@@ -84,11 +90,30 @@ public class userProfile extends ActionBarActivity {
 
                     actbio = user.getString("Bio");
 
+
                     genLikeList = (ArrayList<String>) user.get("genLikes");
 
 
                     userfollows = (ArrayList<String>) user.get("Follows");
-                    Button follow = (Button) findViewById(R.id.follow);
+
+
+                    final ParseUser currentUser = ParseUser.getCurrentUser();
+
+
+                    final ArrayList<String> currentUserfollows = (ArrayList) currentUser.get("folo");
+
+
+                    if (currentUser.getUsername().equals(actuser)) {
+                        follow.setVisibility(View.INVISIBLE);
+
+                    } else if (currentUserfollows.contains(actuser)) {
+                        follow.setBackgroundResource(R.drawable.unfollow);
+                        follow.setVisibility(View.VISIBLE);
+
+                    } else {
+                        follow.setBackgroundResource(R.drawable.follow);
+                        follow.setVisibility(View.VISIBLE);
+                    }
 
 
                     follow.setOnClickListener(new View.OnClickListener() {
@@ -99,15 +124,16 @@ public class userProfile extends ActionBarActivity {
                             if (userfollows != null)
 
                             {
-
-
-                                ParseUser currentUser = ParseUser.getCurrentUser();
-
-
                                 if (currentUser.getUsername().equals(actuser)) {
-                                    Toast.makeText(getApplicationContext(), "You cannot follow yourself !", Toast.LENGTH_SHORT).show();
-                                } else if (userfollows.contains(actuser)) {
-                                    Toast.makeText(getApplicationContext(), "You are already following " + actuser, Toast.LENGTH_SHORT).show();
+                                    follow.setVisibility(View.INVISIBLE);
+
+                                } else if (currentUserfollows.contains(actuser)) {
+                                    Toast.makeText(getApplicationContext(), "You unfollowed " + actuser, Toast.LENGTH_SHORT).show();
+                                    userfollows.remove(actuser);
+
+                                    currentUser.put("Follows", userfollows);
+                                    currentUser.saveInBackground();
+
                                 } else {
                                     // Log.d("Follows", userfollows.toString());
                                     currentUser.addUnique("Follows", userId);
@@ -154,7 +180,7 @@ public class userProfile extends ActionBarActivity {
 
                         }
 
-                        Log.d("Follows",userfollows.toString());
+                        Log.d("Follows", userfollows.toString());
 
 
                         for (int i = 0; i < userfollows.size(); i++) {
@@ -169,11 +195,12 @@ public class userProfile extends ActionBarActivity {
                     }
 
 
-                    if (actbio == null)
+                    if (actbio == null) {
                         viewbio.setText(actuser + " has not entered a bio.");
-
-                    else {
+                        viewbio.setVisibility(View.VISIBLE);
+                    } else {
                         viewbio.setText(actbio);
+                        viewbio.setVisibility(View.VISIBLE);
                     }
 
 
@@ -211,7 +238,7 @@ public class userProfile extends ActionBarActivity {
 
         filler2.setText("Artists that " + actuser + " listens to");
 
-        filler3.setText("Users that "+actuser+" follows");
+        filler3.setText("Users that " + actuser + " follows");
 
 
         viewuser.setText(actuser);
@@ -293,7 +320,7 @@ public class userProfile extends ActionBarActivity {
 
 
                     ParseUser usertemp = objects.get(0);
-                    final String username= usertemp.getUsername();
+                    final String username = usertemp.getUsername();
 
 
                     final ParseFile user2 = usertemp.getParseFile("profilePic");
@@ -312,14 +339,12 @@ public class userProfile extends ActionBarActivity {
                         Bitmap bitmap1 = BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
 
 
-
                         Bitmap bitmapsimplesize = Bitmap.createScaledBitmap(bitmap1, 60, 60, true);
                         bitmap1.recycle();
 
                         Drawable d = new BitmapDrawable(getResources(), bitmapsimplesize);
                         newView.setImageDrawable(d);
                         mFlowLayout.addView(newView);
-
 
 
                     } else {
@@ -340,10 +365,8 @@ public class userProfile extends ActionBarActivity {
                             finish();
 
 
-
                         }
                     });
-
 
 
                 }
@@ -351,7 +374,6 @@ public class userProfile extends ActionBarActivity {
         });
 
 
-
-        }
-
     }
+
+}

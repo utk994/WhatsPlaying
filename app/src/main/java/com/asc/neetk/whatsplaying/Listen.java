@@ -13,12 +13,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-
-import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
-import com.oguzdev.circularfloatingactionmenu.library.FloatingActionMenu;
-import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
 
 /**
  * Created by utk994 on 05/04/15.
@@ -29,39 +24,6 @@ public class Listen extends Fragment {
     public void onCreate(Bundle savedState) {
         super.onCreate(savedState);
         setRetainInstance(true); // handle rotations gracefully
-        FloatingActionButton.LayoutParams fabIconStarParams = new FloatingActionButton.LayoutParams(108, 108);
-
-        final ImageView fabIconNew = new ImageView(getActivity());
-        fabIconNew.setImageDrawable(getResources().getDrawable(R.drawable.fab));
-        final FloatingActionButton rightLowerButton = new FloatingActionButton.Builder(getActivity())
-                .setContentView(fabIconNew,fabIconStarParams)
-                .build();
-
-
-        ImageView rlIcon1 = new ImageView(getActivity());
-        ImageView rlIcon2 = new ImageView(getActivity());
-
-
-        rlIcon1.setImageDrawable(getResources().getDrawable(R.drawable.freindsicon));
-        rlIcon2.setImageDrawable(getResources().getDrawable(R.drawable.viewall));
-
-        SubActionButton.Builder lCSubBuilder = new SubActionButton.Builder(getActivity());
-
-        FrameLayout.LayoutParams blueContentParams = new FrameLayout.LayoutParams(80,80);
-
-        lCSubBuilder.setLayoutParams(blueContentParams);
-
-        // Build the menu with default options: light theme, 90 degrees, 72dp radius.
-        // Set 4 default SubActionButtons
-        final FloatingActionMenu rightLowerMenu = new FloatingActionMenu.Builder(getActivity())
-                .addSubActionView(lCSubBuilder.setContentView(rlIcon1, blueContentParams).build())
-                .addSubActionView(lCSubBuilder.setContentView(rlIcon2,blueContentParams).build())
-
-                .attachTo(rightLowerButton)
-                .build();
-
-        rightLowerButton.setVisibility(View.INVISIBLE);
-
 
     }
 

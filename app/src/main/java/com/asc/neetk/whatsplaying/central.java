@@ -180,7 +180,7 @@ public class central extends ActionBarActivity implements ActionBar.TabListener 
             switch(position){
                 case 0:
                 {
-                    f = new Explore();
+                    f = new ExploreRoot();
                     // set arguments here, if required
                     Bundle args = new Bundle();
                     f.setArguments(args);

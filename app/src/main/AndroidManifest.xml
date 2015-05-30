@@ -38,7 +38,9 @@
             android:theme="@style/Theme.Transparent" />
         <activity
             android:name=".central"
-            android:launchMode="singleTop" >
+            android:launchMode="singleTop"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            >
         </activity>
         <activity
             android:name=".LoginActivity"

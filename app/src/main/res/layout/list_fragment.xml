@@ -44,7 +44,7 @@
         android:layout_marginRight="24dp"
         android:background="@color/purple"
         materialdesign:animate="true"
-        materialdesign:iconDrawable="@drawable/freindsicon2" />
+       />
 
 
 

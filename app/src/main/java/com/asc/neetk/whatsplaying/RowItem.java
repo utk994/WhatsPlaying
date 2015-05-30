@@ -14,24 +14,35 @@ public class RowItem {
     private Drawable profilePic;
     private Integer likes;
     private String objID;
+    private String actdate;
 
-                   public RowItem(String name,String status,String timeStamp,Drawable profilePic,Integer likes,String objID) {
+
+
+    public RowItem(String name, String status, String timeStamp, Drawable profilePic, Integer likes, String objID,String actdate) {
 
         this.name = name;
         this.status = status;
-        this.timeStamp=timeStamp;
-        this.profilePic=profilePic;
-        this.likes=likes;
-        this.objID=objID;
+        this.timeStamp = timeStamp;
+        this.profilePic = profilePic;
+        this.likes = likes;
+        this.objID = objID;
+        this.actdate=actdate;
+
 
 
     }
 
-
+    public String getActdate() {
+        return actdate;
+    }
 
     public String getName() {
         return name;
     }
+
+
+
+
     public Integer getLikes() {
 
 
@@ -41,16 +52,18 @@ public class RowItem {
     public String getObjID() {
         return objID;
     }
+
     public String getStatus() {
-        return  status;
-    }
-    public String getTimeStamp() {
-        return  timeStamp;
-    }
-    public Drawable getProfilePic() {
-        return  profilePic;
+        return status;
     }
 
+    public String getTimeStamp() {
+        return timeStamp;
+    }
+
+    public Drawable getProfilePic() {
+        return profilePic;
+    }
 
 
     public void setName(String name) {
@@ -58,9 +71,8 @@ public class RowItem {
     }
 
     public void setLikes(Integer likes1) {
-        this.likes= likes1;
+        this.likes = likes1;
     }
-
 
 
     public void setTimeStamp(String timeStamp) {
@@ -70,10 +82,10 @@ public class RowItem {
     public void setStatus(String status) {
         this.status = status;
     }
+
     public void setProfilePic(Drawable profilePic) {
         this.profilePic = profilePic;
     }
-
 
 
 }

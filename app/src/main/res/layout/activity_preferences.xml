@@ -45,18 +45,32 @@
             android:id="@+id/textView13"
             android:layout_marginTop="30dp" />
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
         <com.gc.materialdesign.views.Slider
-            android:id="@+id/slider"
-            android:layout_width="match_parent"
+                android:id="@+id/slider"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:background="@color/purple"
+                materialdesign:max="10"
+
+                materialdesign:min="0"
+                materialdesign:showNumberIndicator="true"
+            android:layout_weight=".5" />
+
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
-            android:background="@color/purple"
-            materialdesign:max="10"
-
-            materialdesign:min="0"
-            materialdesign:showNumberIndicator="true"
-            />
-
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="5 seconds"
+            android:id="@+id/texttime"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp" />
+    </LinearLayout>
 
 
 </LinearLayout>
