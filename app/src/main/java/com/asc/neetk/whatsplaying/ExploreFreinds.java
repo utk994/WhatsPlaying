@@ -79,8 +79,7 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
 
 
         super.onCreate(savedState);
-        swap = (ButtonFloat)
-                getActivity().findViewById(R.id.buttonFloat);
+        
         setRetainInstance(true); // handle rotations gracefully
 
 
@@ -103,7 +102,9 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.list_fragment, null, false);
+            View rootView = inflater.inflate(R.layout.list_fragment, null, false);
+            swap = (ButtonFloat) rootview.findViewById(R.id.buttonFloat);
+        return rootView;
 
 
     }

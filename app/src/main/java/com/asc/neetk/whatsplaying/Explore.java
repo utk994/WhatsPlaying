@@ -100,7 +100,9 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.list_fragment, null, false);
+        View rootView =  inflater.inflate(R.layout.list_fragment, null, false);
+        swap = (ButtonFloat) rootView.findViewById(R.id.buttonFloat);
+        return rootView;
 
 
     }
@@ -115,9 +117,7 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
 
 
-
-        swap = (ButtonFloat) getActivity().findViewById(R.id.buttonFloat);
-        swap.setDrawableIcon(getResources().getDrawable(R.drawable.freindsicon2));
+       swap.setDrawableIcon(getResources().getDrawable(R.drawable.freindsicon2));
 
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) getActivity().findViewById(R.id.swipe_container);
