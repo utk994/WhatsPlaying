@@ -1,9 +1,12 @@
 package com.asc.neetk.whatsplaying;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
@@ -18,6 +21,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.gc.materialdesign.views.ButtonFloat;
@@ -33,6 +37,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import mehdi.sakout.dynamicbox.DynamicBox;
 
 /**
  * Created by utk994 on 05/04/15.
@@ -51,7 +57,7 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
     String[] objId = new String[60];
 
     String[] actime = new String[60];
- ;
+    ;
 
     String[] time = new String[60];
     int size;
@@ -63,6 +69,7 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
     CustomAdapter adapter;
     private List<RowItem> rowItems;
     ButtonFloat swap;
+    DynamicBox box;
 
 
     @Override
@@ -106,6 +113,9 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
 
+
+
+
         swap = (ButtonFloat) getActivity().findViewById(R.id.buttonFloat);
         swap.setDrawableIcon(getResources().getDrawable(R.drawable.freindsicon2));
 
@@ -115,12 +125,33 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
 
         super.onActivityCreated(savedInstanceState);
-        getListView().setVisibility(View.GONE);
+        box = new DynamicBox(getActivity(), getListView());
+
+        box.setLoadingMessage("Loading ...");
+
+        View customView = getActivity().getLayoutInflater().inflate(R.layout.nonet, null, false);
+        box.addCustomView(customView,"noNet");
+
+
+        if (!(isOnline())){
+
+            box.showCustomView("noNet");
+
+            Button  retry= (Button) getActivity().findViewById(R.id.retry);
+
+            if (retry!= null)
+            {
+            retry.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    fetchData();
+                }
+            });}
+
+        }
 
 
         tv = (TextView) getActivity().findViewById(R.id.empty);
-        tv.setText("Please Swipe Up to Refresh");
-        tv.setVisibility(View.VISIBLE);
 
         if (savedInstanceState == null) {
             fetchData();
@@ -245,11 +276,30 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
 
     public void fetchData() {
-        rowItems = new ArrayList<RowItem>();
-        getListView().setVisibility(View.GONE);
 
-        tv.setVisibility(View.VISIBLE);
-        tv.setText("Refreshing");
+
+
+
+        if (!(isOnline())){
+
+            box.showCustomView("noNet");
+
+            Button  retry= (Button) getActivity().findViewById(R.id.retry);
+
+
+            {
+                retry.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        fetchData();
+                    }
+                });}
+            return;
+        }
+
+
+        rowItems = new ArrayList<RowItem>();
+        box.showLoadingLayout();
 
 
         final Drawable defdrawable = getResources().getDrawable(R.drawable.profile);
@@ -323,6 +373,8 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
                                             try {
                                                 bitmapdata = user1.getData();
                                             } catch (ParseException e1) {
+
+                                                box.showInternetOffLayout();
                                                 e1.printStackTrace();
                                             }
                                             Bitmap bitmap1 = BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
@@ -355,19 +407,22 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
                                             }
 
 
-
-
                                         });
 
                                         Collections.reverse(rowItems);
 
 
-                                        adapter = new CustomAdapter(getActivity(), rowItems);
-                                        adapter.notifyDataSetChanged();
-                                        setListAdapter(adapter);
-                                        tv.setVisibility(View.GONE);
+                                        if (finalI == size - 1) {
 
 
+                                            adapter = new CustomAdapter(getActivity(), rowItems);
+                                            adapter.notifyDataSetChanged();
+                                            setListAdapter(adapter);
+
+
+                                            getListView().setVisibility(View.VISIBLE);
+                                            box.hideAll();
+                                        }
 
 
                                     }
@@ -377,8 +432,7 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
                         }
 
 
-
-                        getListView().setVisibility(View.VISIBLE);
+                        // getListView().setVisibility(View.VISIBLE);
 
 
                     }
@@ -387,6 +441,7 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
                 } else {
 
                     Log.d("score", "Error: " + e.getMessage());
+                    box.showInternetOffLayout();
                 }
 
 
@@ -403,6 +458,14 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
         super.onDestroy();
 
 
+    }
+
+
+    public boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 }
 

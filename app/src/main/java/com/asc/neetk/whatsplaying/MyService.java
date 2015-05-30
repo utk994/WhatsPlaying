@@ -61,11 +61,14 @@ public class MyService extends Service {
         iF.addAction("com.spotify.music.metadatachanged");
         iF.addAction("com.miui.player.metachanged");
 
+
         iF.addAction("com.sonyericsson.music.metachanged");
         iF.addAction("com.sec.android.app.music.metachanged");
         iF.addAction("com.samsung.sec.android.MusicPlayer.metachanged");
         iF.addAction("com.musixmatch.android.lyrify.metachanged");
         iF.addAction("com.amazon.mp3.metachanged");
+
+        iF.addAction("org.videolan.vlc.metachanged");
 
         //iF.addAction("com.rdio.android.ui.metachanged");
         //iF.addAction("org.videolan.vlc.music.metachanged");

@@ -137,6 +137,7 @@ public class userProfile extends ActionBarActivity {
                                 } else {
                                     // Log.d("Follows", userfollows.toString());
                                     currentUser.addUnique("Follows", userId);
+                                    currentUser.addUnique("folo",actuser);
                                     currentUser.saveInBackground();
                                     Toast.makeText(getApplicationContext(), "Following " + actuser + "!", Toast.LENGTH_SHORT).show();
                                 }
