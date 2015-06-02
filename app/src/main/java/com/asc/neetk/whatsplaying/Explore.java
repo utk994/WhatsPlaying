@@ -13,13 +13,13 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -78,6 +78,8 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
     Calendar c;
     int seconds;
 
+    ActionBar mActionBar;
+
 
     protected FragmentActivity mActivity;
 
@@ -94,6 +96,7 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
 
         super.onCreate(savedState);
+
         //   setRetainInstance(true); // handle rotations gracefully
         c = Calendar.getInstance();
         seconds = c.get(Calendar.MILLISECOND);
@@ -101,18 +104,6 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
     }
 
-    @Override
-    public void setMenuVisibility(final boolean visible) {
-        super.setMenuVisibility(visible);
-        if (visible && swap != null) {
-            swap.setVisibility(View.VISIBLE);
-
-
-            Animation animation1 = AnimationUtils.loadAnimation(mActivity.getApplicationContext(), R.anim.slide_up_fab);
-            swap.setAnimation(animation1);
-
-        }
-    }
 
 
     @Override
@@ -127,7 +118,7 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
                 FragmentTransaction trans = getFragmentManager()
                         .beginTransaction();
-                trans.setCustomAnimations(R.anim.abc_slide_in_top, R.anim.abc_slide_out_bottom);
+
 
                 trans.replace(R.id.root_exploreframe, new ExploreFreinds());
 
@@ -157,6 +148,11 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
             if (mActivity != null)
                 break loop1;
         }
+
+        mActionBar = ((ActionBarActivity)getActivity()).getSupportActionBar();
+
+
+
 
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) mActivity.findViewById(R.id.swipe_container);
@@ -249,34 +245,41 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
             public void onScrollStateChanged(AbsListView view, int scrollState) {
 
 
-                if (scrollState == SCROLL_STATE_IDLE   ) {
+                if (scrollState == SCROLL_STATE_IDLE) {
 
 
-                    {swap.setVisibility(View.VISIBLE);
-                    YoYo.with(Techniques.SlideInUp)
-                            .duration(300)
-                            .playOn(swap);
+                    {
+                        swap.setVisibility(View.VISIBLE);
+                        YoYo.with(Techniques.SlideInUp)
+                                .duration(300)
+                                .playOn(swap);
+
 
                     }
 
 
-                }
+                } else {
 
-                else if
-
-                        (!(YoYo.with(Techniques.SlideOutDown)
+                    if (!(YoYo.with(Techniques.SlideOutDown)
                             .duration(200)
                             .playOn(swap).isRunning()))
 
 
-                {swap.setVisibility(View.INVISIBLE);}
+                    {
+                        swap.setVisibility(View.INVISIBLE);
+                    }
 
 
-
-
-
-
+                }
             }
+
+
+
+
+
+
+
+
 
 
             @Override
@@ -292,7 +295,12 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
                     boolean topOfFirstItemVisible = getListView().getChildAt(0).getTop() == 0;
                     // enabling or disabling the refresh layout
 
+
                     enable = firstItemVisible && topOfFirstItemVisible;
+
+                    if (enable) mActionBar.show();
+
+                    else mActionBar.hide();
 
                     mSwipeRefreshLayout.setEnabled(enable);
                     return;

@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -61,6 +63,8 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
     String[] objId = new String[60];
     Date[] actime = new Date[60];
     DynamicBox box;
+
+    ActionBar mActionBar;
 
 
     ArrayList<String> userfollows;
@@ -134,8 +138,6 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
                 public void onClick(View view) {
                     FragmentTransaction trans = getFragmentManager()
                             .beginTransaction();
-                    trans.setCustomAnimations(R.anim.abc_slide_in_top, R.anim.abc_slide_out_bottom);
-
 
                     trans.replace(R.id.root_exploreframe, new Explore());
 
@@ -165,6 +167,10 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) getActivity().findViewById(R.id.swipe_container1);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.purple);
+
+        mActionBar = ((ActionBarActivity)getActivity()).getSupportActionBar();
+
+
 
 
         super.onActivityCreated(savedInstanceState);
@@ -235,10 +241,11 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
                 public void onScrollStateChanged(AbsListView view, int scrollState) {
 
 
-                    if (scrollState == SCROLL_STATE_IDLE   ) {
+                    if (scrollState == SCROLL_STATE_IDLE) {
 
 
-                        {swap.setVisibility(View.VISIBLE);
+                        {
+                            swap.setVisibility(View.VISIBLE);
                             YoYo.with(Techniques.SlideInUp)
                                     .duration(300)
                                     .playOn(swap);
@@ -246,16 +253,16 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
                         }
 
 
-                    }
-
-                    else if
+                    } else if
 
                             (!(YoYo.with(Techniques.SlideOutDown)
                                     .duration(200)
                                     .playOn(swap).isRunning()))
 
 
-                    {swap.setVisibility(View.INVISIBLE);}
+                    {
+                        swap.setVisibility(View.INVISIBLE);
+                    }
                 }
 
                 @Override
@@ -272,6 +279,10 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
                         // enabling or disabling the refresh layout
 
                         enable = firstItemVisible && topOfFirstItemVisible;
+
+                        if (enable) mActionBar.show();
+
+                        else mActionBar.hide();
 
                         mSwipeRefreshLayout.setEnabled(enable);
                         return;
@@ -473,9 +484,13 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
 
 
                                                 box.hideAll();
+
+                                                YoYo.with(Techniques.Wobble)
+                                                        .duration(700)
+                                                        .playOn(getActivity().findViewById(R.id.buttonFloat1));
                                                 swap.setVisibility(View.VISIBLE);
-                                                box.hideAll();
-                                                swap.setVisibility(View.VISIBLE);
+
+
                                             }
 
 

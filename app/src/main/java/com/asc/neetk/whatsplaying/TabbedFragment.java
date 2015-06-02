@@ -45,6 +45,7 @@ public class TabbedFragment extends Fragment {
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setCurrentItem(0);
 
+
         return v;
     }
 
