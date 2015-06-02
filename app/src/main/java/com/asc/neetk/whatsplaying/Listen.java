@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 /**
  * Created by utk994 on 05/04/15.
@@ -23,9 +24,10 @@ public class Listen extends Fragment {
     @Override
     public void onCreate(Bundle savedState) {
         super.onCreate(savedState);
-        setRetainInstance(true); // handle rotations gracefully
+        //setRetainInstance(true); // handle rotations gracefully
 
     }
+
 
 
 
@@ -49,6 +51,8 @@ public class Listen extends Fragment {
 
 
         {
+
+            final TextView tv = (TextView) getActivity().findViewById(R.id.listen);
             ImageView iv = (ImageView) getActivity().findViewById(R.id.imageView1);
 
             if (iv != null)
@@ -72,13 +76,16 @@ public class Listen extends Fragment {
 
                             getActivity().startService(new Intent(getActivity(), MyService.class));
 
+                            tv.setVisibility(View.GONE);
+
                             FragmentTransaction trans = getFragmentManager()
                                     .beginTransaction();
+
                 /*
 				 * IMPORTANT: We use the "root frame" defined in
 				 * "root_fragment.xml" as the reference to replace fragment
 				 */
-                            trans.replace(R.id.root_frame, new Listen2());
+                             trans.replace(R.id.root_frame, new Listen2());
 
 				/*
 				 * IMPORTANT: The following lines allow us to add the fragment

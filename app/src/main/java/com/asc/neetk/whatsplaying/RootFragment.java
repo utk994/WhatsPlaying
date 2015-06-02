@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 /**
  * Created by utk994 on 20/04/15.
  */
-public class RootFragment extends android.support.v4.app.Fragment {
+public class RootFragment extends TabbedFragment.TabbedContentFragment {
 
     private static final String TAG = "RootFragment";
 
@@ -20,7 +20,7 @@ public class RootFragment extends android.support.v4.app.Fragment {
 		/* Inflate the layout for this fragment */
         View view = inflater.inflate(R.layout.activity_central, container, false);
 
-        android.support.v4.app.FragmentTransaction transaction = getFragmentManager()
+        android.support.v4.app.FragmentTransaction transaction = getChildFragmentManager()
                 .beginTransaction();
 
         boolean run = isMyServiceRunning(MyService.class);

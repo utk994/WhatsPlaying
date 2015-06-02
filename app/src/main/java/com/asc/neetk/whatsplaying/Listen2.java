@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 /**
  * Created by utk994 on 05/04/15.
@@ -19,7 +20,7 @@ public class Listen2 extends Fragment {
     @Override
     public void onCreate(Bundle savedState) {
         super.onCreate(savedState);
-        setRetainInstance(true); // handle rotations gracefully
+//        setRetainInstance(true); // handle rotations gracefully
 
 
 
@@ -42,15 +43,22 @@ public class Listen2 extends Fragment {
     public void onViewCreated (View view,Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Button but = (Button) getActivity().findViewById(R.id.listenbut1);
+        final TextView tv = (TextView) getActivity().findViewById(R.id.listening);
         but.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                tv.setVisibility(View.GONE);
 
 
 
                 FragmentTransaction trans = getFragmentManager()
                         .beginTransaction();
+                trans.setCustomAnimations(R.anim.abc_slide_in_bottom, R.anim.abc_slide_out_top);
+
                 trans.replace(R.id.root_frame, new Listen());
+
+
 
                 trans.commit();
 

@@ -1,5 +1,6 @@
 package com.asc.neetk.whatsplaying;
 
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,7 +15,9 @@ import android.widget.TextView;
 /**
  * Created by utk994 on 30/04/15.
  */
-public class SongDialog extends  android.support.v4.app.DialogFragment {
+
+
+public class SongDialog extends DialogFragment {
 
 
     public SongDialog() {
@@ -22,20 +25,15 @@ public class SongDialog extends  android.support.v4.app.DialogFragment {
     }
 
 
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.song, container);
+
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
 
-
         Bundle bundle = this.getArguments();
-
-
-
 
 
         final String track1 = bundle.getString("SongName");
@@ -55,8 +53,7 @@ public class SongDialog extends  android.support.v4.app.DialogFragment {
         user.setText(user1);
 
 
-
-        Button listen= (Button) view.findViewById(R.id.listenonline);
+        Button listen = (Button) view.findViewById(R.id.listenonline);
 
         listen.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,13 +78,12 @@ public class SongDialog extends  android.support.v4.app.DialogFragment {
             public void onClick(View view) {
 
 
-
                 Intent i = new Intent(getActivity(), userProfile.class);
-                i.putExtra("User",user1);
-                 startActivity(i);
+                i.putExtra("User", user1);
+                startActivity(i);
+                // getActivity().overridePendingTransition(R.anim.abc_slide_in_top, R.anim.abc_slide_out_bottom);
             }
         });
-
 
 
         return view;

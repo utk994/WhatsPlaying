@@ -22,15 +22,16 @@ public class Preferences extends ActionBarActivity {
 
         Slider time = (Slider) findViewById(R.id.slider);
 
-        final TextView texttime =(TextView) findViewById(R.id.texttime);
+
+        final TextView texttime = (TextView) findViewById(R.id.texttime);
 
 
         final SharedPreferences prefs = this.getSharedPreferences(
                 "com.asc.neetk.whatsplaying", Context.MODE_PRIVATE);
 
-       final Integer timedur = prefs.getInt("time", 5);
+        final Integer timedur = prefs.getInt("time", 5);
 
-        texttime.setText(timedur.toString()+" seconds");
+        texttime.setText(timedur.toString() + " seconds");
 
         time.setValue(timedur);
 
@@ -49,33 +50,29 @@ public class Preferences extends ActionBarActivity {
         });
 
 
-
         Switch vib = (Switch) findViewById(R.id.switchView);
         Boolean onoff = prefs.getBoolean("vibrate", true);
 
-         vib.setChecked(onoff);
-
-
-
-
+        vib.setChecked(onoff);
 
 
         vib.setOncheckListener(new Switch.OnCheckListener() {
-             @Override
-             public void onCheck(Switch aSwitch, boolean b) {
+            @Override
+            public void onCheck(Switch aSwitch, boolean b) {
 
-                 prefs.edit().putBoolean("vibrate", b).apply();
-
-
-                 Toast.makeText(getApplicationContext(), "Saved !", Toast.LENGTH_SHORT).show();
-
-             }
-         });
+                prefs.edit().putBoolean("vibrate", b).apply();
 
 
+                Toast.makeText(getApplicationContext(), "Saved !", Toast.LENGTH_SHORT).show();
+
+            }
+        });
 
 
     }
+
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -87,7 +84,7 @@ public class Preferences extends ActionBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
+        // automatically handle clicks on the Home/Up button, so longf
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
@@ -98,4 +95,8 @@ public class Preferences extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
+
+
 }

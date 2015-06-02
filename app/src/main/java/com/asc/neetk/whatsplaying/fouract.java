@@ -24,13 +24,21 @@ public class fouract extends Activity {
     public void onCreate(Bundle savedInstanceState) {
 
 
+
+
+
+
         super.onCreate(savedInstanceState);
         final View content = findViewById(android.R.id.content).getRootView();
 
 
+
+
         this.setTitle("");
 
-        Window window = this.getWindow();
+
+
+         Window window = this.getWindow();
         window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
         window.setFlags(WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
@@ -40,12 +48,16 @@ public class fouract extends Activity {
 
 
         params.gravity = Gravity.BOTTOM;
+        params.y= 20;
+
 
 
         this.getWindow().setAttributes(params);
 
 
+
         setContentView(R.layout.activity_fouract);
+
         Bundle extras = getIntent().getExtras();
 
         final String track1 = extras.getString("Track");

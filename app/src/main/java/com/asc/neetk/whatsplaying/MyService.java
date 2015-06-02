@@ -119,16 +119,21 @@ public class MyService extends Service {
                     v.vibrate(500);
                 }
 
-                // do something - or do it not
-                Intent i = new Intent(getBaseContext(), fouract.class);
 
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                i.putExtra("Track", track1);
-                i.putExtra("Artist", artist1);
-                i.putExtra("Album", album1);
-                c = Calendar.getInstance();
-                seconds = c.get(Calendar.SECOND);
-                getApplication().startActivity(i);
+                        Intent i = new Intent(getBaseContext(), fouract.class);
+
+
+                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        i.putExtra("Track", track1);
+                        i.putExtra("Artist", artist1);
+                        i.putExtra("Album", album1);
+                        c = Calendar.getInstance();
+                        seconds = c.get(Calendar.SECOND);
+                    getApplication().startActivity(i);
+
+
+                // do something - or do it not
+
 
             } else {
                 c = Calendar.getInstance();

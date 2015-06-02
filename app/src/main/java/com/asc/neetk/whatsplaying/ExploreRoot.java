@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 /**
  * Created by utk994 on 29/05/15.
  */
-public class ExploreRoot  extends android.support.v4.app.Fragment {
+public class ExploreRoot  extends TabbedFragment.TabbedContentFragment {
 
     private static final String TAG = "ExploreRootFragment";
 
@@ -18,7 +18,7 @@ public class ExploreRoot  extends android.support.v4.app.Fragment {
 		/* Inflate the layout for this fragment */
         View view = inflater.inflate(R.layout.activity_explore, container, false);
 
-        android.support.v4.app.FragmentTransaction transaction = getFragmentManager()
+        android.support.v4.app.FragmentTransaction transaction = getChildFragmentManager()
                 .beginTransaction();
 
 
@@ -29,6 +29,7 @@ public class ExploreRoot  extends android.support.v4.app.Fragment {
 
         return view;
     }
+
 
 }
 

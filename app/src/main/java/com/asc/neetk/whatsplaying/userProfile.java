@@ -227,9 +227,10 @@ public class userProfile extends ActionBarActivity {
 
 
                     } else {
-                        profilePic.setImageDrawable(getResources().getDrawable(R.drawable.editicon));
+                        profilePic.setImageDrawable(getResources().getDrawable(R.drawable.profile));
                     }
-                    // Something went wrong.
+
+
                 }
             }
         });
@@ -349,7 +350,7 @@ public class userProfile extends ActionBarActivity {
 
 
                     } else {
-                        newView.setImageDrawable(getResources().getDrawable(R.drawable.editicon));
+                        newView.setImageDrawable(getResources().getDrawable(R.drawable.profile1));
                         mFlowLayout.addView(newView);
 
                     }

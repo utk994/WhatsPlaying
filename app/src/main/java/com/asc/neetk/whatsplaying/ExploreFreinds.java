@@ -1,6 +1,8 @@
 package com.asc.neetk.whatsplaying;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -8,8 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.format.DateUtils;
@@ -24,7 +25,10 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.gc.materialdesign.views.ButtonFloat;
+import com.nhaarman.listviewanimations.appearance.simple.SwingLeftInAnimationAdapter;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -32,10 +36,10 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import mehdi.sakout.dynamicbox.DynamicBox;
@@ -55,7 +59,7 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
     String[] username = new String[20];
     Integer[] likes = new Integer[60];
     String[] objId = new String[60];
-    String[] actime = new String[60];
+    Date[] actime = new Date[60];
     DynamicBox box;
 
 
@@ -72,15 +76,31 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
     private List<RowItem> rowItems;
     ButtonFloat swap;
 
+    protected FragmentActivity mActivity;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mActivity = (FragmentActivity) activity;
+    }
+
 
     @Override
 
     public void onCreate(Bundle savedState) {
 
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+            SwingLeftInAnimationAdapter animationAdapter = new SwingLeftInAnimationAdapter(adapter);
+
+            animationAdapter.notifyDataSetChanged();
+
+        }
+
 
         super.onCreate(savedState);
-        
-        setRetainInstance(true); // handle rotations gracefully
+
+        // setRetainInstance(true); // handle rotations gracefully
 
 
     }
@@ -102,8 +122,32 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.list_fragment, null, false);
-            swap = (ButtonFloat) rootview.findViewById(R.id.buttonFloat);
+        View rootView = inflater.inflate(R.layout.list_fragment_2, null, false);
+        swap = (ButtonFloat) rootView.findViewById(R.id.buttonFloat1);
+
+
+        if (swap != null)
+
+        {
+            swap.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    FragmentTransaction trans = getFragmentManager()
+                            .beginTransaction();
+                    trans.setCustomAnimations(R.anim.abc_slide_in_top, R.anim.abc_slide_out_bottom);
+
+
+                    trans.replace(R.id.root_exploreframe, new Explore());
+
+
+                    trans.commit();
+
+
+                }
+            });
+        }
+
+
         return rootView;
 
 
@@ -112,17 +156,14 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
     @Override
     protected void onPostExecute(Void result) {
 
+
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
 
 
-        swap = (ButtonFloat) getActivity().findViewById(R.id.buttonFloat);
-        swap.setDrawableIcon(getResources().getDrawable(R.drawable.viewallico));
-
-
-        mSwipeRefreshLayout = (SwipeRefreshLayout) getActivity().findViewById(R.id.swipe_container);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) getActivity().findViewById(R.id.swipe_container1);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.purple);
 
 
@@ -152,27 +193,8 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
 
         }
 
-        if (swap != null)
 
-        {
-            swap.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    FragmentTransaction trans = getFragmentManager()
-                            .beginTransaction();
-
-                    trans.replace(R.id.root_exploreframe, new Explore());
-
-
-                    trans.commit();
-
-
-                }
-            });
-        }
-
-
-        tv = (TextView) getActivity().findViewById(R.id.empty);
+        tv = (TextView) getActivity().findViewById(R.id.empty1);
 
 
         if (savedInstanceState == null) {
@@ -201,7 +223,6 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
                 mSwipeRefreshLayout.setRefreshing(false);
                 tv.setVisibility(View.GONE);
                 Animation animation1 = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.slide_up_fab);
-                swap.setAnimation(animation1);
 
 
             }
@@ -212,22 +233,29 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
             getListView().setOnScrollListener(new AbsListView.OnScrollListener() {
                 @Override
                 public void onScrollStateChanged(AbsListView view, int scrollState) {
-                    if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL || scrollState == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
-
-                        Animation animation1 = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.slide_down_fab);
-                        swap.setAnimation(animation1);
-                        swap.setVisibility(View.INVISIBLE);
 
 
-                    } else {
-                        swap.setVisibility(View.VISIBLE);
+                    if (scrollState == SCROLL_STATE_IDLE   ) {
 
-                        Animation animation1 = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.slide_up_fab);
-                        swap.setAnimation(animation1);
+
+                        {swap.setVisibility(View.VISIBLE);
+                            YoYo.with(Techniques.SlideInUp)
+                                    .duration(300)
+                                    .playOn(swap);
+
+                        }
 
 
                     }
 
+                    else if
+
+                            (!(YoYo.with(Techniques.SlideOutDown)
+                                    .duration(200)
+                                    .playOn(swap).isRunning()))
+
+
+                    {swap.setVisibility(View.INVISIBLE);}
                 }
 
                 @Override
@@ -271,9 +299,8 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
     public void onItemClick(AdapterView<?> parent, View view, int position,
                             long id) {
 
-
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        DialogFragment dialog = new SongDialog(); // creating new object
+        android.app.FragmentManager fm = mActivity.getFragmentManager();
+        android.app.DialogFragment dialog = new SongDialog(); // creating new object
         Bundle args = new Bundle();
         args.putString("SongName", songname[position]);
         args.putString("Album", album[position]);
@@ -282,11 +309,15 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
         args.putString("User", user[position]);
         dialog.setArguments(args);
 
-        dialog.show(getFragmentManager().beginTransaction(), "MyProgressDialog");
+
+        dialog.show(fm.beginTransaction(), "MyProgressDialog");
     }
 
 
     public void fetchData() {
+
+
+        swap.setVisibility(View.INVISIBLE);
 
 
         if (!(isOnline())) {
@@ -351,7 +382,7 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
 
                             likes[i] = (p.getInt("Likes"));
 
-                            actime[i] = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(p.getCreatedAt());
+                            actime[i] = (p.getCreatedAt());
 
 
                             time[i] = DateUtils.getRelativeTimeSpanString(p.getCreatedAt().getTime(), System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
@@ -424,17 +455,27 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
 
                                             Collections.reverse(rowItems);
 
+                                            adapter = new CustomAdapter(mActivity, rowItems);
+                                            SwingLeftInAnimationAdapter animationAdapter = new SwingLeftInAnimationAdapter(adapter);
+                                            adapter.notifyDataSetChanged();
+                                            animationAdapter.notifyDataSetChanged();
+
+                                            animationAdapter.setAbsListView(getListView());
+
 
                                             if (finalI == size - 1) {
 
 
-                                                adapter = new CustomAdapter(getActivity(), rowItems);
                                                 adapter.notifyDataSetChanged();
-                                                setListAdapter(adapter);
-
-
+                                                animationAdapter.notifyDataSetChanged();
+                                                setListAdapter(animationAdapter);
                                                 getListView().setVisibility(View.VISIBLE);
+
+
                                                 box.hideAll();
+                                                swap.setVisibility(View.VISIBLE);
+                                                box.hideAll();
+                                                swap.setVisibility(View.VISIBLE);
                                             }
 
 
@@ -449,7 +490,9 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
                                 });
                             }
 
+                            if (adapter != null)
 
+                                adapter.notifyDataSetChanged();
                         }
 
 
@@ -465,6 +508,14 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
         }
 
 
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+       /* ButtonFloat swap=(ButtonFloat)getActivity().findViewById(R.id.buttonFloat1);
+        swap.setVisibility(View.VISIBLE); */
     }
 
     public boolean isOnline() {

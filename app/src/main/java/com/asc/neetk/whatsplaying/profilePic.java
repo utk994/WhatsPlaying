@@ -210,9 +210,9 @@ public class profilePic extends ActionBarActivity {
 
                                         if (useremail.equals("")) {
 
-                                                Toast.makeText(getApplicationContext(),
-                                                        "Enter some text",
-                                                        Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getApplicationContext(),
+                                                    "Enter some text",
+                                                    Toast.LENGTH_SHORT).show();
 
 
                                         } else {
@@ -563,7 +563,7 @@ public class profilePic extends ActionBarActivity {
 
 
                     } else {
-                        newView.setImageDrawable(getResources().getDrawable(R.drawable.editicon));
+                        newView.setImageDrawable(getResources().getDrawable(R.drawable.profile1));
                         mFlowLayout.addView(newView);
 
                     }

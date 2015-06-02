@@ -2,6 +2,8 @@ package com.asc.neetk.whatsplaying;
 
 import android.graphics.drawable.Drawable;
 
+import java.util.Date;
+
 /**
  * Created by utk994 on 28/04/15.
  */
@@ -14,11 +16,11 @@ public class RowItem {
     private Drawable profilePic;
     private Integer likes;
     private String objID;
-    private String actdate;
+    private Date actdate;
 
 
 
-    public RowItem(String name, String status, String timeStamp, Drawable profilePic, Integer likes, String objID,String actdate) {
+    public RowItem(String name, String status, String timeStamp, Drawable profilePic, Integer likes, String objID,Date actdate) {
 
         this.name = name;
         this.status = status;
@@ -32,7 +34,7 @@ public class RowItem {
 
     }
 
-    public String getActdate() {
+    public Date getActdate() {
         return actdate;
     }
 

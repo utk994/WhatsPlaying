@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:materialdesign="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/swipe_container1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    ?xml version="1.0" encoding="utf-8"?>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <ListView
+                android:id="@android:id/list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"></ListView>
+
+            <TextView
+                android:id="@+id/empty1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="10dp"
+                android:textSize="20dp"></TextView>
+
+
+
+
+        </LinearLayout>
+        <com.gc.materialdesign.views.ButtonFloat
+            android:id="@+id/buttonFloat1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginRight="24dp"
+            android:background="@color/purple"
+            materialdesign:animate="true"
+            materialdesign:iconDrawable="@drawable/viewallico"
+            android:layout_marginBottom="16dp" />
+
+
+
+
+    </RelativeLayout>
+</android.support.v4.widget.SwipeRefreshLayout>

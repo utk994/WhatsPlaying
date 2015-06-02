@@ -1,6 +1,8 @@
 package com.asc.neetk.whatsplaying;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -8,8 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.format.DateUtils;
@@ -24,7 +25,10 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.gc.materialdesign.views.ButtonFloat;
+import com.nhaarman.listviewanimations.appearance.simple.SwingLeftInAnimationAdapter;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -32,10 +36,11 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import mehdi.sakout.dynamicbox.DynamicBox;
@@ -56,8 +61,8 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
     Integer[] likes = new Integer[60];
     String[] objId = new String[60];
 
-    String[] actime = new String[60];
-    ;
+    Date[] actime = new Date[60];
+
 
     String[] time = new String[60];
     int size;
@@ -70,6 +75,17 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
     private List<RowItem> rowItems;
     ButtonFloat swap;
     DynamicBox box;
+    Calendar c;
+    int seconds;
+
+
+    protected FragmentActivity mActivity;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mActivity = (FragmentActivity) activity;
+    }
 
 
     @Override
@@ -78,7 +94,9 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
 
         super.onCreate(savedState);
-        setRetainInstance(true); // handle rotations gracefully
+        //   setRetainInstance(true); // handle rotations gracefully
+        c = Calendar.getInstance();
+        seconds = c.get(Calendar.MILLISECOND);
 
 
     }
@@ -90,7 +108,7 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
             swap.setVisibility(View.VISIBLE);
 
 
-            Animation animation1 = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.slide_up_fab);
+            Animation animation1 = AnimationUtils.loadAnimation(mActivity.getApplicationContext(), R.anim.slide_up_fab);
             swap.setAnimation(animation1);
 
         }
@@ -100,64 +118,8 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView =  inflater.inflate(R.layout.list_fragment, null, false);
+        View rootView = inflater.inflate(R.layout.list_fragment, null, false);
         swap = (ButtonFloat) rootView.findViewById(R.id.buttonFloat);
-        return rootView;
-
-
-    }
-
-    @Override
-    protected void onPostExecute(Void result) {
-
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-
-
-
-       swap.setDrawableIcon(getResources().getDrawable(R.drawable.freindsicon2));
-
-
-        mSwipeRefreshLayout = (SwipeRefreshLayout) getActivity().findViewById(R.id.swipe_container);
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.purple);
-
-
-        super.onActivityCreated(savedInstanceState);
-        box = new DynamicBox(getActivity(), getListView());
-
-        box.setLoadingMessage("Loading ...");
-
-        View customView = getActivity().getLayoutInflater().inflate(R.layout.nonet, null, false);
-        box.addCustomView(customView,"noNet");
-
-
-        if (!(isOnline())){
-
-            box.showCustomView("noNet");
-
-            Button  retry= (Button) getActivity().findViewById(R.id.retry);
-
-            if (retry!= null)
-            {
-            retry.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    fetchData();
-                }
-            });}
-
-        }
-
-
-        tv = (TextView) getActivity().findViewById(R.id.empty);
-
-        if (savedInstanceState == null) {
-            fetchData();
-
-
-        }
 
         swap.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -165,6 +127,7 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
                 FragmentTransaction trans = getFragmentManager()
                         .beginTransaction();
+                trans.setCustomAnimations(R.anim.abc_slide_in_top, R.anim.abc_slide_out_bottom);
 
                 trans.replace(R.id.root_exploreframe, new ExploreFreinds());
 
@@ -175,9 +138,92 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
         });
 
 
+        return rootView;
+
+
+    }
+
+    @Override
+    protected void onPostExecute(Void result) {
+
+
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+
+        loop1:
+        while (true) {
+            if (mActivity != null)
+                break loop1;
+        }
+
+
+        mSwipeRefreshLayout = (SwipeRefreshLayout) mActivity.findViewById(R.id.swipe_container);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.purple);
+
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+            SwingLeftInAnimationAdapter animationAdapter = new SwingLeftInAnimationAdapter(adapter);
+
+            animationAdapter.notifyDataSetChanged();
+        }
+
+
+        super.onActivityCreated(savedInstanceState);
+        box = new DynamicBox(mActivity, getListView());
+
+        box.setLoadingMessage("Loading ...");
+
+        View customView = mActivity.getLayoutInflater().inflate(R.layout.nonet, null, false);
+        box.addCustomView(customView, "noNet");
+
+
+        if (!(isOnline())) {
+
+            box.showCustomView("noNet");
+
+            Button retry = (Button) mActivity.findViewById(R.id.retry);
+
+            if (retry != null) {
+                retry.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        fetchData();
+                    }
+                });
+            }
+
+        }
+
+        ParseUser currentUser = ParseUser.getCurrentUser();
+
+        if (currentUser.get("genLikes") == null) {
+            currentUser.add("genLikes", "");
+        }
+
+
+        if (currentUser.get("Follows") == null) {
+            currentUser.add("Follows", "");
+        }
+
+        if (currentUser.get("artLikes") == null) {
+            currentUser.add("artLikes", "");
+        }
+
+
+        tv = (TextView) mActivity.findViewById(R.id.empty);
+
+        if (savedInstanceState == null) {
+            fetchData();
+
+
+        }
+
+
         getListView().setOnItemClickListener(this);
 
-        getListView().setEmptyView(getActivity().findViewById(R.id.empty));
+        getListView().setEmptyView(mActivity.findViewById(R.id.empty));
 
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -191,8 +237,6 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
                 mSwipeRefreshLayout.setRefreshing(false);
                 tv.setVisibility(View.GONE);
-                Animation animation1 = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.slide_up_fab);
-                swap.setAnimation(animation1);
 
 
             }
@@ -200,25 +244,40 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
         getListView().setOnScrollListener(new AbsListView.OnScrollListener() {
 
+
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
-                if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL || scrollState == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
-
-                    Animation animation1 = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.slide_down_fab);
-                    swap.setAnimation(animation1);
-                    swap.setVisibility(View.INVISIBLE);
 
 
-                } else {
-                    swap.setVisibility(View.VISIBLE);
+                if (scrollState == SCROLL_STATE_IDLE   ) {
 
-                    Animation animation1 = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.slide_up_fab);
-                    swap.setAnimation(animation1);
+
+                    {swap.setVisibility(View.VISIBLE);
+                    YoYo.with(Techniques.SlideInUp)
+                            .duration(300)
+                            .playOn(swap);
+
+                    }
 
 
                 }
 
+                else if
+
+                        (!(YoYo.with(Techniques.SlideOutDown)
+                            .duration(200)
+                            .playOn(swap).isRunning()))
+
+
+                {swap.setVisibility(View.INVISIBLE);}
+
+
+
+
+
+
             }
+
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem,
@@ -261,8 +320,8 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
                             long id) {
 
 
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        DialogFragment dialog = new SongDialog(); // creating new object
+        android.app.FragmentManager fm = mActivity.getFragmentManager();
+        android.app.DialogFragment dialog = new SongDialog(); // creating new object
         Bundle args = new Bundle();
         args.putString("SongName", songname[position]);
         args.putString("Album", album[position]);
@@ -271,20 +330,21 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
         args.putString("User", user[position]);
         dialog.setArguments(args);
 
-        dialog.show(getFragmentManager().beginTransaction(), "MyProgressDialog");
+
+        dialog.show(fm.beginTransaction(), "MyProgressDialog");
     }
 
 
     public void fetchData() {
 
+        swap.setVisibility(View.INVISIBLE);
 
 
-
-        if (!(isOnline())){
+        if (!(isOnline())) {
 
             box.showCustomView("noNet");
 
-            Button  retry= (Button) getActivity().findViewById(R.id.retry);
+            Button retry = (Button) mActivity.findViewById(R.id.retry);
 
 
             {
@@ -293,7 +353,8 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
                     public void onClick(View view) {
                         fetchData();
                     }
-                });}
+                });
+            }
             return;
         }
 
@@ -337,7 +398,7 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
                         time[i] = DateUtils.getRelativeTimeSpanString(p.getCreatedAt().getTime(), System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
 
 
-                        actime[i] = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(p.getCreatedAt());
+                        actime[i] = (p.getCreatedAt());
 
                        /* for (int j=0;j<i&& user[i]!=null;j++)
                         {
@@ -403,7 +464,7 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
                                             public int compare(RowItem o1, RowItem o2) {
                                                 if (o1.getActdate() == null || o2.getActdate() == null)
                                                     return 0;
-                                                return o1.getActdate().compareTo(o2.getActdate());
+                                                return (o1.getActdate()).compareTo(o2.getActdate());
                                             }
 
 
@@ -412,16 +473,31 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
                                         Collections.reverse(rowItems);
 
 
+                                        adapter = new CustomAdapter(mActivity, rowItems);
+
+                                        adapter.notifyDataSetChanged();
+
+                                        SwingLeftInAnimationAdapter animationAdapter = new SwingLeftInAnimationAdapter(adapter);
+                                        animationAdapter.notifyDataSetChanged();
+
+
+                                        animationAdapter.setAbsListView(getListView());
+                                        getListView().setVisibility(View.VISIBLE);
+
+
                                         if (finalI == size - 1) {
 
 
-                                            adapter = new CustomAdapter(getActivity(), rowItems);
                                             adapter.notifyDataSetChanged();
-                                            setListAdapter(adapter);
+                                            animationAdapter.notifyDataSetChanged();
+                                            setListAdapter(animationAdapter);
 
 
-                                            getListView().setVisibility(View.VISIBLE);
                                             box.hideAll();
+                                            YoYo.with(Techniques.Wobble)
+                                                    .duration(700)
+                                                    .playOn(getActivity().findViewById(R.id.buttonFloat));
+                                            swap.setVisibility(View.VISIBLE);
                                         }
 
 
@@ -429,10 +505,8 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
                                 }
                             });
+
                         }
-
-
-                        // getListView().setVisibility(View.VISIBLE);
 
 
                     }
@@ -454,6 +528,14 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
     }
 
     @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        ButtonFloat swap = (ButtonFloat) getActivity().findViewById(R.id.buttonFloat);
+        swap.setVisibility(View.VISIBLE);
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
 
@@ -463,10 +545,12 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
     public boolean isOnline() {
         ConnectivityManager cm =
-                (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                (ConnectivityManager) mActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
+
+
 }
 
 

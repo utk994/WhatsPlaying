@@ -1,25 +1,33 @@
 package com.asc.neetk.whatsplaying;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 
-import java.util.Locale;
+import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.ParseUser;
 
 
-public class central extends ActionBarActivity implements ActionBar.TabListener {
+public class central extends ActionBarActivity {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -29,101 +37,213 @@ public class central extends ActionBarActivity implements ActionBar.TabListener 
      * may be best to switch to a
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
-    SectionsPagerAdapter mSectionsPagerAdapter;
+
+
+    private DrawerLayout mDrawerLayout;
+    private ListView mDrawerList;
+    private ActionBarDrawerToggle mDrawerToggle;
+
+    private CharSequence mDrawerTitle;
+    Drawable d;
+   drawerAdapter mAdapter;
+    private CharSequence mTitle;
+    private String[] mDrawerItmes= {"Your Profile","Your Preferences","Your History"};
+
+    String TITLES[] = {"Your Profile","Preferences","History","Logout"};
+    int ICONS[] = {R.drawable.userprofileico,R.drawable.preferencesicon,R.drawable.historyicon,R.drawable.logouticon};
+
+
+    String NAME = ParseUser.getCurrentUser().getUsername();
+
+    ParseFile user1 = ParseUser.getCurrentUser().getParseFile("profilePic");
+
+
+    private static final String TAG = central.class.getSimpleName();
 
     /**
      * The {@link android.support.v4.view.ViewPager} that will host the section contents.
      */
-    ViewPager mViewPager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.centrallayout);
 
+        setContentView(R.layout.activity_central);
 
-
-
-        // Set up the action bar.
-        final ActionBar actionBar = getSupportActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
-
-
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.pager);
-        mViewPager.setOffscreenPageLimit(2);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        // When swiping between different sections, select the corresponding
-        // tab. We can also use ActionBar.Tab#select() to do this if we have
-        // a reference to the Tab.
-        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                actionBar.setSelectedNavigationItem(position);
-            }
-        });
-
-        // For each of the sections in the app, add a tab to the action bar.
-        for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
-            // Create a tab with text corresponding to the page title defined by
-            // the adapter. Also specify this Activity object, which implements
-            // the TabListener interface, as the callback (listener) for when
-            // this tab is selected.
-            actionBar.addTab(
-                    actionBar.newTab()
-                            .setText(mSectionsPagerAdapter.getPageTitle(i))
-                            .setTabListener(this));
+        if (user1 == null){  d = getResources().getDrawable(R.drawable.profile);
         }
 
-        mViewPager.setCurrentItem(1, false);
+        else {
+
+            byte[] bitmapdata = new byte[0];
+            try {
+                bitmapdata = user1.getData();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            Bitmap bitmap1 = BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
+
+            d = new BitmapDrawable(getResources(), bitmap1);
+
+        }
 
 
-    }
+        mTitle = mDrawerTitle = getTitle();
+
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+        LayoutInflater inflater = getLayoutInflater();
+        View header = inflater.inflate(R.layout.header, mDrawerList, false);
+        ImageView headerpic = (ImageView) header.findViewById(R.id.drawer_pic);
+        headerpic.setImageDrawable(d);
+        TextView name =(TextView) header.findViewById(R.id.drawer_name);
+        name.setText(NAME);
+        mDrawerList.addHeaderView(header, null, false);
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_main, menu);
-        return super.onCreateOptionsMenu(menu);
+
+
+        // set a custom shadow that overlays the main content when the drawer opens
+        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+        mAdapter=new drawerAdapter(getApplicationContext(),TITLES,ICONS);
+
+        // Add items to the ListView
+        mDrawerList.setAdapter(mAdapter);
+        // Set the OnItemClickListener so something happens when a
+        // user clicks on an item.
+        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+
+
+
+
+        // Enable ActionBar app icon to behave as action to toggle the NavigationDrawer
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
+
+        mDrawerToggle = new ActionBarDrawerToggle(
+                this,
+                mDrawerLayout,
+                R.drawable.ic_drawer,
+                R.string.drawer_open,
+                R.string.drawer_close
+        ) {
+            public void onDrawerClosed(View view) {
+                getSupportActionBar().setTitle(mTitle);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu
+            }
+
+            public void onDrawerOpened(View drawerView) {
+                getSupportActionBar().setTitle(mDrawerTitle);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu
+            }
+        };
+
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+        // Set the default content area to item 0
+        // when the app opens for the first time
+        if (savedInstanceState == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.root_frame, TabbedFragment.newInstance()).commit();
+        }
+
+
+        //
+
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
 
-        switch (item.getItemId()) {
+        return super.onOptionsItemSelected(item);
+    }
 
-            case R.id.action_history:
-                Intent intent = new Intent(getApplicationContext(), MySongs.class);
+
+
+
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+
+    private class DrawerItemClickListener implements OnItemClickListener {
+
+
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+            navigateTo(i);
+
+        }
+    }
+
+    private void navigateTo(int position) {
+
+        switch (position) {
+
+            case 1:
+                Intent intent = new Intent(this, profilePic.class);
                 startActivity(intent);
                 break;
 
 
-
-            case R.id.action_profilepic:
-                Intent intent1 = new Intent(getApplicationContext(), profilePic.class);
+            case 2:
+                Intent intent1 = new Intent(this, Preferences.class);
                 startActivity(intent1);
-
                 break;
 
 
-
-            case R.id.action_preferences:
-                Intent intent2 = new Intent(getApplicationContext(), Preferences.class);
+            case 3:
+                Intent intent2 = new Intent(this,MySongs.class);
                 startActivity(intent2);
+                break;
+
+
+            case 4:
+
+                final ProgressDialog progressDialog = ProgressDialog.show(central.this, "", "Logging Out...");
+                new Thread() {
+
+                    public void run() {
+
+
+                        try {
+
+                            // Logout current user
+                            ParseUser.logOut();
+                            Intent intent3 = new Intent(central.this, LoginSignupActivity.class);
+                            startActivity(intent3);
+                            finish();
+                        } catch (Exception e) {
+
+                            Log.e("tag", e.getMessage());
+
+                        }
+
+
+                        progressDialog.dismiss();
+
+                    }
+
+                }.start();
+
 
                 break;
 
@@ -132,167 +252,17 @@ public class central extends ActionBarActivity implements ActionBar.TabListener 
 
 
 
-            default:
-                return super.onOptionsItemSelected(item);
-
-
-
         }
-        return true;
 
+        mDrawerLayout.closeDrawer(mDrawerList);
     }
 
     @Override
-    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-        // When the given tab is selected, switch to the corresponding page in
-        // the ViewPager.
-        mViewPager.setCurrentItem(tab.getPosition());
+    public void setTitle(CharSequence title) {
+        mTitle = title;
+        getSupportActionBar().setTitle(mTitle);
     }
 
 
-
-    @Override
-    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-    }
-
-    @Override
-    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-    }
-
-    /**
-     * A {@link android.support.v4.app.FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
-
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-
-
-
-
-
-        @Override
-        public Fragment getItem(int position) {
-            Fragment f = null;
-            switch(position){
-                case 0:
-                {
-                    f = new ExploreRoot();
-                    // set arguments here, if required
-                    Bundle args = new Bundle();
-                    f.setArguments(args);
-                    break;
-                }
-                case 1:
-                {
-
-
-                    f = new Welcome();
-                    // set arguments here, if required
-                    Bundle args = new Bundle();
-                    f.setArguments(args);
-                    break;
-                }
-                case 2:
-                {
-
-
-
-                    f = new RootFragment();
-                    // set arguments here, if required
-                    Bundle args = new Bundle();
-                    f.setArguments(args);
-                    break;
-
-                                    }
-
-
-
-                default:
-                    throw new IllegalArgumentException("not this many fragments: " + position);
-            }
-
-
-            return f;
-
-        }
-
-        @Override
-        public int getCount() {
-            // Show 4 total pages.
-            return 3;
-        }
-    /*@Override
-        public int getItemPosition(Object object) {
-            return POSITION_NONE;
-        }*/
-
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            Locale l = Locale.getDefault();
-            switch (position) {
-                case 0:
-                    return "Explore".toUpperCase(l);
-                case 1:
-                    return "Login".toUpperCase(l);
-                case 2:
-                    return "Listen".toUpperCase(l);
-
-            }
-            return null;
-        }
-    }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        public PlaceholderFragment() {
-
-
-        }
-
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-
-
-            View rootView = inflater.inflate(R.layout.fragment_explore, container, false);
-            return rootView;
-        }
-
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-
-    }
-
-    }
+}
 
