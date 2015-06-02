@@ -20,8 +20,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -58,10 +56,14 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
     String[] artist = new String[60];
     String[] user = new String[60];
     String[] album = new String[60];
-    String[] username = new String[20];
+
     Integer[] likes = new Integer[60];
     String[] objId = new String[60];
     Date[] actime = new Date[60];
+
+    String[] actsongname = new String[60];
+
+
     DynamicBox box;
 
     ActionBar mActionBar;
@@ -77,6 +79,7 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
 
 
     CustomAdapter adapter;
+    SwingLeftInAnimationAdapter animationAdapter ;
     private List<RowItem> rowItems;
     ButtonFloat swap;
 
@@ -95,7 +98,6 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
 
         if (adapter != null) {
             adapter.notifyDataSetChanged();
-            SwingLeftInAnimationAdapter animationAdapter = new SwingLeftInAnimationAdapter(adapter);
 
             animationAdapter.notifyDataSetChanged();
 
@@ -115,9 +117,6 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
         if (visible && swap != null) {
             swap.setVisibility(View.VISIBLE);
 
-
-            Animation animation1 = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.slide_up_fab);
-            swap.setAnimation(animation1);
 
         }
     }
@@ -228,7 +227,6 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
 
                 mSwipeRefreshLayout.setRefreshing(false);
                 tv.setVisibility(View.GONE);
-                Animation animation1 = AnimationUtils.loadAnimation(getActivity().getApplicationContext(), R.anim.slide_up_fab);
 
 
             }
@@ -313,7 +311,7 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
         android.app.FragmentManager fm = mActivity.getFragmentManager();
         android.app.DialogFragment dialog = new SongDialog(); // creating new object
         Bundle args = new Bundle();
-        args.putString("SongName", songname[position]);
+        args.putString("SongName", actsongname[position]);
         args.putString("Album", album[position]);
 
         args.putString("Artist", artist[position]);
@@ -385,7 +383,12 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
 
                             ParseObject p = Songs.get(i);
                             objId[i] = p.getObjectId();
-                            songname[i] = (p.getString("Track"));
+
+                            actsongname[i] = (p.getString("Track"));
+
+                            songname[i] = " is listening to " + actsongname[i] + " by " + artist[i];
+
+
                             artist[i] = (p.getString("Artist"));
                             user[i] = (p.getString("Username"));
 
@@ -465,22 +468,37 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
                                             });
 
                                             Collections.reverse(rowItems);
+                                            if (adapter!=null)
+                                                adapter.notifyDataSetChanged();
+
 
                                             adapter = new CustomAdapter(mActivity, rowItems);
-                                            SwingLeftInAnimationAdapter animationAdapter = new SwingLeftInAnimationAdapter(adapter);
+
                                             adapter.notifyDataSetChanged();
+
+                                            animationAdapter = new SwingLeftInAnimationAdapter(adapter);
                                             animationAdapter.notifyDataSetChanged();
 
+
                                             animationAdapter.setAbsListView(getListView());
+                                            getListView().setVisibility(View.VISIBLE);
+
 
 
                                             if (finalI == size - 1) {
 
 
                                                 adapter.notifyDataSetChanged();
+                                                adapter= new CustomAdapter(mActivity,rowItems);
                                                 animationAdapter.notifyDataSetChanged();
+                                                animationAdapter = new SwingLeftInAnimationAdapter(adapter);
+
+                                                animationAdapter.setAbsListView(getListView());
+
+
+
                                                 setListAdapter(animationAdapter);
-                                                getListView().setVisibility(View.VISIBLE);
+
 
 
                                                 box.hideAll();

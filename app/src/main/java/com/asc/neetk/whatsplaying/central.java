@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -21,6 +22,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -263,6 +265,41 @@ public class central extends ActionBarActivity {
         getSupportActionBar().setTitle(mTitle);
     }
 
+    private boolean doubleBackToExitPressedOnce;
+    private Handler mHandler = new Handler();
+    Toast mtoast;
+    private final Runnable mRunnable = new Runnable() {
+        @Override
+        public void run() {
+            doubleBackToExitPressedOnce = false;
+        }
+    };
 
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+
+        if (mHandler != null) { mHandler.removeCallbacks(mRunnable); }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+
+            mtoast.cancel();
+
+
+            super.onBackPressed();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        mtoast= Toast.makeText(this, "Please press back again to exit.", Toast.LENGTH_SHORT);
+
+        mtoast.show();
+
+        mHandler.postDelayed(mRunnable, 2000);
+    }
 }
 

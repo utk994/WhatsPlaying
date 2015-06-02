@@ -63,6 +63,8 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
     Date[] actime = new Date[60];
 
+    String[] actsongname = new String[60];
+
 
     String[] time = new String[60];
     int size;
@@ -72,6 +74,7 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
 
     CustomAdapter adapter;
+    SwingLeftInAnimationAdapter animationAdapter;
     private List<RowItem> rowItems;
     ButtonFloat swap;
     DynamicBox box;
@@ -160,7 +163,6 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
         if (adapter != null) {
             adapter.notifyDataSetChanged();
-            SwingLeftInAnimationAdapter animationAdapter = new SwingLeftInAnimationAdapter(adapter);
 
             animationAdapter.notifyDataSetChanged();
         }
@@ -331,7 +333,8 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
         android.app.FragmentManager fm = mActivity.getFragmentManager();
         android.app.DialogFragment dialog = new SongDialog(); // creating new object
         Bundle args = new Bundle();
-        args.putString("SongName", songname[position]);
+
+        args.putString("SongName", actsongname[position]);
         args.putString("Album", album[position]);
 
         args.putString("Artist", artist[position]);
@@ -400,7 +403,11 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
                         album[i] = (p.getString("Album"));
 
                         likes[i] = (p.getInt("Likes"));
-                        songname[i] = " is listening to " + (p.getString("Track")) + " by " + artist[i];
+
+
+                        actsongname[i] = (p.getString("Track"));
+
+                        songname[i] = " is listening to " + actsongname[i] + " by " + artist[i];
 
 
                         time[i] = DateUtils.getRelativeTimeSpanString(p.getCreatedAt().getTime(), System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
@@ -414,8 +421,6 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
                             {profiles[i]=profiles[j];
                                 continue outloop;
                              }
-
-
                         } */
 
 
@@ -480,12 +485,15 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
                                         Collections.reverse(rowItems);
 
+                                        if (adapter != null)
+                                            adapter.notifyDataSetChanged();
+
 
                                         adapter = new CustomAdapter(mActivity, rowItems);
 
                                         adapter.notifyDataSetChanged();
 
-                                        SwingLeftInAnimationAdapter animationAdapter = new SwingLeftInAnimationAdapter(adapter);
+                                        animationAdapter = new SwingLeftInAnimationAdapter(adapter);
                                         animationAdapter.notifyDataSetChanged();
 
 
@@ -497,7 +505,13 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
 
                                             adapter.notifyDataSetChanged();
+                                            adapter = new CustomAdapter(mActivity, rowItems);
                                             animationAdapter.notifyDataSetChanged();
+                                            animationAdapter = new SwingLeftInAnimationAdapter(adapter);
+
+                                            animationAdapter.setAbsListView(getListView());
+
+
                                             setListAdapter(animationAdapter);
 
 
@@ -560,7 +574,3 @@ public class Explore extends SwipeRefreshListFragment implements AdapterView.OnI
 
 
 }
-
-
-
-
