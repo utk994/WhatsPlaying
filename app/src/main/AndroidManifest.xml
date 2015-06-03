@@ -7,7 +7,6 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
-    <service android:name="com.asc.neetk.whatsplaying.MusicService" />
 
     <application
         android:name=".Appsett"
@@ -30,6 +29,9 @@
                 <action android:name="android.intent.action.CONFIGURATION_CHANGED" />
             </intent-filter>
         </service>
+
+        <service android:name="com.asc.neetk.whatsplaying.MusicService" />
+
 
         <activity android:name="com.soundcloud.android.crop.CropImageActivity" />
         <activity
@@ -124,7 +126,7 @@
         <activity
             android:name=".playSong"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/title_activity_play_song"
+            android:label="Player"
             android:parentActivityName=".central" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
