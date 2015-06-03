@@ -21,8 +21,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_gravity="right"
-            android:layout_marginRight="20dp"
-              />
+            android:layout_marginRight="20dp" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -42,22 +41,37 @@
                 android:id="@+id/imageView4"
                 android:layout_width="match_parent"
                 android:layout_height="5dp"
-                android:background="@color/darkpurple"
-                android:layout_below="@+id/imageView3"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="false"
-                android:layout_marginTop="5dp" />
+                android:layout_below="@+id/imageView3"
+                android:layout_marginTop="5dp"
+                android:background="@color/darkpurple" />
+
+            <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="106dp"
+                android:layout_height="106dp"
+                android:id="@+id/filler"
+                android:layout_gravity="center"
+                android:src="@color/transparent"
+                android:focusableInTouchMode="false"
+                app:border_color="@color/background_material_light"
+                app:border_width="3dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="9dp" />
 
             <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/viewpropic"
                 android:layout_width="100dp"
+                android:src="@color/transparent"
                 android:layout_height="100dp"
 
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="13dp"
+                android:layout_marginTop="10dp"
                 app:border_color="@color/darkpurple"
                 app:border_width="5dp" />
+
 
         </RelativeLayout>
 
@@ -78,11 +92,10 @@
             android:layout_marginTop="10dp"
 
 
-
+            android:autoText="false"
             android:padding="15dp"
             android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:autoText="false" />
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
         <View style="@style/Divider" />
 

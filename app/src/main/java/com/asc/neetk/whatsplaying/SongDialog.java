@@ -4,7 +4,6 @@ import android.app.DialogFragment;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -42,6 +41,9 @@ public class SongDialog extends DialogFragment {
     View mView;
 
 
+
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -49,9 +51,7 @@ public class SongDialog extends DialogFragment {
 
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
-        mView =view;
-
-
+        mView = view;
 
 
         Bundle bundle = this.getArguments();
@@ -62,17 +62,15 @@ public class SongDialog extends DialogFragment {
         final String user1 = bundle.getString("User");
 
 
+
         final TextView user = (TextView) view.findViewById(R.id.sharedby);
         final TextView songname = (TextView) view.findViewById(R.id.songname);
         final TextView artist = (TextView) view.findViewById(R.id.artist);
         final TextView album = (TextView) view.findViewById(R.id.album);
 
 
-        img =(CircleImageView) mView.findViewById(R.id.coverfor);
-        img.setVisibility(View.INVISIBLE);
-
-
-
+        img = (CircleImageView) mView.findViewById(R.id.coverfor);
+        img.setImageDrawable(getResources().getDrawable(R.drawable.albumart));
 
 
         songname.setText(track1);
@@ -86,14 +84,22 @@ public class SongDialog extends DialogFragment {
         listen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String acttrck = track1.replace(" ", "%20");
+
+                Intent intent = new
+                        Intent(getActivity().getApplicationContext(),playSong.class);
+                intent.putExtra("Songname",track1);
+                intent.putExtra("Artist",artist1);
+                startActivity(intent);
+                /*String acttrck = track1.replace(" ", "%20");
                 String actart = artist1.replace(" ", "%20");
 
                 final String url = "https://soundcloud.com/search/sounds?q=" + acttrck + "%20" + actart;
 
 
                 final Intent browserIntent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url));
-                startActivity(browserIntent);
+                startActivity(browserIntent); */
+
+
 
 
             }
@@ -121,7 +127,9 @@ public class SongDialog extends DialogFragment {
         try {
             String url = new RetrieveArt().execute(stringBuilder.toString()).get();
 
-            Log.d("URL",url);
+            if (url != null)
+
+            Log.d("URL", url);
 
             new LoadImage().execute(url);
         } catch (InterruptedException e) {
@@ -153,14 +161,19 @@ public class SongDialog extends DialogFragment {
 
     Bitmap bitmap;
 
+
     private class LoadImage extends AsyncTask<String, String, Bitmap> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
 
         }
+
         protected Bitmap doInBackground(String... args) {
             try {
+
+
+
                 bitmap = BitmapFactory.decodeStream((InputStream) new URL(args[0]).getContent());
 
             } catch (Exception e) {
@@ -171,36 +184,44 @@ public class SongDialog extends DialogFragment {
 
         protected void onPostExecute(Bitmap image) {
 
-            if(image != null){
-
-                img =(CircleImageView) mView.findViewById(R.id.coverfor);
-                img.setVisibility(View.VISIBLE);
 
 
 
-                YoYo.with(Techniques.RotateIn)
-                        .duration(500)
+            if (image != null) {
+
+
+
+                img = (CircleImageView) mView.findViewById(R.id.coverfor);
+
+                YoYo.with(Techniques.RotateOut)
+                        .duration(100)
                         .playOn(img);
-
 
 
                 img.setImageBitmap(image);
 
-            }else{
 
-                img =(CircleImageView) mView.findViewById(R.id.coverfor);
+                YoYo.with(Techniques.RotateIn)
+                        .duration(300)
+                        .playOn(img);
+
+
+                img.setImageBitmap(image);
+
+            } else {
+
+                img = (CircleImageView) mView.findViewById(R.id.coverfor);
 
                 img.setImageDrawable(getResources().getDrawable(R.drawable.albumart));
-                img.setVisibility(View.VISIBLE);
-
 
                 YoYo.with(Techniques.RotateIn)
                         .duration(500)
                         .playOn(img);
-
 
 
             }
         }
     }
+
+
 }

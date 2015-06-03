@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
+
     <application
         android:name=".Appsett"
         android:allowBackup="true"
@@ -120,7 +121,13 @@
         </activity>
         <activity
             android:name=".playSong"
-            android:label="@string/title_activity_play_song" >
+            android:label="@string/title_activity_play_song"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:parentActivityName=".central" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.asc.neetk.whatsplaying.central" />
+
         </activity>
     </application>
 
