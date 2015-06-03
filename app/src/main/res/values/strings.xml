@@ -117,4 +117,5 @@
     <string name="title_activity_user_profile">userProfile</string>
     <string name="title_activity_preferences">Preferences</string>
     <string name="title_activity_play_song">playSong</string>
+    <string name="title_activity_tuts_player">tutsPlayer</string>
 </resources>

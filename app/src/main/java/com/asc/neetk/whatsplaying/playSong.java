@@ -1,43 +1,44 @@
 package com.asc.neetk.whatsplaying;
 
-import android.app.Activity;
+import android.content.Intent;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Button;
 import android.widget.MediaController;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 import de.voidplus.soundcloud.SoundCloud;
 import de.voidplus.soundcloud.Track;
+import mehdi.sakout.dynamicbox.DynamicBox;
 
 
-public class playSong extends Activity implements MediaPlayer.OnPreparedListener, MediaController.MediaPlayerControl{
+public class playSong extends ActionBarActivity implements MediaPlayer.OnPreparedListener, MediaController.MediaPlayerControl{
     private static final String TAG = "AudioPlayer";
 
     public static final String AUDIO_FILE_NAME = "audioFileName";
 
     private MediaPlayer mediaPlayer;
     private MediaController mediaController;
+    boolean playerthere =true;
     private String url;
+    String song;
+    String artist;
+    DynamicBox box;
 
     private Handler handler = new Handler();
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_song);
-
-
-
-
-
-
-
 
 
         mediaPlayer = new MediaPlayer();
@@ -47,39 +48,42 @@ public class playSong extends Activity implements MediaPlayer.OnPreparedListener
 
 
         Bundle extras = getIntent().getExtras();
-        String song = extras.getString("Songname");
+         song = extras.getString("Songname");
+        artist= extras.getString("Artist");
         //String artist = extras.getString("Artist");
-
-
-        try {
-            url = new RetreiveUrl().execute(song).get();
-            if (url != null) {
-                Log.d("DIditWork", url);
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+        box = new DynamicBox(this, findViewById(R.id.main_audio_view));
+        View customView = getLayoutInflater().inflate(R.layout.songnotfound, null, false);
+        box.addCustomView(customView, "noSong");
+        box.setLoadingMessage("Loding ...");
+        box.showLoadingLayout();
 
 
 
-        try {
-            mediaPlayer.setDataSource(url);
-            mediaPlayer.prepare();
-            mediaPlayer.start();
-        } catch (IOException e) {
-            Log.e(TAG, "Could not open file " +url+ " for playback.", e);
-        }
 
+    }
+
+    @Override
+    protected void onStart() {
+
+            new RetreiveUrl().execute(song);
+
+
+
+
+
+
+        super.onStart();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        mediaController.hide();
-        mediaPlayer.stop();
+
+
+        if ( playerthere)
+        {
         mediaPlayer.release();
+             mediaController.hide();}
     }
 
     @Override
@@ -147,6 +151,16 @@ public class playSong extends Activity implements MediaPlayer.OnPreparedListener
                 mediaController.show();
             }
         });
+
+        box.hideAll();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        System.out.println("onBackPressed() called");
+        if (mediaPlayer!=null)mediaPlayer.release();
+
     }
 
 
@@ -159,7 +173,8 @@ public class playSong extends Activity implements MediaPlayer.OnPreparedListener
         @Override
         protected String doInBackground(String... urls) {
 
-            String song = urls[0];
+
+
 
             try {
                 SoundCloud soundcloud = new SoundCloud(
@@ -177,13 +192,53 @@ public class playSong extends Activity implements MediaPlayer.OnPreparedListener
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            Log.d("abcs",use);
+
             return use;
 
         }
 
+
+
         @Override
-        protected void onPostExecute(String url) {
+        protected void onPostExecute(String url1) {
+            try {
+
+                if (url1 !=null)
+                {mediaPlayer.setDataSource(url1);
+
+                mediaPlayer.prepare();
+
+                mediaPlayer.start();}
+
+
+                else {box.showCustomView("noSong");
+                    Button search = (Button) findViewById(R.id.searcho);
+
+                    playerthere =false;
+
+                    search.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                             String acttrck = song.replace(" ", "%20");
+                String actart = artist.replace(" ", "%20");
+
+                final String url = "https://soundcloud.com/search/sounds?q=" + acttrck + "%20" + actart;
+
+
+
+                final Intent browserIntent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url));
+                startActivity(browserIntent);
+
+                        }
+                    });
+
+
+
+                }
+            } catch (IOException e) {
+                Log.e(TAG, "Could not open file " +url1+ " for playback.", e);
+            }
+
 
 
         }

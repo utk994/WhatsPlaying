@@ -41,6 +41,48 @@ public class SongDialog extends DialogFragment {
     View mView;
 
 
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+
+        StringBuilder stringBuilder = new StringBuilder("http://ws.audioscrobbler.com/2.0/");
+        stringBuilder.append("?method=album.getinfo");
+        stringBuilder.append("&api_key=");
+        stringBuilder.append("3d4c79881824afd6b4c7544b753d1024");
+
+        try {
+            stringBuilder.append("&artist=" + URLEncoder.encode(artist1, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+
+        try {
+            stringBuilder.append("&album=" + URLEncoder.encode(album1, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+
+        try {
+            String url = new RetrieveArt().execute(stringBuilder.toString()).get();
+
+            if (url != null)
+
+                Log.d("URL", url);
+
+            new LoadImage().execute(url);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        Log.d("TAG", "onViewCreated");
+
+    }
+
+    String album1;
+    String artist1;
 
 
 
@@ -57,8 +99,8 @@ public class SongDialog extends DialogFragment {
         Bundle bundle = this.getArguments();
 
         final String track1 = bundle.getString("SongName");
-        final String artist1 = bundle.getString("Artist");
-        final String album1 = bundle.getString("Album");
+          artist1 = bundle.getString("Artist");
+         album1 = bundle.getString("Album");
         final String user1 = bundle.getString("User");
 
 
@@ -104,39 +146,6 @@ public class SongDialog extends DialogFragment {
 
             }
         });
-
-        StringBuilder stringBuilder = new StringBuilder("http://ws.audioscrobbler.com/2.0/");
-        stringBuilder.append("?method=album.getinfo");
-        stringBuilder.append("&api_key=");
-        stringBuilder.append("3d4c79881824afd6b4c7544b753d1024");
-
-        try {
-            stringBuilder.append("&artist=" + URLEncoder.encode(artist1, "UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-
-        try {
-            stringBuilder.append("&album=" + URLEncoder.encode(album1, "UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-
-        try {
-            String url = new RetrieveArt().execute(stringBuilder.toString()).get();
-
-            if (url != null)
-
-            Log.d("URL", url);
-
-            new LoadImage().execute(url);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
 
 
         ImageButton viewProfile = (ImageButton) view.findViewById(R.id.viewprofile);
