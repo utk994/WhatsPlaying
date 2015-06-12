@@ -18,11 +18,10 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
-        <ListView
-            android:id="@android:id/list"
+        <com.nhaarman.listviewanimations.itemmanipulation.DynamicListView
+            android:id="@+id/list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"></ListView>
-
+            android:layout_height="match_parent" />
         <TextView
             android:id="@+id/empty"
             android:layout_width="match_parent"

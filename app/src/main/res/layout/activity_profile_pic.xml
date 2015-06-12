@@ -53,7 +53,8 @@
         android:layout_below="@+id/textView7"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="10dp"
+        android:weightSum="1">
 
         <TextView
             android:layout_width="wrap_content"
@@ -73,7 +74,7 @@
             android:id="@+id/profile_email"
             android:text="utk994@gmail.com"
             android:layout_marginLeft="10dp"
-            android:textSize="20dp" />
+            android:textSize="18dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -82,11 +83,11 @@
             android:text="Change"
             android:id="@+id/change_email"
             android:autoText="false"
-            android:layout_marginLeft="20dp"
             android:linksClickable="true"
             android:clickable="true"
             android:textColor="@color/darkpurple"
-            android:textSize="10dp" />
+            android:textSize="10dp"
+            android:layout_marginLeft="10dp" />
     </LinearLayout>
 
     <LinearLayout
@@ -198,6 +199,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+
+
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -229,7 +232,8 @@
         android:layout_marginRight="5dp"
         android:layout_marginTop="5dp" />
 
-    <View style="@style/Divider" />
+    <View style="@style/Divider"
+        android:layout_marginTop="10dp" />
 
 
     <TextView
@@ -261,12 +265,23 @@
             android:id="@+id/subgen"
             android:background="@drawable/fab" />
     </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Add some genres you listen to."
+        android:id="@+id/nogen"
+        android:layout_margin="5dp"
+        android:visibility="gone" />
+
     <com.wefika.flowlayout.FlowLayout
         android:id="@+id/flowgen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
          />
-    <View style="@style/Divider" />
+    <View style="@style/Divider"
+        android:layout_marginTop="10dp" />
 
 
     <TextView
@@ -298,6 +313,15 @@
             android:background="@drawable/fab" />
     </LinearLayout>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Add artists you listen to."
+        android:id="@+id/noart"
+        android:layout_margin="5dp"
+        android:visibility="gone" />
+
     <com.wefika.flowlayout.FlowLayout
         android:id="@+id/flowartist"
         android:layout_width="wrap_content"
@@ -305,7 +329,8 @@
          />
 
 
-    <View style="@style/Divider" />
+    <View style="@style/Divider"
+        android:layout_marginTop="10dp" />
 
     <TextView
         android:id="@+id/filler3"
@@ -316,6 +341,15 @@
         android:text="Users that you follow"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
         android:textSize="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Follow some users."
+        android:id="@+id/nouser"
+        android:layout_margin="5dp"
+        android:visibility="gone" />
 
     <com.wefika.flowlayout.FlowLayout
         android:id="@+id/flowuser"

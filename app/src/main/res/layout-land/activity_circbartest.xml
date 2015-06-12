@@ -1,0 +1,179 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:seekarc="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/relativm">
+
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    tools:context="com.asc.neetk.whatsplaying.circbartest"
+    android:background="#111"
+
+    android:gravity="center_horizontal"
+    android:measureWithLargestChild="false"
+    android:weightSum="2"
+    android:id="@+id/vert">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_weight="2"
+            android:id="@+id/relativ1">
+
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+
+                android:src="@drawable/sampleart"
+                android:focusableInTouchMode="false"
+
+
+                android:id="@+id/circlealbum"
+                android:visibility="visible"
+                android:layout_centerInParent="true"
+                android:cropToPadding="true"
+                android:padding="30dp"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="false"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp" />
+
+            <com.triggertrap.seekarc.SeekArc
+                android:id="@+id/seekArc"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_gravity="center"
+                seekarc:arcWidth="5dp"
+                seekarc:arcColor="#80FFFFFF"
+                seekarc:thumb ="@drawable/scrubber_control"
+                seekarc:progressColor="#CC9C27B0"
+                seekarc:progressWidth="5dp"
+                seekarc:rotation="270"
+                seekarc:touchInside="true"
+                android:accessibilityLiveRegion="none"
+                android:visibility="visible"
+                android:paddingLeft="16dp"
+                android:layout_centerHorizontal="true"
+                android:paddingRight="16dp">
+
+            </com.triggertrap.seekarc.SeekArc>
+
+            <Button
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:id="@+id/hiddenbutton"
+                android:background="@color/transparent"
+                android:layout_centerInParent="true" />
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="130dp"
+                android:id="@+id/playicon"
+                android:background="@drawable/play"
+                android:adjustViewBounds="false"
+                android:alpha=".75"
+                android:visibility="invisible"
+                android:layout_centerInParent="true" />
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="120dp"
+                android:id="@+id/pauseicon"
+                android:background="@drawable/pause"
+                android:layout_alignParentTop="false"
+                android:focusable="false"
+                android:alpha=".75"
+                android:visibility="invisible"
+                android:layout_alignWithParentIfMissing="false"
+                android:layout_centerInParent="true" />
+
+            <ImageView
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:id="@+id/replay"
+                android:background="@drawable/rotate1"
+                android:alpha=".5"
+                android:visibility="invisible"
+                android:layout_centerInParent="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="2:34"
+                android:id="@+id/seektime"
+                android:textColor="@color/white"
+                android:textSize="20dp"
+                android:textIsSelectable="false"
+                android:visibility="visible"
+                android:layout_alignParentEnd="false"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true" />
+
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Radioactive"
+            android:id="@+id/player_song"
+            android:layout_below="@+id/seektime"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/white"
+            android:textSize="30dp"
+            android:layout_marginTop="10dp"
+            android:visibility="visible"
+            android:gravity="center" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Imagine Dragons"
+            android:id="@+id/player_artist"
+            android:layout_below="@+id/player_song"
+            android:layout_centerHorizontal="true"
+            android:textSize="26dp"
+            android:textColor="@color/white"
+            android:visibility="visible"
+            android:gravity="center" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Night Visions"
+            android:id="@+id/player_album"
+            android:layout_below="@+id/player_artist"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/white"
+            android:textSize="24dp"
+            android:layout_marginTop="5dp"
+            android:gravity="center" />
+
+    </LinearLayout>
+
+</LinearLayout>
+</RelativeLayout>

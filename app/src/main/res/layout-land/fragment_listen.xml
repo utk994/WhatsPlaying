@@ -25,7 +25,6 @@
         android:layout_below="@+id/imageView1"
         android:layout_centerHorizontal="true"
         android:textSize="20sp"
-        android:layout_marginTop="10dp"
         android:text="TapToListen" />
 
 </RelativeLayout>

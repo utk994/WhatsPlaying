@@ -11,7 +11,7 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:clickable="true"
-        android:background="@drawable/plisten" />
+        android:background="@drawable/listen" />
 
     <TextView
         android:layout_width="wrap_content"

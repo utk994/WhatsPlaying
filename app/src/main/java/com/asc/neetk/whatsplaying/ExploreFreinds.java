@@ -9,6 +9,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -29,7 +30,6 @@ import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.gc.materialdesign.views.ButtonFloat;
 import com.nhaarman.listviewanimations.appearance.simple.SwingLeftInAnimationAdapter;
-import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -77,9 +77,11 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
 
     Drawable[] profiles = new Drawable[60];
 
+    private RetreiveItems mTask;
+
 
     CustomAdapter adapter;
-    SwingLeftInAnimationAdapter animationAdapter ;
+    SwingLeftInAnimationAdapter animationAdapter;
     private List<RowItem> rowItems;
     ButtonFloat swap;
 
@@ -167,9 +169,7 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
         mSwipeRefreshLayout = (SwipeRefreshLayout) getActivity().findViewById(R.id.swipe_container1);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.purple);
 
-        mActionBar = ((ActionBarActivity)getActivity()).getSupportActionBar();
-
-
+        mActionBar = ((ActionBarActivity) getActivity()).getSupportActionBar();
 
 
         super.onActivityCreated(savedInstanceState);
@@ -191,7 +191,8 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
                 retry.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        fetchData();
+                        box.showLoadingLayout();
+                        mTask = (RetreiveItems) new RetreiveItems().execute();
                     }
                 });
             }
@@ -203,7 +204,10 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
 
 
         if (savedInstanceState == null) {
-            fetchData();
+            box.showLoadingLayout();
+            swap.setVisibility(View.INVISIBLE);
+
+            mTask = (RetreiveItems) new RetreiveItems().execute();
 
 
         }
@@ -222,7 +226,10 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
 
 
                 mSwipeRefreshLayout.setRefreshing(true);
-                fetchData();
+                box.showLoadingLayout();
+                swap.setVisibility(View.INVISIBLE);
+
+                mTask = (RetreiveItems) new RetreiveItems().execute();
 
 
                 mSwipeRefreshLayout.setRefreshing(false);
@@ -305,6 +312,15 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
 
 
     @Override
+    public void onDestroy() {
+        mTask.cancel(true);
+        super.onDestroy();
+
+
+    }
+
+
+    @Override
     public void onItemClick(AdapterView<?> parent, View view, int position,
                             long id) {
 
@@ -323,225 +339,232 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
     }
 
 
-    public void fetchData() {
+    public class RetreiveItems extends AsyncTask<String, Void, List<RowItem>> {
 
 
-        swap.setVisibility(View.INVISIBLE);
+        @Override
+        protected List<RowItem> doInBackground(String... urls) {
 
 
-        if (!(isOnline())) {
+            if (!(isOnline())) {
 
-            box.showCustomView("noNet");
+                box.showCustomView("noNet");
 
-            Button retry = (Button) getActivity().findViewById(R.id.retry);
+                Button retry = (Button) mActivity.findViewById(R.id.retry);
 
 
-            {
-                retry.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        fetchData();
-                    }
-                });
+                {
+                    retry.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            swap.setVisibility(View.INVISIBLE);
+
+                            mTask = (RetreiveItems) new RetreiveItems().execute();
+                        }
+                    });
+                }
+
             }
-            return;
-        }
-
-        rowItems = new ArrayList<RowItem>();
 
 
-        box.showLoadingLayout();
-
-
-        userfollows = (ArrayList<String>) ParseUser.getCurrentUser().get("folo");
-
-
-        if (userfollows != null) {
+            rowItems = new ArrayList<RowItem>();
 
 
             final Drawable defdrawable = getResources().getDrawable(R.drawable.profile);
 
-
-            ParseQuery<ParseObject> query = ParseQuery.getQuery("Songs");
-            query.orderByDescending("createdAt");
-            query.whereContainedIn("Username", userfollows);
-            query.setLimit(40);
+            userfollows = (ArrayList<String>) ParseUser.getCurrentUser().get("folo");
 
 
-            query.findInBackground(new FindCallback<ParseObject>() {
+            if (userfollows != null) {
 
-                @Override
-                public void done(List<ParseObject> Songs, com.parse.ParseException e) {
-                    if (e == null) {
-                        Log.d("score", "Retrieved " + Songs.size() + " songs");
-
-                        size = Songs.size();
-
-                        outloop:
-                        for (int i = 0; i < size; i++) {
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("Songs");
+                query.orderByDescending("createdAt");
+                query.whereContainedIn("Username", userfollows);
+                query.setLimit(40);
 
 
-                            ParseObject p = Songs.get(i);
-                            objId[i] = p.getObjectId();
+                try {
 
-                            actsongname[i] = (p.getString("Track"));
+                    List<ParseObject> Songs = query.find();
 
-                            songname[i] = " is listening to " + actsongname[i] + " by " + artist[i];
+                    Log.d("score", "Retrieved " + Songs.size() + " songs");
 
+                    size = Songs.size();
 
-                            artist[i] = (p.getString("Artist"));
-                            user[i] = (p.getString("Username"));
-
-                            album[i] = (p.getString("Album"));
-
-                            likes[i] = (p.getInt("Likes"));
-
-                            actime[i] = (p.getCreatedAt());
+                    outloop:
+                    for (int i = 0; i < size; i++) {
 
 
-                            time[i] = DateUtils.getRelativeTimeSpanString(p.getCreatedAt().getTime(), System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
+                        ParseObject p = Songs.get(i);
+                        objId[i] = p.getObjectId();
+
+                        artist[i] = (p.getString("Artist"));
+                        user[i] = (p.getString("Username"));
+
+                        album[i] = (p.getString("Album"));
+
+                        likes[i] = (p.getInt("Likes"));
 
 
+                        actsongname[i] = (p.getString("Track"));
 
-                       /* for (int j=0;j<i&& user[i]!=null;j++)
-                        {
-                            if (user[i].equals(user[j]))
-                            {profiles[i]=profiles[j];
+                        songname[i] = " is listening to " + actsongname[i] + " by " + artist[i];
+
+
+                        time[i] = DateUtils.getRelativeTimeSpanString(p.getCreatedAt().getTime(), System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
+
+
+                        actime[i] = (p.getCreatedAt());
+
+                        for (int j = 0; j < i && user[i] != null; j++) {
+                            if (user[i].equals(user[j])) {
+                                profiles[i] = profiles[j];
+
+                                RowItem items = new RowItem(user[i], songname[i], time[i], profiles[i], likes[i], objId[i], actime[i]);
+
+
+                                rowItems.add(items);
+
+
                                 continue outloop;
-                             }
+                            }
+                        }
 
 
-                        } */
+                        if (user[i] != null)
+
+                        {
+                            ParseQuery<ParseUser> query1 = ParseUser.getQuery();
+                            query1.whereEqualTo("username", user[i]);
+                            query1.setLimit(1);
 
 
-                            if (user[i] != null)
+                            final int finalI = i;
+                            try {
+                                List<ParseUser> objects = query1.find();
 
-                            {
-                                ParseQuery<ParseUser> query1 = ParseUser.getQuery();
-                                query1.whereEqualTo("username", user[i]);
-                                query1.setLimit(1);
+                                ParseFile user1 = objects.get(0).getParseFile("profilePic");
 
+                                if (user1 != null)
 
-                                final int finalI = i;
-                                query1.findInBackground(new FindCallback<ParseUser>() {
-                                    public void done(List<ParseUser> objects, ParseException e) {
-                                        if (e == null) {
+                                {
 
-                                            ParseFile user1 = objects.get(0).getParseFile("profilePic");
+                                    byte[] bitmapdata = new byte[0];
+                                    try {
+                                        bitmapdata = user1.getData();
+                                    } catch (ParseException e1) {
 
-                                            if (user1 != null)
+                                        box.showInternetOffLayout();
+                                        e1.printStackTrace();
+                                    }
+                                    Bitmap bitmap1 = BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
+                                    Bitmap bitmapsimplesize = Bitmap.createScaledBitmap(bitmap1, 50, 50, true);
+                                    bitmap1.recycle();
 
-                                            {
+                                    Drawable d = new BitmapDrawable(getResources(), bitmapsimplesize);
 
-                                                byte[] bitmapdata = new byte[0];
-                                                try {
-                                                    bitmapdata = user1.getData();
-                                                } catch (ParseException e1) {
-                                                    e1.printStackTrace();
-                                                }
-                                                Bitmap bitmap1 = BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
-                                                Bitmap bitmapsimplesize = Bitmap.createScaledBitmap(bitmap1, 50, 50, true);
-                                                bitmap1.recycle();
-
-                                                Drawable d = new BitmapDrawable(getResources(), bitmapsimplesize);
-
-                                                profiles[finalI] = d;
-                                            } else profiles[finalI] = defdrawable;
+                                    profiles[finalI] = d;
 
 
-                                            songname[finalI] = " is listening to " + songname[finalI] + " by " + artist[finalI];
-
-                                            RowItem items = new RowItem(user[finalI], songname[finalI], time[finalI], profiles[finalI], likes[finalI], objId[finalI], actime[finalI]);
-
-
-                                            rowItems.add(items);
-
-                                            Collections.sort(rowItems, new Comparator<RowItem>() {
-                                                @Override
-                                                public int compare(RowItem o1, RowItem o2) {
-                                                    if (o1.getActdate() == null || o2.getActdate() == null)
-                                                        return 0;
-                                                    return o1.getActdate().compareTo(o2.getActdate());
-                                                }
+                                } else {
+                                    profiles[finalI] = defdrawable;
 
 
-                                            });
-
-                                            Collections.reverse(rowItems);
-                                            if (adapter!=null)
-                                                adapter.notifyDataSetChanged();
+                                }
 
 
-                                            adapter = new CustomAdapter(mActivity, rowItems);
-
-                                            adapter.notifyDataSetChanged();
-
-                                            animationAdapter = new SwingLeftInAnimationAdapter(adapter);
-                                            animationAdapter.notifyDataSetChanged();
+                                RowItem items = new RowItem(user[finalI], songname[finalI], time[finalI], profiles[finalI], likes[finalI], objId[finalI], actime[finalI]);
 
 
-                                            animationAdapter.setAbsListView(getListView());
-                                            getListView().setVisibility(View.VISIBLE);
+                                rowItems.add(items);
 
-
-
-                                            if (finalI == size - 1) {
-
-
-                                                adapter.notifyDataSetChanged();
-                                                adapter= new CustomAdapter(mActivity,rowItems);
-                                                animationAdapter.notifyDataSetChanged();
-                                                animationAdapter = new SwingLeftInAnimationAdapter(adapter);
-
-                                                animationAdapter.setAbsListView(getListView());
-
-
-
-                                                setListAdapter(animationAdapter);
-
-
-
-                                                box.hideAll();
-
-                                                YoYo.with(Techniques.Wobble)
-                                                        .duration(700)
-                                                        .playOn(getActivity().findViewById(R.id.buttonFloat1));
-                                                swap.setVisibility(View.VISIBLE);
-
-
-                                            }
-
-
-                                            // Something went wrong.
-
-
-                                        }
-
+                                Collections.sort(rowItems, new Comparator<RowItem>() {
+                                    @Override
+                                    public int compare(RowItem o1, RowItem o2) {
+                                        if (o1.getActdate() == null || o2.getActdate() == null)
+                                            return 0;
+                                        return (o1.getActdate()).compareTo(o2.getActdate());
                                     }
 
 
                                 });
+
+                                Collections.reverse(rowItems);
+
+                                if (finalI == size - 1)
+                                    return rowItems;
+
+
+                                if (finalI == size - 1)
+                                    return rowItems;
+                            } catch (ParseException e) {
+                                e.printStackTrace();
                             }
 
-                            if (adapter != null)
 
-                                adapter.notifyDataSetChanged();
                         }
 
-
-                    } else {
-
-                        Log.d("score", "Error: " + e.getMessage());
                     }
+                } catch (
+                        ParseException e1
+                        )
 
+                {
+                    e1.printStackTrace();
                 }
 
+            }
 
-            });
+
+            return rowItems;
+
+
+        }
+
+
+        @Override
+        protected void onPostExecute(List<RowItem> items) {
+
+
+            adapter = new CustomAdapter(mActivity, items);
+
+            adapter.notifyDataSetChanged();
+
+
+            animationAdapter = new SwingLeftInAnimationAdapter(adapter);
+            animationAdapter.notifyDataSetChanged();
+
+            if (getListView() != null)
+
+            {
+                animationAdapter.setAbsListView(getListView());
+
+
+                setListAdapter(animationAdapter);
+
+                if (animationAdapter.isEmpty()) {
+
+                    getListView().setVisibility(View.INVISIBLE);
+                    tv.setVisibility(View.VISIBLE);
+                    tv.setText("You don't have any friends!");
+
+
+                }
+            }
+            box.hideAll();
+
+
+            YoYo.with(Techniques.Wobble)
+                    .duration(700)
+                    .playOn(getActivity().findViewById(R.id.buttonFloat1));
+            swap.setVisibility(View.VISIBLE);
+
+
         }
 
 
     }
+
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {

@@ -26,10 +26,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -52,15 +55,17 @@ public class profilePic extends ActionBarActivity {
 
     Bitmap bitmap;
     private FlowLayout mFlowLayout1, mFlowLayout2,mFlowLayout3;
-    ArrayList<String> genLikeList, artLikeList,userfollows;
+    ArrayList<String> genLikeList, artLikeList,userfollows,usernamefollows;
+    TextView nogen,noart,nouser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile_pic);
+        setContentView(R.layout.activity_profile_pic); LinearLayout lay= (LinearLayout)findViewById(R.id.lin4);
 
+        YoYo.with(Techniques.FadeIn).duration(1000).playOn(lay);
 
         if (getActionBar() != null)
             getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -68,6 +73,11 @@ public class profilePic extends ActionBarActivity {
         mFlowLayout1 = (FlowLayout) findViewById(R.id.flowgen);
         mFlowLayout2 = (FlowLayout) findViewById(R.id.flowartist);
         mFlowLayout3 = (FlowLayout) findViewById(R.id.flowuser);
+
+
+        noart = (TextView) findViewById(R.id.noart);
+        nouser = (TextView) findViewById(R.id.nouser);
+        nogen = (TextView) findViewById(R.id.nogen);
 
 
 
@@ -96,6 +106,8 @@ public class profilePic extends ActionBarActivity {
         if (bio == null) dispBio.setText("Enter a bio to interact better with other users. ");
 
         else dispBio.setText(bio);
+        YoYo.with(Techniques.FadeIn).duration(500).playOn(dispBio);
+
 
 
         changeBio.setOnClickListener(new View.OnClickListener() {
@@ -112,6 +124,8 @@ public class profilePic extends ActionBarActivity {
                             Toast.LENGTH_SHORT).show();
                 } else {
                     dispBio.setText(actbio);
+                    YoYo.with(Techniques.Pulse).duration(500).playOn(dispBio);
+
                     getBio.setText("");
                     hideSoftKeyboard(com.asc.neetk.whatsplaying.profilePic.this);
 
@@ -218,6 +232,8 @@ public class profilePic extends ActionBarActivity {
                                         } else {
 
                                             email.setText(useremail);
+                                            YoYo.with(Techniques.FadeIn).duration(500).playOn(email);
+
 
                                             ParseUser currentUser = ParseUser.getCurrentUser();
                                             currentUser.setEmail(useremail);
@@ -260,6 +276,8 @@ public class profilePic extends ActionBarActivity {
             Drawable d = new BitmapDrawable(getResources(), bitmap1);
 
             profilePic.setImageDrawable(d);
+            YoYo.with(Techniques.FadeIn).duration(500).playOn(profilePic);
+
         }
 
 
@@ -276,11 +294,13 @@ public class profilePic extends ActionBarActivity {
             }
         });
         userfollows = (ArrayList<String>) ParseUser.getCurrentUser().get("Follows");
+        usernamefollows = (ArrayList<String>) ParseUser.getCurrentUser().get("folo");
         genLikeList = (ArrayList<String>) ParseUser.getCurrentUser().get("genLikes");
         artLikeList = (ArrayList<String>) ParseUser.getCurrentUser().get("artLikes");
 
 
         if (userfollows != null){
+
 
 
             for (int i = 0; i < userfollows.size(); i++) {
@@ -289,9 +309,12 @@ public class profilePic extends ActionBarActivity {
                     userfollows.remove(i);
                     continue;
                 }
+
                 addImage(mFlowLayout3, deletebllank);
 
             }
+            if( userfollows.size()==0) {nouser.setVisibility(View.VISIBLE);}
+
         }
 
         if (genLikeList != null) {
@@ -308,6 +331,12 @@ public class profilePic extends ActionBarActivity {
 
 
             }
+            if (genLikeList.isEmpty()) {
+                nogen.setVisibility(View.VISIBLE);
+            }
+
+
+        }
 
             if (artLikeList != null) {
                 for (int i = 0; i < artLikeList.size(); i++) {
@@ -318,10 +347,14 @@ public class profilePic extends ActionBarActivity {
                         continue;
                     }
 
+
+
                     addItem(mFlowLayout2, myString);
 
 
                 }
+
+                if(artLikeList.isEmpty()) {noart.setVisibility(View.VISIBLE);}
             }
 
 
@@ -340,6 +373,7 @@ public class profilePic extends ActionBarActivity {
                 subgen.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+
                         String msg = genTag.getText().toString();
                         genTag.setText("");
 
@@ -350,7 +384,7 @@ public class profilePic extends ActionBarActivity {
                                     "Enter some text",
                                     Toast.LENGTH_SHORT).show();
                         } else {
-
+                            nogen.setVisibility(View.GONE);
                             addItem(mFlowLayout1, msg);
                             genLikeList.add(msg);
 
@@ -372,6 +406,7 @@ public class profilePic extends ActionBarActivity {
                 subart.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+
                         String msg = artTag.getText().toString();
                         artTag.setText("");
 
@@ -381,6 +416,7 @@ public class profilePic extends ActionBarActivity {
                                     "Enter some text",
                                     Toast.LENGTH_SHORT).show();
                         } else {
+                            noart.setVisibility(View.GONE);
 
                             addItem(mFlowLayout2, msg);
                             artLikeList.add(msg);
@@ -394,7 +430,7 @@ public class profilePic extends ActionBarActivity {
                 });
             }
         }
-    }
+
 
     public void addItem(final FlowLayout mFlowLayout, String message) {
 
@@ -421,15 +457,21 @@ public class profilePic extends ActionBarActivity {
 
                 if (mFlowLayout == mFlowLayout1) {
 
+                    YoYo.with(Techniques.Wobble).duration(500).playOn(newView);
+
                     genLikeList.remove(index);
+                    if (genLikeList.isEmpty()) nogen.setVisibility(View.VISIBLE);
                     ParseUser user = ParseUser.getCurrentUser();
                     user.put("genLikes", genLikeList);
                     user.saveInBackground();
 
 
                 } else {
+                    YoYo.with(Techniques.Wobble).duration(500).playOn(newView);
+
 
                     artLikeList.remove(index);
+                    if (artLikeList.isEmpty()) noart.setVisibility(View.VISIBLE);
 
                     ParseUser user = ParseUser.getCurrentUser();
                     user.put("artLikes", artLikeList);
@@ -444,13 +486,17 @@ public class profilePic extends ActionBarActivity {
             }
         });
 
-        FlowLayout.LayoutParams params = new FlowLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.rightMargin = 10;
-        params.bottomMargin = 10;
-        newView.setLayoutParams(params);
+    FlowLayout.LayoutParams params = new FlowLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+    params.rightMargin = 10;
+    params.bottomMargin = 10;
+    newView.setLayoutParams(params);
 
-        mFlowLayout.addView(newView);
-    }
+    mFlowLayout.addView(newView);
+    YoYo.with(Techniques.FadeIn).duration(500).playOn(newView);
+
+
+
+}
 
 
     @Override
@@ -560,11 +606,15 @@ public class profilePic extends ActionBarActivity {
                         Drawable d = new BitmapDrawable(getResources(), bitmapsimplesize);
                         newView.setImageDrawable(d);
                         mFlowLayout.addView(newView);
+                        YoYo.with(Techniques.Pulse).duration(500).playOn(newView);
+
 
 
                     } else {
                         newView.setImageDrawable(getResources().getDrawable(R.drawable.profile1));
                         mFlowLayout.addView(newView);
+                        YoYo.with(Techniques.Pulse).duration(500).playOn(newView);
+
 
                     }
 
@@ -576,8 +626,14 @@ public class profilePic extends ActionBarActivity {
 
 
                             userfollows.remove(index);
+                            if (userfollows.isEmpty()) nouser.setVisibility(View.VISIBLE);
+                            YoYo.with(Techniques.Wobble).duration(500).playOn(newView);
+                            usernamefollows.remove(username);
+
                             ParseUser user = ParseUser.getCurrentUser();
                             user.put("Follows", userfollows );
+                            user.put("folo", usernamefollows);
+
                             user.saveInBackground();
 
                             mFlowLayout.removeViewAt(index);

@@ -2,8 +2,6 @@ package com.asc.neetk.whatsplaying;
 
 import android.app.DialogFragment;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,12 +15,15 @@ import android.widget.TextView;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
-import java.io.InputStream;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.net.URLEncoder;
-import java.util.concurrent.ExecutionException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -39,51 +40,21 @@ public class SongDialog extends DialogFragment {
     }
 
     View mView;
+    String fileName = "Somename.png";
 
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
 
-        StringBuilder stringBuilder = new StringBuilder("http://ws.audioscrobbler.com/2.0/");
-        stringBuilder.append("?method=album.getinfo");
-        stringBuilder.append("&api_key=");
-        stringBuilder.append("3d4c79881824afd6b4c7544b753d1024");
-
-        try {
-            stringBuilder.append("&artist=" + URLEncoder.encode(artist1, "UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-
-        try {
-            stringBuilder.append("&album=" + URLEncoder.encode(album1, "UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-
-        try {
-            String url = new RetrieveArt().execute(stringBuilder.toString()).get();
-
-            if (url != null)
-
-                Log.d("URL", url);
-
-            new LoadImage().execute(url);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-
-        Log.d("TAG", "onViewCreated");
 
     }
 
+    String url;
     String album1;
     String artist1;
+    String track1;
 
+    RetrieveArt task;
 
 
     @Override
@@ -98,11 +69,10 @@ public class SongDialog extends DialogFragment {
 
         Bundle bundle = this.getArguments();
 
-        final String track1 = bundle.getString("SongName");
-          artist1 = bundle.getString("Artist");
-         album1 = bundle.getString("Album");
+        track1 = bundle.getString("SongName");
+        artist1 = bundle.getString("Artist");
+        album1 = bundle.getString("Album");
         final String user1 = bundle.getString("User");
-
 
 
         final TextView user = (TextView) view.findViewById(R.id.sharedby);
@@ -128,9 +98,12 @@ public class SongDialog extends DialogFragment {
             public void onClick(View view) {
 
                 Intent intent = new
-                        Intent(getActivity().getApplicationContext(),playSong.class);
-                intent.putExtra("Songname",track1);
-                intent.putExtra("Artist",artist1);
+                        Intent(getActivity().getApplicationContext(), tutsPlayer.class);
+                intent.putExtra("Songname", track1);
+                intent.putExtra("Artist", artist1);
+                intent.putExtra("Album", album1);
+                intent.putExtra("picname", fileName);
+                intent.putExtra("url", url);
                 startActivity(intent);
                 /*String acttrck = track1.replace(" ", "%20");
                 String actart = artist1.replace(" ", "%20");
@@ -140,8 +113,6 @@ public class SongDialog extends DialogFragment {
 
                 final Intent browserIntent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url));
                 startActivity(browserIntent); */
-
-
 
 
             }
@@ -163,74 +134,100 @@ public class SongDialog extends DialogFragment {
         });
 
 
+        StringBuilder stringBuilder = new StringBuilder("http://ws.audioscrobbler.com/2.0/");
+        stringBuilder.append("?method=album.getinfo");
+        stringBuilder.append("&api_key=");
+        stringBuilder.append("3d4c79881824afd6b4c7544b753d1024");
+
+        try {
+            stringBuilder.append("&artist=" + URLEncoder.encode(artist1, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+
+        try {
+            stringBuilder.append("&album=" + URLEncoder.encode(album1, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+
+        task = (RetrieveArt) new RetrieveArt().execute(stringBuilder.toString());
+
+        Log.d("TAG", "onViewCreated");
+
+
         return view;
+    }
+
+
+    @Override
+    public void onDestroy() {
+
+        super.onDestroy();
+        task.cancel(true);
+
+
     }
 
     CircleImageView img;
 
-    Bitmap bitmap;
 
 
-    private class LoadImage extends AsyncTask<String, String, Bitmap> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
 
-        }
+    public class RetrieveArt extends AsyncTask<String, Void, String> {
 
-        protected Bitmap doInBackground(String... args) {
+        protected String doInBackground(String... urls) {
+            String albumArtUrl = null;
             try {
+                XMLParser parser = new XMLParser();
+                String xml = parser.getXmlFromUrl(urls[0]); // getting XML from URL
+                Document doc = parser.getDomElement(xml);
+                NodeList nl = doc.getElementsByTagName("image");
+                for (int i = 0; i < nl.getLength(); i++) {
+                    Element e = (Element) nl.item(i);
 
-
-
-                bitmap = BitmapFactory.decodeStream((InputStream) new URL(args[0]).getContent());
-
+                    if (e.getAttribute("size").contentEquals("large")) {
+                        albumArtUrl = parser.getElementValue(e);
+                    }
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return bitmap;
+            return albumArtUrl;
         }
 
-        protected void onPostExecute(Bitmap image) {
+
+        protected void onPostExecute(String url1) {
+
+            url = url1;
 
 
+            if (url1 != null && !url1.equals("")) {
+
+                Picasso.with(getActivity().getApplicationContext())
+                        .load(url1)
+                        .fit()
+                        .noFade()
+                        .into(img, new Callback.EmptyCallback() {
+                            @Override
+                            public void onSuccess() {
 
 
-            if (image != null) {
+                                YoYo.with(Techniques.RotateIn)
+                                        .duration(300)
+                                        .playOn(img);
 
 
-
-                img = (CircleImageView) mView.findViewById(R.id.coverfor);
-
-                YoYo.with(Techniques.RotateOut)
-                        .duration(100)
-                        .playOn(img);
+                            }
 
 
-                img.setImageBitmap(image);
-
-
-                YoYo.with(Techniques.RotateIn)
-                        .duration(300)
-                        .playOn(img);
-
-
-                img.setImageBitmap(image);
-
-            } else {
-
-                img = (CircleImageView) mView.findViewById(R.id.coverfor);
-
-                img.setImageDrawable(getResources().getDrawable(R.drawable.albumart));
-
-                YoYo.with(Techniques.RotateIn)
-                        .duration(500)
-                        .playOn(img);
+                        });
 
 
             }
         }
+
     }
-
-
 }

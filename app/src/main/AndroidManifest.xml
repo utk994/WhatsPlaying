@@ -7,7 +7,6 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
-
     <application
         android:name=".Appsett"
         android:allowBackup="true"
@@ -21,6 +20,8 @@
             android:name="com.parse.CLIENT_KEY"
             android:value="@string/parse_client_key" />
 
+        <service android:name=".MusicService" />
+
         <service
             android:name=".MyService"
             android:enabled="true"
@@ -29,9 +30,6 @@
                 <action android:name="android.intent.action.CONFIGURATION_CHANGED" />
             </intent-filter>
         </service>
-
-        <service android:name="com.asc.neetk.whatsplaying.MusicService" />
-
 
         <activity android:name="com.soundcloud.android.crop.CropImageActivity" />
         <activity
@@ -127,7 +125,7 @@
             android:name=".playSong"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="Player"
-            android:parentActivityName=".central" >
+             android:parentActivityName=".central" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.asc.neetk.whatsplaying.central" />
@@ -135,11 +133,16 @@
         <activity
             android:name=".tutsPlayer"
             android:label="@string/title_activity_tuts_player"
+            android:launchMode="singleTop"
             android:parentActivityName=".central"
-            android:launchMode="singleTop">
+            android:configChanges="keyboardHidden|orientation|screenSize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.asc.neetk.whatsplaying.central" />
+        </activity>
+        <activity
+            android:name=".circbartest"
+            android:label="@string/title_activity_circbartest" >
         </activity>
     </application>
 

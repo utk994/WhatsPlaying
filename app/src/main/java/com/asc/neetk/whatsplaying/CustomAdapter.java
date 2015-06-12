@@ -48,6 +48,14 @@ public class CustomAdapter extends BaseAdapter {
     }
 
 
+    public void remove(int position) {
+        rowItem.remove(position);
+
+
+    }
+
+
+
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
 

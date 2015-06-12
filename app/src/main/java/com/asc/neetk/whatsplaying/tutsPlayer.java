@@ -1,69 +1,237 @@
 package com.asc.neetk.whatsplaying;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.MediaController;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
+import com.squareup.picasso.Picasso;
+import com.triggertrap.seekarc.SeekArc;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
+import java.util.Collections;
+import java.util.Comparator;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import de.voidplus.soundcloud.SoundCloud;
 import de.voidplus.soundcloud.Track;
+import mehdi.sakout.dynamicbox.DynamicBox;
 
 
-public class tutsPlayer extends ActionBarActivity implements MediaController.MediaPlayerControl {
+public class tutsPlayer extends Activity {
 
     private MusicService musicSrv;
     private Intent playIntent;
     private boolean musicBound = false;
-    private MusicController controller;
+    private static final String TAG = "AudioPlayer";
+
+    Handler mHandler = new Handler();
+
 
     private String url;
     private String title;
-    String song;
+
     private boolean paused = false, playbackPaused = false;
+
+    private RetreiveUrl task;
+
+    SeekArc bar;
+    CircleImageView albumart;
+    ImageView play;
+    ImageView pause;
+    ImageView replay;
+
+
+    TextView albumname;
+    TextView songname;
+    TextView artistname;
+
+    TextView time;
+
+    Button hiddenBut;
+
+    private Utilities utils;
+
+
+    String song;
+
+
+    String artist;
+    String album;
+    DynamicBox box;
+
+
+    Bitmap bitmap;
+    String imageurl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tuts_player);
+        setContentView(R.layout.activity_circbartest);
+
+        box = new DynamicBox(this, findViewById(R.id.relativm));
+
+        utils = new Utilities();
+
+        View customView = getLayoutInflater().inflate(R.layout.songnotfound, null, false);
+        box.addCustomView(customView, "noSong");
+        box.setLoadingMessage("Loding ...");
+        box.showLoadingLayout();
 
         Bundle extras = getIntent().getExtras();
-        song= extras.getString("Songname");
-        setController();
+        song = extras.getString("Songname");
+        artist = extras.getString("Artist");
+        album = extras.getString("Album");
+
+        imageurl = extras.getString("url");
 
 
-
+        task = (RetreiveUrl) new RetreiveUrl().execute(song, artist);
 
 
     }
 
     @Override
     protected void onStart() {
-        try {
-            url = new RetreiveUrl().execute(song).get();
 
-            playIntent = new Intent(this, MusicService.class);
-            bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
-            startService(playIntent);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+
         super.onStart();
 
     }
+
+
+
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+
+            setContentView(R.layout.activity_circbartest);
+
+
+
+        songname = (TextView) findViewById(R.id.player_song);
+        artistname = (TextView) findViewById(R.id.player_artist);
+        albumname = (TextView) findViewById(R.id.player_album);
+
+        songname.setText(song);
+        artistname.setText(artist);
+        albumname.setText(album);
+
+
+        bar = (SeekArc) findViewById(R.id.seekArc);
+        pause = (ImageView) findViewById(R.id.pauseicon);
+        play = (ImageView) findViewById(R.id.playicon);
+        play.setVisibility(View.INVISIBLE);
+        pause.setVisibility(View.INVISIBLE);
+        bar.setVisibility(View.VISIBLE);
+
+
+
+
+        songname.setText(song);
+        artistname.setText(artist);
+        albumname.setText(album);
+
+
+        time = (TextView) findViewById(R.id.seektime);
+
+
+        time.setText("" + utils.milliSecondsToTimer(musicSrv.getPosn()));
+
+
+
+       if (musicSrv != null) bar.setProgress(musicSrv.getPosn());
+
+        bar.setOnSeekArcChangeListener(new SeekArc.OnSeekArcChangeListener() {
+            @Override
+            public void onProgressChanged(SeekArc seekArc, int progress, boolean fromUser) {
+
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekArc seekBar) {
+                // remove message Handler from updating progress bar
+                mHandler.removeCallbacks(mUpdateTimeTask);
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekArc seekBar) {
+                mHandler.removeCallbacks(mUpdateTimeTask);
+
+
+                // forward or backward to certain seconds
+                musicSrv.seek(seekBar.getProgress());
+
+                // update timer progress again
+                updateProgressBar();
+            }
+        });
+
+        albumart = (CircleImageView) findViewById(R.id.circlealbum);
+
+
+        if (imageurl != null && !imageurl.equals(""))
+            Picasso.with(tutsPlayer.this)
+                    .load(imageurl)
+                    .fit()
+                    .into(albumart)
+                    ;
+
+
+        replay = (ImageView) findViewById(R.id.replay);
+
+        hiddenBut = (Button) findViewById(R.id.hiddenbutton);
+
+        if (bitmap != null)
+            albumart.setImageBitmap(bitmap);
+
+        else {
+            albumart.setImageDrawable(getResources().getDrawable(R.drawable.albumart));
+        }
+        albumart.setVisibility(View.VISIBLE);
+
+
+        hiddenBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (musicSrv.isPng()) {
+
+                    pause();
+
+                } else {
+
+
+                    start();
+                }
+            }
+        });
+
+
+
+
+    }
+
+
 
 
     //connect to the service
@@ -75,11 +243,101 @@ public class tutsPlayer extends ActionBarActivity implements MediaController.Med
             //get service
             musicSrv = binder.getService();
             //pass list
-            if (url != null) {
-                musicSrv.setUrl(url);
-                musicSrv.setTitle(title);
-                musicBound = true;
+
+            musicSrv.setUrl(url);
+            musicSrv.setTitle(title);
+
+            musicBound = true;
+
+
+            songname = (TextView) findViewById(R.id.player_song);
+            artistname = (TextView) findViewById(R.id.player_artist);
+            albumname = (TextView) findViewById(R.id.player_album);
+
+            songname.setText(song);
+            artistname.setText(artist);
+            albumname.setText(album);
+
+
+            bar = (SeekArc) findViewById(R.id.seekArc);
+            pause = (ImageView) findViewById(R.id.pauseicon);
+            play = (ImageView) findViewById(R.id.playicon);
+            play.setVisibility(View.INVISIBLE);
+            pause.setVisibility(View.INVISIBLE);
+            bar.setVisibility(View.VISIBLE);
+
+            bar.setOnSeekArcChangeListener(new SeekArc.OnSeekArcChangeListener() {
+                @Override
+                public void onProgressChanged(SeekArc seekArc, int progress, boolean fromUser) {
+
+
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekArc seekBar) {
+                    // remove message Handler from updating progress bar
+                    mHandler.removeCallbacks(mUpdateTimeTask);
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekArc seekBar) {
+                    mHandler.removeCallbacks(mUpdateTimeTask);
+
+
+                    // forward or backward to certain seconds
+                    musicSrv.seek(seekBar.getProgress());
+
+                    // update timer progress again
+                    updateProgressBar();
+                }
+            });
+
+            time = (TextView) findViewById(R.id.seektime);
+            albumart = (CircleImageView) findViewById(R.id.circlealbum);
+
+
+            if (imageurl != null && !imageurl.equals(""))
+                Picasso.with(tutsPlayer.this)
+                        .load(imageurl)
+                        .fit()
+                        .into(albumart)
+                        ;
+
+
+            replay = (ImageView) findViewById(R.id.replay);
+
+            hiddenBut = (Button) findViewById(R.id.hiddenbutton);
+
+            if (bitmap != null)
+                albumart.setImageBitmap(bitmap);
+
+            else {
+                albumart.setImageDrawable(getResources().getDrawable(R.drawable.albumart));
             }
+            albumart.setVisibility(View.VISIBLE);
+            bar.setMax(musicSrv.getDur());
+            bar.setProgress(0);
+
+            musicSrv.playSong();
+
+            hiddenBut.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (musicSrv.isPng()) {
+
+                        pause();
+
+                    } else {
+
+
+                        start();
+                    }
+                }
+            });
+
+            updateProgressBar();
+
+
         }
 
         @Override
@@ -88,13 +346,21 @@ public class tutsPlayer extends ActionBarActivity implements MediaController.Med
         }
     };
 
+    private void start() {
+        play.setVisibility(View.VISIBLE);
+        YoYo.with(Techniques.FadeIn).duration(300).playOn(play);
+        YoYo.with(Techniques.FadeOut).duration(600).playOn(play);
 
-    private void setController() {
-        controller = new MusicController(this);
-        controller.setMediaPlayer(this);
-        controller.setAnchorView(findViewById(R.id.song_list));
-        controller.setEnabled(true);
+        musicSrv.go();
     }
+
+    private void pause() {
+        pause.setVisibility(View.VISIBLE);
+        YoYo.with(Techniques.FadeIn).duration(300).playOn(pause);
+        YoYo.with(Techniques.FadeOut).duration(600).playOn(pause);
+        musicSrv.pausePlayer();
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -105,7 +371,17 @@ public class tutsPlayer extends ActionBarActivity implements MediaController.Med
 
     @Override
     protected void onDestroy() {
-        stopService(playIntent);
+
+
+        mHandler.removeCallbacks(null);
+
+        task.cancel(true);
+
+        if (playIntent != null)
+
+            unbindService(musicConnection);
+        this.stopService(new Intent(this, MusicService.class));
+
         musicSrv = null;
         super.onDestroy();
     }
@@ -118,80 +394,8 @@ public class tutsPlayer extends ActionBarActivity implements MediaController.Med
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void start() {
-        musicSrv.go();
-    }
 
-    @Override
-    public void pause() {
-        playbackPaused = true;
-        musicSrv.pausePlayer();
 
-    }
-
-    @Override
-    public int getDuration() {
-        if (musicSrv != null && musicBound && musicSrv.isPng())
-            return musicSrv.getDur();
-        else return 0;
-    }
-
-    @Override
-    public int getCurrentPosition() {
-        if (musicSrv != null && musicBound && musicSrv.isPng())
-            return musicSrv.getPosn();
-        else return 0;
-    }
-
-    @Override
-    public void seekTo(int i) {
-        musicSrv.seek(i);
-
-    }
-
-    @Override
-    public boolean isPlaying() {
-        if (musicSrv != null && musicBound)
-            return musicSrv.isPng();
-        return false;
-    }
-
-    @Override
-    public int getBufferPercentage() {
-        return 0;
-    }
-
-    @Override
-    public boolean canPause() {
-        return true;
-    }
-
-    @Override
-    public boolean canSeekBackward() {
-        return true;
-    }
-
-    @Override
-    public boolean canSeekForward() {
-        return true;
-    }
-
-    @Override
-    public int getAudioSessionId() {
-        return 0;
-    }
-
-    public class MusicController extends MediaController {
-
-        public MusicController(Context c) {
-            super(c);
-        }
-
-        public void hide() {
-        }
-
-    }
 
     @Override
     protected void onPause() {
@@ -203,14 +407,14 @@ public class tutsPlayer extends ActionBarActivity implements MediaController.Med
     protected void onResume() {
         super.onResume();
         if (paused) {
-            setController();
+
             paused = false;
         }
     }
 
     @Override
     protected void onStop() {
-        controller.hide();
+
         super.onStop();
     }
 
@@ -219,23 +423,58 @@ public class tutsPlayer extends ActionBarActivity implements MediaController.Med
         musicSrv.setUrl(url);
         musicSrv.playSong();
         if (playbackPaused) {
-            setController();
+
             playbackPaused = false;
         }
-        controller.show(0);
+
     }
 
 
+    public void updateProgressBar() {
+        mHandler.postDelayed(mUpdateTimeTask, 100);
+    }
+
+
+    private Runnable mUpdateTimeTask = new Runnable() {
+        public void run() {
+
+
+
+            if (musicSrv != null && musicSrv.present() && musicSrv.isPng())  {
+
+
+                box.hideAll();
+
+
+                long totalDuration = musicSrv.getDur();
+
+                bar.setMax(musicSrv.getDur());
+                long currentDuration = musicSrv.getPosn();
+
+                time.setText("" + utils.milliSecondsToTimer(currentDuration));
+
+                // Updating progress bar
+                int progress = (int) (utils.getProgressPercentage(currentDuration, totalDuration));
+                //Log.d("Progress", ""+progress);
+                bar.setProgress(musicSrv.getPosn());
+
+
+            }
+
+
+            // Running this thread after 100 milliseconds
+            mHandler.postDelayed(this, 100);
+        }
+    };
+
     public class RetreiveUrl extends AsyncTask<String, Void, String> {
-        String use;
-        ArrayList<Track> result;
 
 
         @Override
         protected String doInBackground(String... urls) {
 
-            String song = urls[0].substring(0, 6);
 
+            String use = null;
 
             try {
                 SoundCloud soundcloud = new SoundCloud(
@@ -243,29 +482,99 @@ public class tutsPlayer extends ActionBarActivity implements MediaController.Med
                         "1d87b4e3d9930f116fb604b7f7e3b209"
                 );
 
+                ArrayList<Track> streamable_tracks = soundcloud.get("tracks", new String[]{
+
+                        "q", song + " " + artist,
+                        "filter", "downloadable",
+
+                });
+
+                Collections.sort(streamable_tracks, new Comparator<Track>() {
+                    public int compare(Track o1, Track o2) {
+                        if (o1.getPlaybackCount() == o2.getPlaybackCount())
+                            return 0;
+                        return o1.getPlaybackCount() < o2.getPlaybackCount() ? -1 : 1;
+                    }
+                });
+
+                Collections.reverse(streamable_tracks);
 
 
-                result = soundcloud.findTrack(song);
-            int i;
+                for (int j = 0; j < streamable_tracks.size(); j++)
 
-            for (i = 0; i < result.size() && use == null; i++) {
-                Track acttrack = result.get(i);
-                title = acttrack.getTitle();
+                {
 
-                use = acttrack.getStreamUrl();
-            }
+
+                    String title = streamable_tracks.get(j).getTitle().toLowerCase();
+
+                    Boolean bool = title.toLowerCase().contains("remix") && !(song.toLowerCase().contains("remix"));
+                    Boolean bool1 = title.toLowerCase().contains("live") && !(song.toLowerCase().contains("live"));
+                    Boolean bool2 = title.toLowerCase().contains("soundtrack") && !(song.toLowerCase().contains("soundtrack"));
+                    Boolean bool3 = title.toLowerCase().contains("cover") && !(song.toLowerCase().contains("cover"));
+
+
+                    if (!bool && !bool1 && !bool2 && !bool3) {
+                        use = streamable_tracks.get(j).getStreamUrl();
+                        break;
+                    }
+
+                }
+
+
+                Log.d("abcd", use);
+
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            Log.d("abcs", use);
 
 
             return use;
 
         }
 
+
         @Override
-        protected void onPostExecute(String url) {
+        protected void onPostExecute(String url1) {
+
+            if (url1 != null) {
+
+                url = url1;
+
+
+                Log.d("check1", url1);
+
+
+                if (playIntent == null) {
+                    playIntent = new Intent(tutsPlayer.this, MusicService.class);
+                    bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
+                    startService(playIntent);
+
+
+                }
+            } else {
+
+                box.showCustomView("noSong");
+                Button search = (Button) findViewById(R.id.searcho);
+
+
+                search.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String acttrck = song.replace(" ", "%20");
+                        String actart = artist.replace(" ", "%20");
+
+                        final String url = "https://soundcloud.com/search/sounds?q=" + acttrck + "%20" + actart;
+
+
+                        final Intent browserIntent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url));
+                        startActivity(browserIntent);
+
+                    }
+                });
+
+
+            }
 
 
         }
@@ -273,4 +582,10 @@ public class tutsPlayer extends ActionBarActivity implements MediaController.Med
 
 
 }
+
+
+
+
+
+
 

@@ -45,6 +45,8 @@ public class TabbedFragment extends Fragment {
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setCurrentItem(0);
 
+       // mViewPager.setPageTransformer(true, new FlipHorizontalTransformer());
+
 
         return v;
     }

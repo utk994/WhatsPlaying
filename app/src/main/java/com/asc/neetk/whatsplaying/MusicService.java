@@ -6,28 +6,30 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
 
+import wseemann.media.FFmpegMediaPlayer;
+
 /**
  * Created by utk994 on 03/06/15.
  */
-public class MusicService extends Service implements
-        MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
-        MediaPlayer.OnCompletionListener{
+public class MusicService extends Service {
 
+private FFmpegMediaPlayer player;
 
-private MediaPlayer player;
 //song list
-private String url;
+public String url = "";
+
+    boolean present= false;
 //current position
 private int songPosn;
     private final IBinder musicBind = new MusicBinder();
+
+
 
 
 
@@ -38,7 +40,7 @@ private int songPosn;
 
             songPosn=0;
 
-            player = new MediaPlayer();
+            player = new FFmpegMediaPlayer();
             initMusicPlayer();
         }
 
@@ -48,9 +50,46 @@ private int songPosn;
             player.setWakeMode(getApplicationContext(),
                     PowerManager.PARTIAL_WAKE_LOCK);
             player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            player.setOnPreparedListener(this);
-            player.setOnCompletionListener(this);
-            player.setOnErrorListener(this);
+            player.setOnPreparedListener(new FFmpegMediaPlayer.OnPreparedListener() {
+                @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+                @Override
+                public void onPrepared(FFmpegMediaPlayer fFmpegMediaPlayer) {
+                    present = true;
+                    fFmpegMediaPlayer.start();
+
+                    Intent notIntent = new Intent(getApplicationContext(), tutsPlayer.class);
+                    notIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    PendingIntent pendInt = PendingIntent.getActivity(getApplicationContext(), 0,
+                            notIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                    Notification.Builder builder = new Notification.Builder(getApplicationContext());
+
+                    builder.setContentIntent(pendInt)
+                            .setSmallIcon(R.drawable.play)
+                            .setTicker(songTitle)
+                            .setOngoing(true)
+                            .setContentTitle("Playing")
+                            .setContentText(songTitle);
+                    Notification not = builder.build();
+
+                    startForeground(NOTIFY_ID, not);
+
+                }
+            });
+            player.setOnCompletionListener(new FFmpegMediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(FFmpegMediaPlayer fFmpegMediaPlayer) {
+
+                    fFmpegMediaPlayer.pause();
+                }
+            });
+            player.setOnErrorListener(new FFmpegMediaPlayer.OnErrorListener() {
+                @Override
+                public boolean onError(FFmpegMediaPlayer fFmpegMediaPlayer, int i, int i1) {
+                    fFmpegMediaPlayer.reset();
+                    return false;
+                }
+            });
         }
 
 
@@ -77,54 +116,33 @@ private int songPosn;
         player.release();
         return false;
     }
-    @Override
-    public void onCompletion(MediaPlayer mp) {
-        mp.stop();
-
-        }
 
 
-    @Override
-    public boolean onError(MediaPlayer mp, int what, int extra) {
-        mp.reset();
-        return false;
-    }
+
+
 
     private String songTitle="";
     private static final int NOTIFY_ID=1;
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    @Override
-    public void onPrepared(MediaPlayer mp) {
-        //start playback
-        mp.start();
-        Intent notIntent = new Intent(this, tutsPlayer.class);
-        notIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendInt = PendingIntent.getActivity(this, 0,
-                notIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Notification.Builder builder = new Notification.Builder(this);
-
-        builder.setContentIntent(pendInt)
-                .setSmallIcon(R.drawable.play)
-                .setTicker(songTitle)
-                .setOngoing(true)
-                .setContentTitle("Playing")
-        .setContentText(songTitle);
-        Notification not = builder.build();
-
-        startForeground(NOTIFY_ID, not);
-    }
 
     @Override
     public void onDestroy() {
+
+
         stopForeground(true);
     }
 
 
+
+    public boolean present ()
+    {
+        return (present);
+
+    }
     public void playSong(){
         player.reset();
         try{
-            player.setDataSource(getApplicationContext(), Uri.parse(url));
+            player.setDataSource(url);
         } catch(Exception e){
             Log.e("MUSIC SERVICE", "Error setting data source", e);
         }
@@ -148,6 +166,7 @@ private int songPosn;
     public void pausePlayer(){
         player.pause();
     }
+
 
     public void seek(int posn){
         player.seekTo(posn);

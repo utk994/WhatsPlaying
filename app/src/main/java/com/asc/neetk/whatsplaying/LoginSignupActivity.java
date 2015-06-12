@@ -13,6 +13,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.parse.LogInCallback;
 import com.parse.ParseUser;
 
@@ -20,7 +22,7 @@ import com.parse.ParseUser;
 public class LoginSignupActivity extends Activity {
     // Declare Variables
     Button loginbutton;
-    Button signup;
+    TextView signup;
     String usernametxt;
     String passwordtxt;
     EditText password;
@@ -39,7 +41,7 @@ public class LoginSignupActivity extends Activity {
 
         // Locate Buttons in main.xml
         loginbutton = (Button) findViewById(R.id.login);
-        signup = (Button) findViewById(R.id.signup);
+        signup = (  TextView) findViewById(R.id.signuptxt);
 
         // Login Button Click Listener
         loginbutton.setOnClickListener(new View.OnClickListener() {
@@ -76,7 +78,13 @@ public class LoginSignupActivity extends Activity {
 
                                                 finish();
                                             } else {
+
+
                                                 progressDialog.dismiss();
+
+                                                YoYo.with(Techniques.Shake).duration(200).playOn(password);
+                                                YoYo.with(Techniques.Shake).duration(200).playOn(username) ;
+
                                                 Toast.makeText(
                                                         getApplicationContext(),
                                                         "Please check the details entered. ",
@@ -136,7 +144,7 @@ public class LoginSignupActivity extends Activity {
 
                 });
 
-        Button forgotPassButt = (Button) findViewById(R.id.forgotpass);
+        TextView forgotPassButt = (TextView) findViewById(R.id.forgotpass);
 
         if (forgotPassButt != null) {
 

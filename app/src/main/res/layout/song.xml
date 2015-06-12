@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fbutton="http://schemas.android.com/apk/res-auto"
     android:id="@+id/song"
     android:layout_width="match_parent" android:layout_height="800dp"
     android:layout_gravity="center" android:orientation="horizontal"
@@ -83,12 +84,20 @@
             android:textSize="14dp"
             android:textColor="@color/purple1" />
 
-        <Button
-            android:layout_width="80dp"
-            android:layout_height="40dp"
+        <info.hoang8f.widget.FButton
             android:id="@+id/listenonline"
-            android:background="@drawable/listenonline1"
-            android:layout_marginTop="20dp"
-            android:layout_gravity="center_horizontal" />
+            android:layout_width="120dp"
+            android:layout_height="40dp"
+            android:textAllCaps="false"
+            android:text="Listen"
+            android:textColor="@android:color/white"
+            android:textSize="20dp"
+            fbutton:buttonColor="@color/darkpurple"
+            fbutton:shadowEnabled="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="15dp"
+
+            android:layout_marginBottom="10dp" />
+
     </LinearLayout>
 </LinearLayout>

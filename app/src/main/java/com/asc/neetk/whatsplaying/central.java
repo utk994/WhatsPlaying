@@ -1,5 +1,6 @@
 package com.asc.neetk.whatsplaying;
 
+import android.animation.ValueAnimator;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -15,8 +16,10 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
@@ -58,6 +61,8 @@ public class central extends ActionBarActivity {
     String NAME = ParseUser.getCurrentUser().getUsername();
 
     ParseFile user1 = ParseUser.getCurrentUser().getParseFile("profilePic");
+    View header;
+    ImageView headerpic;
 
 
     private static final String TAG = central.class.getSimpleName();
@@ -93,14 +98,19 @@ public class central extends ActionBarActivity {
         }
 
 
+
+
+
         mTitle = mDrawerTitle = getTitle();
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
         LayoutInflater inflater = getLayoutInflater();
-        View header = inflater.inflate(R.layout.header, mDrawerList, false);
-        ImageView headerpic = (ImageView) header.findViewById(R.id.drawer_pic);
+        header = inflater.inflate(R.layout.header, mDrawerList, false);
+        headerpic = (ImageView) header.findViewById(R.id.drawer_pic);
         headerpic.setImageDrawable(d);
+
+
         TextView name =(TextView) header.findViewById(R.id.drawer_name);
         name.setText(NAME);
         mDrawerList.addHeaderView(header, null, false);
@@ -134,11 +144,25 @@ public class central extends ActionBarActivity {
                 R.string.drawer_close
         ) {
             public void onDrawerClosed(View view) {
+                ValueAnimator anim = ValueAnimator.ofFloat(1, 0);
+                anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                        float slideOffset = (Float) valueAnimator.getAnimatedValue();
+                        mDrawerToggle.onDrawerSlide(mDrawerLayout, slideOffset);
+                    }
+                });
+                anim.setInterpolator(new DecelerateInterpolator());
+// You can change this duration to more closely match that of the default animation.
+                anim.setDuration(500);
+                anim.start();
+
                 getSupportActionBar().setTitle(mTitle);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu
             }
 
             public void onDrawerOpened(View drawerView) {
+
                 getSupportActionBar().setTitle(mDrawerTitle);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu
             }
@@ -151,12 +175,26 @@ public class central extends ActionBarActivity {
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.root_frame, TabbedFragment.newInstance()).commit();
+                    .replace(R. id.root_frame, TabbedFragment.newInstance()).commit();
         }
+
 
 
         //
 
+    }
+
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+        if (drawerOpen) {
+
+
+        }
+
+
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -167,6 +205,42 @@ public class central extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
+
+    public void open1() {
+
+
+        if (user1 == null){  d = getResources().getDrawable(R.drawable.profile);
+        }
+
+        else {
+
+            byte[] bitmapdata = new byte[0];
+            try {
+                bitmapdata = user1.getData();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            Bitmap bitmap1 = BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
+
+            d = new BitmapDrawable(getResources(), bitmap1);
+
+        }
+
+
+        // OR
+        LayoutInflater inflater = getLayoutInflater();
+        View header = inflater.inflate(R.layout.header, mDrawerList, false);
+        ImageView headerpic = (ImageView) header.findViewById(R.id.drawer_pic);
+        headerpic.setImageDrawable(d);
+
+
+
+
+        mDrawerLayout.addView(header);
+    }
+
 
 
 

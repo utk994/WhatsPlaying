@@ -115,7 +115,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp" />
 
-        <View style="@style/Divider" />
+        <View style="@style/Divider"
+            android:layout_marginTop="10dp" />
 
         <TextView
             android:id="@+id/filler2"
@@ -134,7 +135,8 @@
             android:layout_marginTop="5dp" />
 
 
-        <View style="@style/Divider" />
+        <View style="@style/Divider"
+            android:layout_marginTop="10dp" />
 
         <TextView
             android:id="@+id/filler3"

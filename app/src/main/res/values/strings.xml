@@ -118,4 +118,6 @@
     <string name="title_activity_preferences">Preferences</string>
     <string name="title_activity_play_song">playSong</string>
     <string name="title_activity_tuts_player">tutsPlayer</string>
+    <string name="title_activity_circbartest">circbartest</string>
+    <string name="title_activity_lock_overlay">lockOverlay</string>
 </resources>

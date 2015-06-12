@@ -29,8 +29,11 @@ public class MyService extends Service {
     String song1 = "";
     Integer timedur;
     Boolean vib;
+    Handler handlerTimer = new Handler();
+    Runnable r_Alerts;
 
     SharedPreferences prefs;
+
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -45,8 +48,7 @@ public class MyService extends Service {
         timedur = prefs.getInt("time", 5);
 
 
-
-         vib = prefs.getBoolean("vibrate", true);
+        vib = prefs.getBoolean("vibrate", true);
         Log.d(TAG, "onCreate()");
 
 
@@ -91,6 +93,11 @@ public class MyService extends Service {
         public void onReceive(final Context context, Intent intent) {
 
 
+
+            handlerTimer.removeCallbacksAndMessages(null);
+
+
+
             final String artist1 = intent.getStringExtra("artist");
             final String album1 = intent.getStringExtra("album");
             final String track1 = intent.getStringExtra("track");
@@ -100,24 +107,24 @@ public class MyService extends Service {
             Log.v("tag1", song1);
 
 
-
-
-
-
             c = Calendar.getInstance();
-            seconds = c.get(Calendar.SECOND) - seconds;
-
-            if (seconds > timedur)
+           // seconds = c.get(Calendar.SECOND) - seconds;
 
 
-            {
-                if (vib)
 
-                {
-                    Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-                    // Vibrate for 500 milliseconds
-                    v.vibrate(500);
-                }
+
+
+                  r_Alerts = new Runnable() {
+                    public void run()
+
+
+                    {   if (vib)
+
+                        {
+                            Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+                            // Vibrate for 500 milliseconds
+                            v.vibrate(500);
+                        }
 
 
                         Intent i = new Intent(getBaseContext(), fouract.class);
@@ -127,18 +134,18 @@ public class MyService extends Service {
                         i.putExtra("Track", track1);
                         i.putExtra("Artist", artist1);
                         i.putExtra("Album", album1);
-                        c = Calendar.getInstance();
-                        seconds = c.get(Calendar.SECOND);
-                    getApplication().startActivity(i);
+                        //c = Calendar.getInstance();
+                       // seconds = c.get(Calendar.SECOND);
+                        getApplication().startActivity(i);
+                    }
+                };
+
+               handlerTimer.postDelayed(r_Alerts,5000);
 
 
                 // do something - or do it not
 
 
-            } else {
-                c = Calendar.getInstance();
-                seconds = c.get(Calendar.SECOND);
-            }
 
 
 

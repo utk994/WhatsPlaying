@@ -17,10 +17,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -40,6 +43,7 @@ public class userProfile extends ActionBarActivity {
     String actbio;
     ParseUser user;
     ArrayList<String> userfollows;
+    ArrayList<String> currentUserfollows,currentuserfollowsID;
 
 
     @Override
@@ -47,14 +51,24 @@ public class userProfile extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
 
+
         if (getActionBar() != null)
             getActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+        LinearLayout lay= (LinearLayout)findViewById(R.id.lin3);
+
+        YoYo.with(Techniques.FadeIn).duration(1000).playOn(lay);
+
 
         Intent intent = getIntent();
         final String actuser = intent.getStringExtra("User");
 
         this.setTitle(actuser);
         final ImageView profilePic = (ImageView) findViewById(R.id.viewpropic);
+        profilePic.setImageDrawable(getResources().getDrawable(R.drawable.profile));
+
+
 
         mFlowLayout1 = (FlowLayout) findViewById(R.id.flowviewgen);
         mFlowLayout2 = (FlowLayout) findViewById(R.id.flowviewart);
@@ -100,20 +114,33 @@ public class userProfile extends ActionBarActivity {
                     final ParseUser currentUser = ParseUser.getCurrentUser();
 
 
-                    final ArrayList<String> currentUserfollows = (ArrayList) currentUser.get("folo");
+                     currentUserfollows = (ArrayList) currentUser.get("folo");
+                    currentuserfollowsID=(ArrayList)currentUser.get("Follows");
+
+                    follow.setVisibility(View.VISIBLE);
+
 
 
                     if (currentUser.getUsername().equals(actuser)) {
+
                         follow.setVisibility(View.INVISIBLE);
 
                     } else if (currentUserfollows.contains(actuser)) {
                         follow.setBackgroundResource(R.drawable.unfollow);
+
                         follow.setVisibility(View.VISIBLE);
+                        YoYo.with(Techniques.FadeIn).duration(500).playOn(follow);
+
+
 
                     } else {
                         follow.setBackgroundResource(R.drawable.follow);
                         follow.setVisibility(View.VISIBLE);
+                        YoYo.with(Techniques.FadeIn).duration(500).playOn(follow);
+
                     }
+
+
 
 
                     follow.setOnClickListener(new View.OnClickListener() {
@@ -121,23 +148,30 @@ public class userProfile extends ActionBarActivity {
                         public void onClick(View view) {
 
 
-                            if (userfollows != null)
-
                             {
                                 if (currentUser.getUsername().equals(actuser)) {
                                     follow.setVisibility(View.INVISIBLE);
 
                                 } else if (currentUserfollows.contains(actuser)) {
+                                    follow.setBackgroundResource(R.drawable.follow);
+                                    follow.setVisibility(View.VISIBLE);
                                     Toast.makeText(getApplicationContext(), "You unfollowed " + actuser, Toast.LENGTH_SHORT).show();
-                                    userfollows.remove(actuser);
+                                    currentuserfollowsID.remove(userId);
+                                    currentUserfollows.remove(actuser);
 
-                                    currentUser.put("Follows", userfollows);
+
+                                    currentUser.put("folo", currentUserfollows);
+                                    currentUser.saveInBackground();
+                                    currentUser.put("Follows",currentuserfollowsID);
                                     currentUser.saveInBackground();
 
                                 } else {
+                                    follow.setBackgroundResource(R.drawable.unfollow);
+                                    follow.setVisibility(View.VISIBLE);
+                                    currentUserfollows.add(actuser);
                                     // Log.d("Follows", userfollows.toString());
-                                    currentUser.addUnique("Follows", userId);
-                                    currentUser.addUnique("folo",actuser);
+                                    currentUser.add("Follows", userId);
+                                    currentUser.add("folo",actuser);
                                     currentUser.saveInBackground();
                                     Toast.makeText(getApplicationContext(), "Following " + actuser + "!", Toast.LENGTH_SHORT).show();
                                 }
@@ -199,9 +233,13 @@ public class userProfile extends ActionBarActivity {
                     if (actbio == null) {
                         viewbio.setText(actuser + " has not entered a bio.");
                         viewbio.setVisibility(View.VISIBLE);
+                        YoYo.with(Techniques.FadeIn).duration(500).playOn(viewbio);
+
                     } else {
                         viewbio.setText(actbio);
                         viewbio.setVisibility(View.VISIBLE);
+                        YoYo.with(Techniques.FadeIn).duration(500).playOn(viewbio);
+
                     }
 
 
@@ -224,10 +262,14 @@ public class userProfile extends ActionBarActivity {
 
                         Drawable d = new BitmapDrawable(getResources(), bitmap1);
                         profilePic.setImageDrawable(d);
+                        YoYo.with(Techniques.FadeIn).duration(500).playOn(profilePic);
+
 
 
                     } else {
                         profilePic.setImageDrawable(getResources().getDrawable(R.drawable.profile));
+                         YoYo.with(Techniques.FadeIn).duration(500).playOn(profilePic);
+
                     }
 
 
@@ -292,6 +334,8 @@ public class userProfile extends ActionBarActivity {
         newView.setLayoutParams(params);
 
         mFlowLayout.addView(newView);
+        YoYo.with(Techniques.Pulse).duration(500).playOn(newView);
+
     }
 
 
@@ -346,12 +390,18 @@ public class userProfile extends ActionBarActivity {
 
                         Drawable d = new BitmapDrawable(getResources(), bitmapsimplesize);
                         newView.setImageDrawable(d);
+
                         mFlowLayout.addView(newView);
+                        YoYo.with(Techniques.Pulse).duration(500).playOn(newView);
+
+
 
 
                     } else {
                         newView.setImageDrawable(getResources().getDrawable(R.drawable.profile1));
                         mFlowLayout.addView(newView);
+                        YoYo.with(Techniques.Pulse).duration(500).playOn(newView);
+
 
                     }
 
@@ -360,6 +410,7 @@ public class userProfile extends ActionBarActivity {
                         public void onClick(View view) {
 
                             Intent i = new Intent(userProfile.this, userProfile.class);
+
                             i.putExtra("User", username);
                             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 

@@ -30,10 +30,14 @@ dependencies {
     compile 'com.soundcloud.android:android-crop:1.0.0@aar'
     compile 'de.hdodenhof:circleimageview:1.3.0'
     compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    compile 'info.hoang8f:fbutton:1.0.5'
+    compile 'com.wrapp.floatlabelededittext:library:0.0.6'
     compile 'com.android.support:appcompat-v7:22.0.0'
     compile 'com.parse.bolts:bolts-android:1.+'
-    compile fileTree(dir: 'libs', include: 'Parse-*.jar')
+    compile fileTree(dir: 'libs', include: '*.jar')
     compile 'com.oguzdev:CircularFloatingActionMenu:1.0.2'
+    compile 'com.ToxicBakery.viewpager.transforms:view-pager-transforms:1.2.32@aar'
     compile 'com.wefika:flowlayout:0.4.0'
     compile 'com.github.medyo:dynamicbox:1.1@aar'
     compile 'com.melnykov:floatingactionbutton:1.3.0'
@@ -41,7 +45,9 @@ dependencies {
     compile 'com.daimajia.easing:library:1.0.1@aar'
     compile 'com.daimajia.androidanimations:library:1.1.3@aar'
     compile project(':soundcloud-0.2.1-jar-with-dependencies')
-    compile 'com.google.android.exoplayer:exoplayer:r1.3.3'
+     compile project(':seekArc_library')
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.github.amlcurran.showcaseview:library:5.0.0'
 
 }
 
@@ -59,6 +65,7 @@ repositories {
 }
 
 dependencies {
+
     compile 'com.nhaarman.listviewanimations:lib-core:3.1.0@aar'
     compile 'com.nhaarman.listviewanimations:lib-manipulation:3.1.0@aar'
     compile 'com.nhaarman.listviewanimations:lib-core-slh:3.1.0@aar'
