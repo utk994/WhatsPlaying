@@ -29,7 +29,6 @@ import android.widget.TextView;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.gc.materialdesign.views.ButtonFloat;
-import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.nhaarman.listviewanimations.appearance.simple.SwingLeftInAnimationAdapter;
 import com.nhaarman.listviewanimations.itemmanipulation.DynamicListView;
 import com.parse.ParseException;
@@ -77,7 +76,7 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
     private RetreiveItems mTask;
 
     DynamicListView list;
-    ShowcaseView sv;
+
 
 
     CustomAdapter adapter;
