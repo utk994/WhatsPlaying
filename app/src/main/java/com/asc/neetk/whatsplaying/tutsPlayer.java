@@ -245,7 +245,7 @@ public class tutsPlayer extends Activity {
             //pass list
 
             musicSrv.setUrl(url);
-            musicSrv.setTitle(title);
+            musicSrv.setTitle(song);
 
             musicBound = true;
 

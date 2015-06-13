@@ -31,7 +31,7 @@ private int songPosn;
 
 
 
-
+    public String songTitle="";
 
         @Override
         public void onCreate(){
@@ -65,7 +65,7 @@ private int songPosn;
                     Notification.Builder builder = new Notification.Builder(getApplicationContext());
 
                     builder.setContentIntent(pendInt)
-                            .setSmallIcon(R.drawable.play)
+                            .setSmallIcon(R.drawable.speakers7)
                             .setTicker(songTitle)
                             .setOngoing(true)
                             .setContentTitle("Playing")
@@ -121,7 +121,7 @@ private int songPosn;
 
 
 
-    private String songTitle="";
+
     private static final int NOTIFY_ID=1;
 
 
