@@ -39,8 +39,11 @@ public class TabbedFragment extends Fragment {
         mSectionsPagerAdapter = new SectionsPagerAdapter(
                 getChildFragmentManager());
 
+
         mViewPager = (ViewPager) v.findViewById(R.id.pager);
         mViewPager.setOffscreenPageLimit(2);
+
+
 
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setCurrentItem(0);

@@ -68,6 +68,10 @@ public class LoginSignupActivity extends Activity {
 
                                             if (parseUser != null) {
 
+
+
+
+
                                                 progressDialog.dismiss();
                                                 // If user exist and authenticated, send user to Welcome.class
                                                 Intent intent = new Intent(

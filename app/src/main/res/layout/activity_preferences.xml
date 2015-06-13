@@ -81,7 +81,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Time between notifications"
+            android:text="Time before notification"
             android:id="@+id/textView13"
             android:layout_marginTop="59dp"
         android:layout_below="@+id/linearLayout4"

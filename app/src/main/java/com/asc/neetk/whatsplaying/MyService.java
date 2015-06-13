@@ -11,8 +11,6 @@ import android.os.IBinder;
 import android.os.Vibrator;
 import android.util.Log;
 
-import java.util.Calendar;
-
 
 public class MyService extends Service {
 
@@ -85,8 +83,6 @@ public class MyService extends Service {
 
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
 
-        Calendar c = Calendar.getInstance();
-        int seconds = c.get(Calendar.SECOND);
 
 
         @Override
@@ -107,11 +103,7 @@ public class MyService extends Service {
             Log.v("tag1", song1);
 
 
-            c = Calendar.getInstance();
-           // seconds = c.get(Calendar.SECOND) - seconds;
-
-
-
+            
 
 
                   r_Alerts = new Runnable() {
@@ -140,7 +132,7 @@ public class MyService extends Service {
                     }
                 };
 
-               handlerTimer.postDelayed(r_Alerts,5000);
+               handlerTimer.postDelayed(r_Alerts,timedur*1000);
 
 
                 // do something - or do it not

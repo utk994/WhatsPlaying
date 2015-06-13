@@ -67,7 +67,7 @@ public class Listen extends Fragment {
 
 
                      AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-                    alertDialogBuilder.setMessage("Play Songs as you Normally would.WhatsPlayin will Listen for new Songs.");
+                    alertDialogBuilder.setMessage("Play Songs as you Normally would.WhatsPlaying will Listen for new Songs.");
 
 
 

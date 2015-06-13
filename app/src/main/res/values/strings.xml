@@ -120,4 +120,5 @@
     <string name="title_activity_tuts_player">tutsPlayer</string>
     <string name="title_activity_circbartest">circbartest</string>
     <string name="title_activity_lock_overlay">lockOverlay</string>
+    <string name="title_activity_guide">guide</string>
 </resources>

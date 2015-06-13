@@ -2,6 +2,8 @@ package com.asc.neetk.whatsplaying;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -107,8 +109,6 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
         super.onCreate(savedState);
 
         //   setRetainInstance(true); // handle rotations gracefully
-        c = Calendar.getInstance();
-        seconds = c.get(Calendar.MILLISECOND);
 
 
     }
@@ -141,6 +141,8 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
 
             }
         });
+
+
 
 
         return rootView;
@@ -551,10 +553,27 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
             box.hideAll();
 
 
+
+
+
+
             YoYo.with(Techniques.Wobble)
                     .duration(700)
                     .playOn(getActivity().findViewById(R.id.buttonFloat));
             swap.setVisibility(View.VISIBLE);
+
+
+
+            final SharedPreferences prefs = getActivity().getSharedPreferences(
+                    "com.asc.neetk.whatsplaying", Context.MODE_PRIVATE);
+
+            Boolean ftime = prefs.getBoolean("ftime", true);
+
+            if (ftime)
+            {Intent intent = new Intent(getActivity(), guide.class);
+                intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
+                startActivity(intent);}
+
 
 
         }
