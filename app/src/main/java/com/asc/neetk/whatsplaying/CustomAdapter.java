@@ -226,7 +226,6 @@ public class CustomAdapter extends ExpandableListItemAdapter<Integer> {
 
             viewHolder.listen = (Button) convertView.findViewById(R.id.listenonline);
 
-            viewHolder.img = (CircleImageView) convertView.findViewById(R.id.coverfor);
 
 
             convertView.setTag(viewHolder);
@@ -234,6 +233,8 @@ public class CustomAdapter extends ExpandableListItemAdapter<Integer> {
 
         } else {
             viewHolder = (ViewHolderItem2) convertView.getTag();
+
+            img = (CircleImageView) convertView.findViewById(R.id.coverfor);
 
         }
 
@@ -256,9 +257,6 @@ public class CustomAdapter extends ExpandableListItemAdapter<Integer> {
 
 
                 View view = getContentView(i);
-
-                img = (CircleImageView) view.findViewById(R.id.coverfor);
-
 
                 Log.d("Image", img.toString());
                 try {
@@ -292,7 +290,7 @@ public class CustomAdapter extends ExpandableListItemAdapter<Integer> {
         viewHolder.artist1.setText(row_pos.getArtist());
         viewHolder.album1.setText(row_pos.getAlbum());
 
-        viewHolder.img.setImageResource(R.drawable.albumart);
+
 
 
         viewHolder.listen.setOnClickListener(new View.OnClickListener() {
@@ -340,8 +338,6 @@ public class CustomAdapter extends ExpandableListItemAdapter<Integer> {
         TextView artist1;
         TextView album1;
         Button listen;
-        CircleImageView img;
-
 
     }
 

@@ -36,7 +36,6 @@ import com.nhaarman.listviewanimations.appearance.simple.SwingLeftInAnimationAda
 import com.nhaarman.listviewanimations.itemmanipulation.DynamicListView;
 import com.nhaarman.listviewanimations.itemmanipulation.expandablelistitem.ExpandableListItemAdapter;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -105,7 +104,7 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
     ButtonFloat swap;
     DynamicBox box;
 
-    CircleImageView img;
+    CircleImageView[] img= new CircleImageView[30];
 
 
     ActionBar mActionBar;
@@ -129,7 +128,7 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
             Drawable drawable = new BitmapDrawable(getResources(), bitmap);
             albumart[pos]=drawable;
 
-            img.setImageDrawable(drawable);
+            img[pos].setImageDrawable(drawable);
 
         }
 
@@ -606,7 +605,7 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
 
                         View view = adapter.getContentView(i);
 
-                        img = (CircleImageView) view.findViewById(R.id.coverfor);
+                        img[i] = (CircleImageView) view.findViewById(R.id.coverfor);
 
                         pos = i;
 
@@ -640,7 +639,7 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
                             animationAdapter.notifyDataSetChanged();
                         } else {
 
-                            img.setImageDrawable(albumart[i]);
+                            img[i].setImageDrawable(albumart[i]);
                         }
 
                     }
@@ -712,17 +711,10 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
 
                 Log.d("there", url1);
 
-              //  Picasso.with(getActivity()).load(url1).into(target);
+               Picasso.with(getActivity()).load(url1).into(target);
 
 
-                imageLoader.loadImage(url1, new SimpleImageLoadingListener() {
-                    @Override
-                    public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                        Drawable drawable = new BitmapDrawable(getResources(), loadedImage);
-                        albumart[pos]=drawable;
-                        img.setImageDrawable(drawable);
-                    }
-                });
+
 
                 adapter.notifyDataSetChanged();
                 animationAdapter.notifyDataSetChanged();
@@ -734,7 +726,7 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
             else {
                 albumart[pos] = getResources().getDrawable(R.drawable.albumart);
 
-                img.setImageDrawable(albumart[pos]);}
+                img[pos].setImageDrawable(albumart[pos]);}
         }
 
 
