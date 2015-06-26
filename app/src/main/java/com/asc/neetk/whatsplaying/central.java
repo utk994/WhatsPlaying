@@ -105,6 +105,8 @@ public class central extends ActionBarActivity {
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
+        mDrawerList.setDivider(null);
+        mDrawerList.setDividerHeight(0);
         LayoutInflater inflater = getLayoutInflater();
         header = inflater.inflate(R.layout.header, mDrawerList, false);
         headerpic = (ImageView) header.findViewById(R.id.drawer_pic);

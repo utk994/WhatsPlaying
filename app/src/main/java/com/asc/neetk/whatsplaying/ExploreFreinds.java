@@ -30,6 +30,7 @@ import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.gc.materialdesign.views.ButtonFloat;
 import com.nhaarman.listviewanimations.appearance.simple.SwingLeftInAnimationAdapter;
+import com.nhaarman.listviewanimations.itemmanipulation.DynamicListView;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -57,6 +58,8 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
     String[] user = new String[60];
     String[] album = new String[60];
 
+    DynamicListView list;
+
     Integer[] likes = new Integer[60];
     String[] objId = new String[60];
     Date[] actime = new Date[60];
@@ -77,7 +80,7 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
 
     Drawable[] profiles = new Drawable[60];
 
-    private RetreiveItems mTask;
+     RetreiveItems mTask;
 
 
     CustomAdapter adapter;
@@ -128,6 +131,12 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.list_fragment_2, null, false);
+
+        list =(DynamicListView) rootView.findViewById(R.id.list);
+
+        list.setDivider(null);
+        list.setDividerHeight(0);
+
         swap = (ButtonFloat) rootView.findViewById(R.id.buttonFloat1);
 
 
@@ -420,7 +429,7 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
                             if (user[i].equals(user[j])) {
                                 profiles[i] = profiles[j];
 
-                                RowItem items = new RowItem(user[i], songname[i], time[i], profiles[i], likes[i], objId[i], actime[i]);
+                                RowItem items = new RowItem(user[i], actsongname[i],album[i],artist[i], time[i], profiles[i], likes[i], objId[i], actime[i]);
 
 
                                 rowItems.add(items);
@@ -473,7 +482,7 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
                                 }
 
 
-                                RowItem items = new RowItem(user[finalI], songname[finalI], time[finalI], profiles[finalI], likes[finalI], objId[finalI], actime[finalI]);
+                                RowItem items = new RowItem(user[finalI], actsongname[finalI],album[finalI],artist[finalI], time[finalI], profiles[finalI], likes[finalI], objId[finalI], actime[finalI]);
 
 
                                 rowItems.add(items);

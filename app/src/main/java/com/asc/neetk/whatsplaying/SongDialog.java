@@ -2,7 +2,6 @@ package com.asc.neetk.whatsplaying;
 
 import android.app.DialogFragment;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,19 +12,8 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.daimajia.androidanimations.library.Techniques;
-import com.daimajia.androidanimations.library.YoYo;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by utk994 on 30/04/15.
@@ -43,6 +31,7 @@ public class SongDialog extends DialogFragment {
     String fileName = "Somename.png";
 
 
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
 
@@ -53,6 +42,10 @@ public class SongDialog extends DialogFragment {
     String album1;
     String artist1;
     String track1;
+
+
+
+
 
     RetrieveArt task;
 
@@ -75,14 +68,15 @@ public class SongDialog extends DialogFragment {
         final String user1 = bundle.getString("User");
 
 
+
+
         final TextView user = (TextView) view.findViewById(R.id.sharedby);
         final TextView songname = (TextView) view.findViewById(R.id.songname);
         final TextView artist = (TextView) view.findViewById(R.id.artist);
         final TextView album = (TextView) view.findViewById(R.id.album);
 
 
-        img = (CircleImageView) mView.findViewById(R.id.coverfor);
-        img.setImageDrawable(getResources().getDrawable(R.drawable.albumart));
+
 
 
         songname.setText(track1);
@@ -171,63 +165,4 @@ public class SongDialog extends DialogFragment {
 
     }
 
-    CircleImageView img;
-
-
-
-
-    public class RetrieveArt extends AsyncTask<String, Void, String> {
-
-        protected String doInBackground(String... urls) {
-            String albumArtUrl = null;
-            try {
-                XMLParser parser = new XMLParser();
-                String xml = parser.getXmlFromUrl(urls[0]); // getting XML from URL
-                Document doc = parser.getDomElement(xml);
-                NodeList nl = doc.getElementsByTagName("image");
-                for (int i = 0; i < nl.getLength(); i++) {
-                    Element e = (Element) nl.item(i);
-
-                    if (e.getAttribute("size").contentEquals("large")) {
-                        albumArtUrl = parser.getElementValue(e);
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return albumArtUrl;
-        }
-
-
-        protected void onPostExecute(String url1) {
-
-            url = url1;
-
-
-            if (url1 != null && !url1.equals("")) {
-
-                Picasso.with(getActivity().getApplicationContext())
-                        .load(url1)
-                        .fit()
-                        .noFade()
-                        .into(img, new Callback.EmptyCallback() {
-                            @Override
-                            public void onSuccess() {
-
-
-                                YoYo.with(Techniques.RotateIn)
-                                        .duration(300)
-                                        .playOn(img);
-
-
-                            }
-
-
-                        });
-
-
-            }
-        }
-
-    }
 }

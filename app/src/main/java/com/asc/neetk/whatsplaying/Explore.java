@@ -26,6 +26,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.daimajia.androidanimations.library.Techniques;
@@ -40,7 +41,6 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -54,6 +54,7 @@ import mehdi.sakout.dynamicbox.DynamicBox;
 
 public class Explore extends Fragment implements AdapterView.OnItemClickListener {
     SwipeRefreshLayout mSwipeRefreshLayout;
+
 
 
     String[] songname = new String[60];
@@ -75,7 +76,7 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
 
     Drawable[] profiles = new Drawable[60];
 
-    private RetreiveItems mTask;
+    RetreiveItems mTask;
 
     DynamicListView list;
 
@@ -86,13 +87,15 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
     private List<RowItem> rowItems;
     ButtonFloat swap;
     DynamicBox box;
-    Calendar c;
-    int seconds;
+
 
     ActionBar mActionBar;
 
 
     protected FragmentActivity mActivity;
+
+
+
 
     @Override
     public void onAttach(Activity activity) {
@@ -108,7 +111,6 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
 
         super.onCreate(savedState);
 
-        //   setRetainInstance(true); // handle rotations gracefully
 
 
     }
@@ -120,6 +122,13 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
         View rootView = inflater.inflate(R.layout.list_fragment, null, false);
 
         list =(DynamicListView) rootView.findViewById(R.id.list);
+
+        list.setDivider(null);
+        list.setDividerHeight(0);
+
+
+        list.setScrollingCacheEnabled(true);
+
         swap = (ButtonFloat) rootView.findViewById(R.id.buttonFloat);
 
 
@@ -310,6 +319,7 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
                 mSwipeRefreshLayout.setEnabled(true);
 
 
+
             }
         });
 
@@ -324,11 +334,25 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
 
 
     @Override
+    public void onDestroy()
+    {
+        mTask.cancel(true);
+        super.onDestroy();
+
+    }
+
+
+    @Override
     public void onItemClick(AdapterView<?> parent, View view, int position,
                             long id) {
 
 
-        android.app.FragmentManager fm = mActivity.getFragmentManager();
+        LinearLayout linearLayout =(LinearLayout) view.findViewById(R.id.song2);
+        View child = getActivity().getLayoutInflater().inflate(R.layout.list_fragment,null,false);
+        linearLayout.addView(child);
+
+
+         android.app.FragmentManager fm = mActivity.getFragmentManager();
         android.app.DialogFragment dialog = new SongDialog(); // creating new object
         Bundle args = new Bundle();
 
@@ -423,7 +447,7 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
                             if (user[i].equals(user[j]))
                             {profiles[i]=profiles[j];
 
-                                RowItem items = new RowItem(user[i], songname[i], time[i], profiles[i], likes[i], objId[i], actime[i]);
+                                RowItem items = new RowItem(user[i], actsongname[i],artist[i],album[i], time[i], profiles[i], likes[i], objId[i], actime[i]);
 
 
                                 rowItems.add(items);
@@ -482,7 +506,7 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
 
 
 
-                            RowItem items = new RowItem(user[finalI], songname[finalI], time[finalI], profiles[finalI], likes[finalI], objId[finalI], actime[finalI]);
+                            RowItem items = new RowItem(user[finalI], actsongname[finalI],artist[finalI],album[finalI], time[finalI], profiles[finalI], likes[finalI], objId[finalI], actime[finalI]);
 
 
                             rowItems.add(items);
@@ -577,6 +601,8 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
 
 
         }
+
+
 
 
     }
