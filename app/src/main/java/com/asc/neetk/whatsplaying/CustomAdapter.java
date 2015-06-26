@@ -3,8 +3,6 @@ package com.asc.neetk.whatsplaying;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
@@ -20,6 +18,7 @@ import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.nhaarman.listviewanimations.itemmanipulation.DynamicListView;
 import com.nhaarman.listviewanimations.itemmanipulation.expandablelistitem.ExpandableListItemAdapter;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.parse.ParseObject;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -28,9 +27,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -46,9 +42,10 @@ public class CustomAdapter extends ExpandableListItemAdapter<Integer> {
     DynamicListView list;
 
 
+    ImageLoader imageLoader;
+
+
     CircleImageView img;
-
-
 
 
     RetrieveArt task;
@@ -87,6 +84,8 @@ public class CustomAdapter extends ExpandableListItemAdapter<Integer> {
     public View getTitleView(final int position, View convertView, ViewGroup viewGroup) {
 
         final ViewHolderItem1 viewHolder;
+
+        imageLoader = ImageLoader.getInstance();
 
 
         if (convertView == null) {
@@ -209,8 +208,6 @@ public class CustomAdapter extends ExpandableListItemAdapter<Integer> {
         final ViewHolderItem2 viewHolder;
 
 
-
-
         if (convertView == null)
 
 
@@ -243,6 +240,7 @@ public class CustomAdapter extends ExpandableListItemAdapter<Integer> {
 
         final RowItem row_pos = rowItem.get(position);
 
+        /*
 
 
         CustomAdapter.this.setExpandCollapseListener(new ExpandCollapseListener() {
@@ -257,13 +255,12 @@ public class CustomAdapter extends ExpandableListItemAdapter<Integer> {
                 RowItem actrow = rowItem.get(i);
 
 
-
                 View view = getContentView(i);
 
-                img=(CircleImageView)view.findViewById(R.id.coverfor);
+                img = (CircleImageView) view.findViewById(R.id.coverfor);
 
 
-                Log.d("Image",img.toString());
+                Log.d("Image", img.toString());
                 try {
                     stringBuilder.append("&artist=" + URLEncoder.encode(actrow.getArtist(), "UTF-8"));
                 } catch (UnsupportedEncodingException e) {
@@ -288,12 +285,14 @@ public class CustomAdapter extends ExpandableListItemAdapter<Integer> {
                 task.cancel(true);
 
             }
-        });
+        }); */
 
 
         viewHolder.songname.setText(row_pos.getSong());
         viewHolder.artist1.setText(row_pos.getArtist());
         viewHolder.album1.setText(row_pos.getAlbum());
+
+        viewHolder.img.setImageResource(R.drawable.albumart);
 
 
         viewHolder.listen.setOnClickListener(new View.OnClickListener() {
@@ -313,14 +312,14 @@ public class CustomAdapter extends ExpandableListItemAdapter<Integer> {
         });
 
 
-        viewHolder.img.setImageDrawable(context.getResources().getDrawable(R.drawable.albumart));
+
+
 
 
         return convertView;
 
 
     }
-
 
 
     static class ViewHolderItem1 {
@@ -377,8 +376,8 @@ public class CustomAdapter extends ExpandableListItemAdapter<Integer> {
             if (url1 != null && !url1.equals("")) {
 
 
-
                 Log.d("there", url1);
+
                 Picasso.with(context)
                         .load(url1)
                         .fit()
@@ -397,6 +396,8 @@ public class CustomAdapter extends ExpandableListItemAdapter<Integer> {
 
 
                         });
+
+
                 notifyDataSetChanged();
 
             }
@@ -404,32 +405,6 @@ public class CustomAdapter extends ExpandableListItemAdapter<Integer> {
 
     }
 
-
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        CircleImageView bmImage;
-
-        public DownloadImageTask(CircleImageView bmImage) {
-            this.bmImage = bmImage;
-        }
-
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
-            return mIcon11;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
-            notifyDataSetChanged();
-        }
-    }
 
 }
 

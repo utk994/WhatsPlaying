@@ -20,7 +20,7 @@
             android:id="@+id/coverfor"
             android:layout_gravity="center"
             android:focusableInTouchMode="false"
-            android:src="@drawable/profile"
+            android:src="@drawable/albumart"
             app:border_color="@color/material_blue_grey_800"
             app:border_width="2dp" />
 
