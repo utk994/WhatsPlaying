@@ -21,9 +21,14 @@ public class RowItem {
     private String objID;
     private Date actdate;
 
+    private Drawable albumart;
 
 
-    public RowItem(String name, String song,String artist,String album, String timeStamp, Drawable profilePic, Integer likes, String objID,Date actdate) {
+    private String albumurl;
+
+
+
+    public RowItem(String name, String song,String artist,String album, String timeStamp, Drawable profilePic, Integer likes, String objID,Date actdate,Drawable albumart,String albumurl) {
 
         this.name = name;
         this.song = song;
@@ -34,6 +39,9 @@ public class RowItem {
         this.likes = likes;
         this.objID = objID;
         this.actdate=actdate;
+        this.albumart=albumart;
+
+        this.albumurl=albumurl;
 
 
 
@@ -50,6 +58,11 @@ public class RowItem {
     public String getSong() {
         return song;
     }
+    public String getAlbumurl() {
+        return albumurl;
+    }
+
+
     public String getArtist() {
         return artist;
     }
@@ -81,8 +94,18 @@ public class RowItem {
     }
 
 
+    public Drawable getAlbumart() {
+        return albumart;
+    }
+
+
     public void setName(String name) {
         this.name = name;
+    }
+
+
+    public void setAlbumurl(String albumurl) {
+        this.albumurl = albumurl;
     }
 
     public void setLikes(Integer likes1) {
@@ -96,6 +119,11 @@ public class RowItem {
 
     public void setProfilePic(Drawable profilePic) {
         this.profilePic = profilePic;
+    }
+
+
+    public void setAlbumart(Drawable albumart) {
+        this.albumart = albumart;
     }
 
 

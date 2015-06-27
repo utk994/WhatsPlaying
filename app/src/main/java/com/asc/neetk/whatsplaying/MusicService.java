@@ -25,6 +25,7 @@ private FFmpegMediaPlayer player;
 public String url = "";
 
     boolean present= false;
+
 //current position
 private int songPosn;
     private final IBinder musicBind = new MusicBinder();
@@ -41,8 +42,11 @@ private int songPosn;
             songPosn=0;
 
             player = new FFmpegMediaPlayer();
+
             initMusicPlayer();
         }
+
+
 
 
 
@@ -81,6 +85,7 @@ private int songPosn;
                 public void onCompletion(FFmpegMediaPlayer fFmpegMediaPlayer) {
 
                     fFmpegMediaPlayer.pause();
+
                 }
             });
             player.setOnErrorListener(new FFmpegMediaPlayer.OnErrorListener() {
@@ -98,6 +103,7 @@ private int songPosn;
             return MusicService.this;
         }
     }
+
 
     public void setUrl(String theUrl){
         url=theUrl;
@@ -139,6 +145,10 @@ private int songPosn;
         return (present);
 
     }
+
+
+
+
     public void playSong(){
         player.reset();
         try{

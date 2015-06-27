@@ -11,6 +11,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -31,13 +32,23 @@ import com.daimajia.androidanimations.library.YoYo;
 import com.gc.materialdesign.views.ButtonFloat;
 import com.nhaarman.listviewanimations.appearance.simple.SwingLeftInAnimationAdapter;
 import com.nhaarman.listviewanimations.itemmanipulation.DynamicListView;
+import com.nhaarman.listviewanimations.itemmanipulation.expandablelistitem.ExpandableListItemAdapter;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -49,7 +60,7 @@ import mehdi.sakout.dynamicbox.DynamicBox;
  * Created by utk994 on 05/04/15.
  */
 
-public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterView.OnItemClickListener {
+public class ExploreFreinds  extends Fragment implements AdapterView.OnItemClickListener {
     SwipeRefreshLayout mSwipeRefreshLayout;
 
 
@@ -58,8 +69,6 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
     String[] user = new String[60];
     String[] album = new String[60];
 
-    DynamicListView list;
-
     Integer[] likes = new Integer[60];
     String[] objId = new String[60];
     Date[] actime = new Date[60];
@@ -67,7 +76,14 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
     String[] actsongname = new String[60];
 
 
+    Drawable[] albumart = new Drawable[30];
+
+
     DynamicBox box;
+
+
+    DynamicListView list;
+
 
     ActionBar mActionBar;
 
@@ -82,6 +98,15 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
 
      RetreiveItems mTask;
 
+    ImageLoader imageLoader;
+
+
+    RetrieveArt task;
+
+    int pos;
+
+    String urls[]= new String[30];
+
 
     CustomAdapter adapter;
     SwingLeftInAnimationAdapter animationAdapter;
@@ -94,6 +119,8 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mActivity = (FragmentActivity) activity;
+
+
     }
 
 
@@ -101,30 +128,17 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
 
     public void onCreate(Bundle savedState) {
 
-        if (adapter != null) {
-            adapter.notifyDataSetChanged();
-
-            animationAdapter.notifyDataSetChanged();
-
-        }
-
-
         super.onCreate(savedState);
 
-        // setRetainInstance(true); // handle rotations gracefully
+
+        Drawable d = getActivity().getResources().getDrawable(R.drawable.albumart);
+
+        Arrays.fill(albumart, d);
 
 
     }
 
-    @Override
-    public void setMenuVisibility(final boolean visible) {
-        super.setMenuVisibility(visible);
-        if (visible && swap != null) {
-            swap.setVisibility(View.VISIBLE);
 
-
-        }
-    }
 
 
     @Override
@@ -132,10 +146,18 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.list_fragment_2, null, false);
 
-        list =(DynamicListView) rootView.findViewById(R.id.list);
+
+        imageLoader = ImageLoader.getInstance();
+
+        list =(DynamicListView) rootView.findViewById(R.id.list2);
 
         list.setDivider(null);
         list.setDividerHeight(0);
+
+        list.setScrollingCacheEnabled(true);
+
+        box = new DynamicBox(getActivity(), list);
+
 
         swap = (ButtonFloat) rootView.findViewById(R.id.buttonFloat1);
 
@@ -146,6 +168,9 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
             swap.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    swap.setVisibility(View.INVISIBLE);
+
+                    if (task != null) task.cancel(true);
                     FragmentTransaction trans = getFragmentManager()
                             .beginTransaction();
 
@@ -165,11 +190,6 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
 
     }
 
-    @Override
-    protected void onPostExecute(Void result) {
-
-
-    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -183,7 +203,6 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
 
         super.onActivityCreated(savedInstanceState);
 
-        box = new DynamicBox(getActivity(), getListView());
 
         box.setLoadingMessage("Loading ...");
 
@@ -209,7 +228,7 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
         }
 
 
-        tv = (TextView) getActivity().findViewById(R.id.empty1);
+        tv = (TextView) mActivity.findViewById(R.id.empty1);
 
 
         if (savedInstanceState == null) {
@@ -224,9 +243,9 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
 
         // adapter.notifyDataSetChanged();
 
-        getListView().setOnItemClickListener(this);
+        list.setOnItemClickListener(this);
 
-        getListView().setEmptyView(getActivity().findViewById(R.id.empty));
+        list.setEmptyView(mActivity.findViewById(R.id.empty));
 
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -248,67 +267,66 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
             }
         });
 
-        if ((getListView()) != null) {
 
-            getListView().setOnScrollListener(new AbsListView.OnScrollListener() {
-                @Override
-                public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-
-                    if (scrollState == SCROLL_STATE_IDLE) {
+        list.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
 
 
-                        {
-                            swap.setVisibility(View.VISIBLE);
-                            YoYo.with(Techniques.SlideInUp)
-                                    .duration(300)
-                                    .playOn(swap);
-
-                        }
-
-
-                    } else if
-
-                            (!(YoYo.with(Techniques.SlideOutDown)
-                                    .duration(200)
-                                    .playOn(swap).isRunning()))
+                if (scrollState == SCROLL_STATE_IDLE) {
 
 
                     {
-                        swap.setVisibility(View.INVISIBLE);
-                    }
-                }
+                        swap.setVisibility(View.VISIBLE);
+                        YoYo.with(Techniques.SlideInUp)
+                                .duration(300)
+                                .playOn(swap);
 
-                @Override
-                public void onScroll(AbsListView view, int firstVisibleItem,
-                                     int visibleItemCount, int totalItemCount) {
-
-
-                    boolean enable = false;
-                    if (getListView() != null && getListView().getChildCount() > 0) {
-                        // check if the first item of the list is visible
-                        boolean firstItemVisible = getListView().getFirstVisiblePosition() == 0;
-                        // check if the top of the first item is visible
-                        boolean topOfFirstItemVisible = getListView().getChildAt(0).getTop() == 0;
-                        // enabling or disabling the refresh layout
-
-                        enable = firstItemVisible && topOfFirstItemVisible;
-
-                        if (enable) mActionBar.show();
-
-                        else mActionBar.hide();
-
-                        mSwipeRefreshLayout.setEnabled(enable);
-                        return;
                     }
 
 
-                    mSwipeRefreshLayout.setEnabled(true);
+                } else if
+
+                        (!(YoYo.with(Techniques.SlideOutDown)
+                                .duration(200)
+                                .playOn(swap).isRunning()))
 
 
+                {
+                    swap.setVisibility(View.INVISIBLE);
                 }
-            });
-        }
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem,
+                                 int visibleItemCount, int totalItemCount) {
+
+
+                boolean enable = false;
+                if (list != null && list.getChildCount() > 0) {
+                    // check if the first item of the list is visible
+                    boolean firstItemVisible = list.getFirstVisiblePosition() == 0;
+                    // check if the top of the first item is visible
+                    boolean topOfFirstItemVisible = list.getChildAt(0).getTop() == 0;
+                    // enabling or disabling the refresh layout
+
+                    enable = firstItemVisible && topOfFirstItemVisible;
+
+                    if (enable) mActionBar.show();
+
+                    else mActionBar.hide();
+
+                    mSwipeRefreshLayout.setEnabled(enable);
+                    return;
+                }
+
+
+                mSwipeRefreshLayout.setEnabled(true);
+
+
+            }
+        });
+
 
 
     }
@@ -323,6 +341,7 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
     @Override
     public void onDestroy() {
         mTask.cancel(true);
+        if (task != null) task.cancel(true);
         super.onDestroy();
 
 
@@ -429,7 +448,7 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
                             if (user[i].equals(user[j])) {
                                 profiles[i] = profiles[j];
 
-                                RowItem items = new RowItem(user[i], actsongname[i],album[i],artist[i], time[i], profiles[i], likes[i], objId[i], actime[i]);
+                                RowItem items = new RowItem(user[i], actsongname[i],album[i],artist[i], time[i], profiles[i], likes[i], objId[i], actime[i],albumart[i],"");
 
 
                                 rowItems.add(items);
@@ -482,7 +501,7 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
                                 }
 
 
-                                RowItem items = new RowItem(user[finalI], actsongname[finalI],album[finalI],artist[finalI], time[finalI], profiles[finalI], likes[finalI], objId[finalI], actime[finalI]);
+                                RowItem items = new RowItem(user[finalI], actsongname[finalI],album[finalI],artist[finalI], time[finalI], profiles[finalI], likes[finalI], objId[finalI], actime[finalI],albumart[finalI],"");
 
 
                                 rowItems.add(items);
@@ -543,23 +562,68 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
             animationAdapter = new SwingLeftInAnimationAdapter(adapter);
             animationAdapter.notifyDataSetChanged();
 
-            if (getListView() != null)
+            if (list != null)
 
             {
-                animationAdapter.setAbsListView(getListView());
+                animationAdapter.setAbsListView(list);
 
-
-                setListAdapter(animationAdapter);
+                list.setAdapter(animationAdapter);
 
                 if (animationAdapter.isEmpty()) {
 
-                    getListView().setVisibility(View.INVISIBLE);
+                    list.setVisibility(View.INVISIBLE);
                     tv.setVisibility(View.VISIBLE);
                     tv.setText("You don't have any friends!");
 
 
                 }
+
+
+                adapter.setExpandCollapseListener(new ExpandableListItemAdapter.ExpandCollapseListener() {
+                    @Override
+                    public void onItemExpanded(int i) {
+
+
+                        pos = i;
+
+
+                        {
+                            StringBuilder stringBuilder = new StringBuilder("http://ws.audioscrobbler.com/2.0/");
+                            stringBuilder.append("?method=album.getinfo");
+                            stringBuilder.append("&api_key=");
+                            stringBuilder.append("3d4c79881824afd6b4c7544b753d1024");
+
+
+                            try {
+                                stringBuilder.append("&artist=" + URLEncoder.encode(artist[i], "UTF-8"));
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+
+
+                            try {
+                                stringBuilder.append("&album=" + URLEncoder.encode(album[i], "UTF-8"));
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+
+                            task = (RetrieveArt) new RetrieveArt().execute(stringBuilder.toString());
+
+
+                            adapter.notifyDataSetChanged();
+                            animationAdapter.notifyDataSetChanged();
+                        }
+                    }
+
+                    @Override
+                    public void onItemCollapsed(int i) {
+                        task.cancel(true);
+
+                    }
+                });
             }
+
+
             box.hideAll();
 
 
@@ -583,12 +647,85 @@ public class ExploreFreinds extends SwipeRefreshListFragment implements AdapterV
         swap.setVisibility(View.VISIBLE); */
     }
 
+
+    public class RetrieveArt extends AsyncTask<String, Void, String> {
+
+        protected String doInBackground(String... urls) {
+            String albumArtUrl = null;
+            try {
+                XMLParser parser = new XMLParser();
+                String xml = parser.getXmlFromUrl(urls[0]); // getting XML from URL
+                Document doc = parser.getDomElement(xml);
+                NodeList nl = doc.getElementsByTagName("image");
+                for (int i = 0; i < nl.getLength(); i++) {
+                    Element e = (Element) nl.item(i);
+
+                    if (e.getAttribute("size").contentEquals("large")) {
+                        albumArtUrl = parser.getElementValue(e);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return albumArtUrl;
+        }
+
+
+        protected void onPostExecute(final String url1) {
+
+
+            if (url1 != null && !url1.equals("")) {
+
+
+                Log.d("there", url1);
+
+
+                urls[pos] = url1;
+
+
+                imageLoader.loadImage(url1, new SimpleImageLoadingListener() {
+                    @Override
+                    public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                        Drawable drawable = new BitmapDrawable(getResources(), loadedImage);
+                        albumart[pos] = drawable;
+
+                        RowItem items = new RowItem(user[pos], actsongname[pos], artist[pos], album[pos], time[pos], profiles[pos], likes[pos], objId[pos], actime[pos],drawable,url1);
+
+                        rowItems.set(pos,items);
+
+                        Log.d("checkthis",rowItems.get(pos).toString());
+
+
+
+
+
+
+                        adapter.notifyDataSetChanged();
+
+                        animationAdapter.notifyDataSetChanged();
+
+
+
+                    }
+                });
+
+
+
+
+            }
+
+
+        }
+    }
+
     public boolean isOnline() {
         ConnectivityManager cm =
                 (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
+
+
 
 
 }

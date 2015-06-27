@@ -86,6 +86,11 @@ public class userProfile extends ActionBarActivity {
         TextView filler2 = (TextView) findViewById(R.id.filler2);
         TextView filler3 = (TextView) findViewById(R.id.filler3);
 
+
+        final TextView nougen =(TextView) findViewById(R.id.nougen);
+        final TextView nouart =(TextView) findViewById(R.id.nouart);
+        final TextView nouuser =(TextView) findViewById(R.id.nouuser);
+
         follow.setVisibility(View.INVISIBLE);
 
         ParseQuery<ParseUser> query1 = ParseUser.getQuery();
@@ -184,6 +189,8 @@ public class userProfile extends ActionBarActivity {
                     artLikeList = (ArrayList<String>) user.get("artLikes");
 
 
+
+
                     if (genLikeList != null) {
 
                         for (int i = 0; i < genLikeList.size(); i++) {
@@ -201,6 +208,11 @@ public class userProfile extends ActionBarActivity {
                         }
                     }
 
+                    if (genLikeList.isEmpty()){nougen.setVisibility(View.VISIBLE);
+                        nougen.setText(actuser+" has not entered any genres");}
+
+                  //  else nougen.setVisibility(View.GONE);
+
                     if (artLikeList != null) {
                         for (int i = 0; i < artLikeList.size(); i++) {
                             String myString = artLikeList.get(i);
@@ -215,6 +227,14 @@ public class userProfile extends ActionBarActivity {
 
                         }
 
+                        if (artLikeList.isEmpty()){nouart.setVisibility(View.VISIBLE);
+                            nouart.setText(actuser+" has not entered any artists");}
+
+                       // else nouart.setVisibility(View.GONE);
+
+
+
+
                         Log.d("Follows", userfollows.toString());
 
 
@@ -228,6 +248,12 @@ public class userProfile extends ActionBarActivity {
 
                         }
                     }
+
+                    if (userfollows.isEmpty()){nouuser.setVisibility(View.VISIBLE);
+                        nouuser.setText(actuser+" has not followed anyone");}
+
+                  //  else nouuser.setVisibility(View.GONE);
+
 
 
                     if (actbio == null) {

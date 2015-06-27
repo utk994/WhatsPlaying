@@ -3,7 +3,6 @@ package com.asc.neetk.whatsplaying;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
@@ -14,18 +13,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.daimajia.androidanimations.library.Techniques;
-import com.daimajia.androidanimations.library.YoYo;
 import com.nhaarman.listviewanimations.itemmanipulation.DynamicListView;
 import com.nhaarman.listviewanimations.itemmanipulation.expandablelistitem.ExpandableListItemAdapter;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.parse.ParseObject;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 import java.util.List;
 
@@ -58,6 +49,7 @@ public class CustomAdapter extends ExpandableListItemAdapter<Integer> {
         this.rowItem = rowItem;
 
     }
+
 
 
     @Override
@@ -225,6 +217,7 @@ public class CustomAdapter extends ExpandableListItemAdapter<Integer> {
 
 
             viewHolder.listen = (Button) convertView.findViewById(R.id.listenonline);
+            viewHolder.img = (CircleImageView) convertView.findViewById(R.id.coverfor);
 
 
 
@@ -234,7 +227,6 @@ public class CustomAdapter extends ExpandableListItemAdapter<Integer> {
         } else {
             viewHolder = (ViewHolderItem2) convertView.getTag();
 
-            img = (CircleImageView) convertView.findViewById(R.id.coverfor);
 
         }
 
@@ -291,6 +283,9 @@ public class CustomAdapter extends ExpandableListItemAdapter<Integer> {
         viewHolder.album1.setText(row_pos.getAlbum());
 
 
+        viewHolder.img.setImageDrawable(row_pos.getAlbumart());
+
+
 
 
         viewHolder.listen.setOnClickListener(new View.OnClickListener() {
@@ -302,7 +297,8 @@ public class CustomAdapter extends ExpandableListItemAdapter<Integer> {
                 intent.putExtra("Songname", row_pos.getSong());
                 intent.putExtra("Artist", row_pos.getArtist());
                 intent.putExtra("Album", row_pos.getAlbum());
-                intent.putExtra("url", url);
+                intent.putExtra("url",row_pos.getAlbumurl());
+
                 context.startActivity(intent);
 
 
@@ -338,66 +334,7 @@ public class CustomAdapter extends ExpandableListItemAdapter<Integer> {
         TextView artist1;
         TextView album1;
         Button listen;
-
-    }
-
-    public class RetrieveArt extends AsyncTask<String, Void, String> {
-
-        protected String doInBackground(String... urls) {
-            String albumArtUrl = null;
-            try {
-                XMLParser parser = new XMLParser();
-                String xml = parser.getXmlFromUrl(urls[0]); // getting XML from URL
-                Document doc = parser.getDomElement(xml);
-                NodeList nl = doc.getElementsByTagName("image");
-                for (int i = 0; i < nl.getLength(); i++) {
-                    Element e = (Element) nl.item(i);
-
-                    if (e.getAttribute("size").contentEquals("large")) {
-                        albumArtUrl = parser.getElementValue(e);
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return albumArtUrl;
-        }
-
-
-        protected void onPostExecute(String url1) {
-
-            url = url1;
-
-
-            if (url1 != null && !url1.equals("")) {
-
-
-                Log.d("there", url1);
-
-                Picasso.with(context)
-                        .load(url1)
-                        .fit()
-                        .noFade()
-                        .into(img, new Callback.EmptyCallback() {
-                            @Override
-                            public void onSuccess() {
-
-
-                                YoYo.with(Techniques.RotateIn)
-                                        .duration(300)
-                                        .playOn(img);
-
-
-                            }
-
-
-                        });
-
-
-                notifyDataSetChanged();
-
-            }
-        }
+        CircleImageView img;
 
     }
 

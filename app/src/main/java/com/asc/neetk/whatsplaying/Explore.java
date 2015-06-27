@@ -36,13 +36,12 @@ import com.nhaarman.listviewanimations.appearance.simple.SwingLeftInAnimationAda
 import com.nhaarman.listviewanimations.itemmanipulation.DynamicListView;
 import com.nhaarman.listviewanimations.itemmanipulation.expandablelistitem.ExpandableListItemAdapter;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -51,6 +50,7 @@ import org.w3c.dom.NodeList;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -78,6 +78,8 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
 
 
     RetrieveArt task;
+
+    String[] urls=new String [30];
 
     Integer[] likes = new Integer[60];
     String[] objId = new String[60];
@@ -122,28 +124,7 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
     }
 
 
-    private Target target = new Target() {
-        @Override
-        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-            Drawable drawable = new BitmapDrawable(getResources(), bitmap);
-            albumart[pos]=drawable;
 
-            img[pos].setImageDrawable(drawable);
-
-        }
-
-        @Override
-        public void onBitmapFailed(Drawable errorDrawable) {
-
-        }
-
-        @Override
-        public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-        }
-
-
-    };
 
 
     @Override
@@ -153,6 +134,9 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
 
 
         super.onCreate(savedState);
+        Drawable d= getActivity().getDrawable(R.drawable.albumart);
+        Arrays.fill(albumart, d);
+
 
 
     }
@@ -164,10 +148,16 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
         View rootView = inflater.inflate(R.layout.list_fragment, null, false);
 
 
+
+
+
+
         imageLoader = ImageLoader.getInstance();
 
 
         list = (DynamicListView) rootView.findViewById(R.id.list);
+
+
 
         list.setDivider(null);
         list.setDividerHeight(0);
@@ -181,6 +171,8 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
         swap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+               if (task != null) task.cancel(true);
 
                 FragmentTransaction trans = getFragmentManager()
                         .beginTransaction();
@@ -203,12 +195,6 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-
-        loop1:
-        while (true) {
-            if (mActivity != null)
-                break loop1;
-        }
 
         mActionBar = ((ActionBarActivity) getActivity()).getSupportActionBar();
 
@@ -264,6 +250,7 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
         tv = (TextView) mActivity.findViewById(R.id.empty);
 
         if (savedInstanceState == null) {
+            swap.setVisibility(View.INVISIBLE);
             mTask = (RetreiveItems) new RetreiveItems().execute();
             box.showLoadingLayout();
 
@@ -282,6 +269,7 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
 
 
                 mSwipeRefreshLayout.setRefreshing(true);
+                swap.setVisibility(View.INVISIBLE);
                 mTask = (RetreiveItems) new RetreiveItems().execute();
                 box.showLoadingLayout();
 
@@ -374,8 +362,8 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
     @Override
     public void onDestroy() {
         mTask.cancel(true);
-        task.cancel(true);
-       // Picasso.with(getActivity()).cancelRequest(target);
+       if (task != null) task.cancel(true);
+
         super.onDestroy();
 
     }
@@ -413,7 +401,7 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
 
         @Override
         protected List<RowItem> doInBackground(String... urls) {
-            swap.setVisibility(View.INVISIBLE);
+
 
 
             if (!(isOnline())) {
@@ -427,6 +415,7 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
                     retry.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+
                             mTask = (RetreiveItems) new RetreiveItems().execute();
                         }
                     });
@@ -481,7 +470,7 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
                         if (user[i].equals(user[j])) {
                             profiles[i] = profiles[j];
 
-                            RowItem items = new RowItem(user[i], actsongname[i], artist[i], album[i], time[i], profiles[i], likes[i], objId[i], actime[i]);
+                            RowItem items = new RowItem(user[i], actsongname[i], artist[i], album[i], time[i], profiles[i], likes[i], objId[i], actime[i],albumart[i],"");
 
 
                             rowItems.add(items);
@@ -534,7 +523,7 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
                             }
 
 
-                            RowItem items = new RowItem(user[finalI], actsongname[finalI], artist[finalI], album[finalI], time[finalI], profiles[finalI], likes[finalI], objId[finalI], actime[finalI]);
+                            RowItem items = new RowItem(user[finalI], actsongname[finalI], artist[finalI], album[finalI], time[finalI], profiles[finalI], likes[finalI], objId[finalI], actime[finalI],albumart[i],"");
 
 
                             rowItems.add(items);
@@ -603,18 +592,15 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
                     @Override
                     public void onItemExpanded(int i) {
 
-                        View view = adapter.getContentView(i);
 
-                        img[i] = (CircleImageView) view.findViewById(R.id.coverfor);
 
                         pos = i;
 
 
-                        if (albumart[i] == null)
 
 
-                        {
-                            StringBuilder stringBuilder = new StringBuilder("http://ws.audioscrobbler.com/2.0/");
+
+                        {    StringBuilder stringBuilder = new StringBuilder("http://ws.audioscrobbler.com/2.0/");
                             stringBuilder.append("?method=album.getinfo");
                             stringBuilder.append("&api_key=");
                             stringBuilder.append("3d4c79881824afd6b4c7544b753d1024");
@@ -635,13 +621,11 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
                             }
 
                             task = (RetrieveArt) new RetrieveArt().execute(stringBuilder.toString());
+
+
                             adapter.notifyDataSetChanged();
                             animationAdapter.notifyDataSetChanged();
-                        } else {
-
-                            img[i].setImageDrawable(albumart[i]);
                         }
-
                     }
 
                     @Override
@@ -674,6 +658,10 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
             }
 
 
+
+
+
+
         }
 
 
@@ -703,7 +691,7 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
         }
 
 
-        protected void onPostExecute(String url1) {
+        protected void onPostExecute(final String url1) {
 
 
             if (url1 != null && !url1.equals("")) {
@@ -711,25 +699,43 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
 
                 Log.d("there", url1);
 
-               Picasso.with(getActivity()).load(url1).into(target);
+
+                urls[pos] = url1;
+
+
+               imageLoader.loadImage(url1, new SimpleImageLoadingListener() {
+                    @Override
+                    public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                        Drawable drawable = new BitmapDrawable(getResources(), loadedImage);
+                        albumart[pos] = drawable;
+
+                        RowItem items = new RowItem(user[pos], actsongname[pos], artist[pos], album[pos], time[pos], profiles[pos], likes[pos], objId[pos], actime[pos],drawable,url1);
+
+                        rowItems.set(pos,items);
+
+                        Log.d("checkthis",rowItems.get(pos).toString());
 
 
 
 
-                adapter.notifyDataSetChanged();
-                animationAdapter.notifyDataSetChanged();
+
+
+                        adapter.notifyDataSetChanged();
+
+                        animationAdapter.notifyDataSetChanged();
+
+
+
+                    }
+                });
+
 
 
 
             }
 
-            else {
-                albumart[pos] = getResources().getDrawable(R.drawable.albumart);
 
-                img[pos].setImageDrawable(albumart[pos]);}
         }
-
-
     }
 
 

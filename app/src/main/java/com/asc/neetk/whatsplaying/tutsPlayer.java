@@ -22,8 +22,7 @@ import android.widget.TextView;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.triggertrap.seekarc.SeekArc;
 
 import org.w3c.dom.Document;
@@ -54,14 +53,13 @@ public class tutsPlayer extends Activity {
 
     private String url;
 
-    String artUrl;
-
 
     private boolean paused = false, playbackPaused = false;
 
     private RetreiveUrl task;
 
-    private  RetrieveArt task2;
+    private RetrieveArt task2;
+
 
     SeekArc bar;
     CircleImageView albumart;
@@ -89,14 +87,22 @@ public class tutsPlayer extends Activity {
     DynamicBox box;
 
 
+
+
     Bitmap bitmap;
     String imageurl;
+
+    ImageLoader imageLoader;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_circbartest);
+
+
+        imageLoader = ImageLoader.getInstance();
+
 
         box = new DynamicBox(this, findViewById(R.id.relativm));
 
@@ -112,32 +118,30 @@ public class tutsPlayer extends Activity {
         artist = extras.getString("Artist");
         album = extras.getString("Album");
 
-        imageurl = extras.getString("url");
+
+            StringBuilder stringBuilder = new StringBuilder("http://ws.audioscrobbler.com/2.0/");
+            stringBuilder.append("?method=album.getinfo");
+            stringBuilder.append("&api_key=");
+            stringBuilder.append("3d4c79881824afd6b4c7544b753d1024");
 
 
-        StringBuilder stringBuilder = new StringBuilder("http://ws.audioscrobbler.com/2.0/");
-        stringBuilder.append("?method=album.getinfo");
-        stringBuilder.append("&api_key=");
-        stringBuilder.append("3d4c79881824afd6b4c7544b753d1024");
-
-        try {
-            stringBuilder.append("&artist=" + URLEncoder.encode(artist, "UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+            try {
+                stringBuilder.append("&artist=" + URLEncoder.encode(artist, "UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
 
 
-        try {
-            stringBuilder.append("&album=" + URLEncoder.encode(album, "UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+            try {
+                stringBuilder.append("&album=" + URLEncoder.encode(album, "UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            task2= (RetrieveArt) new RetrieveArt().execute(stringBuilder.toString());
 
 
 
         task = (RetreiveUrl) new RetreiveUrl().execute(song, artist);
-
-        task2=(RetrieveArt) new RetrieveArt().execute(stringBuilder.toString());
 
 
     }
@@ -151,15 +155,12 @@ public class tutsPlayer extends Activity {
     }
 
 
-
-
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
 
-            setContentView(R.layout.activity_circbartest);
-
+        setContentView(R.layout.activity_circbartest);
 
 
         songname = (TextView) findViewById(R.id.player_song);
@@ -179,8 +180,6 @@ public class tutsPlayer extends Activity {
         bar.setVisibility(View.VISIBLE);
 
 
-
-
         songname.setText(song);
         artistname.setText(artist);
         albumname.setText(album);
@@ -192,8 +191,7 @@ public class tutsPlayer extends Activity {
         time.setText("" + utils.milliSecondsToTimer(musicSrv.getPosn()));
 
 
-
-       if (musicSrv != null) bar.setProgress(musicSrv.getPosn());
+        if (musicSrv != null) bar.setProgress(musicSrv.getPosn());
 
         bar.setOnSeekArcChangeListener(new SeekArc.OnSeekArcChangeListener() {
             @Override
@@ -224,25 +222,25 @@ public class tutsPlayer extends Activity {
         albumart = (CircleImageView) findViewById(R.id.circlealbum);
 
 
-        if (artUrl != null && !artUrl.equals(""))
-            Picasso.with(tutsPlayer.this)
-                    .load(artUrl)
-                    .fit()
-                    .into(albumart)
-                    ;
+
 
 
         replay = (ImageView) findViewById(R.id.replay);
 
         hiddenBut = (Button) findViewById(R.id.hiddenbutton);
 
-        if (bitmap != null)
-            albumart.setImageBitmap(bitmap);
+
+
+        albumart.setVisibility(View.VISIBLE);
+
+
+        if (imageurl != null)
+            imageLoader.displayImage(imageurl, albumart);
 
         else {
             albumart.setImageDrawable(getResources().getDrawable(R.drawable.albumart));
         }
-        albumart.setVisibility(View.VISIBLE);
+
 
 
         hiddenBut.setOnClickListener(new View.OnClickListener() {
@@ -260,12 +258,7 @@ public class tutsPlayer extends Activity {
             }
         });
 
-
-
-
     }
-
-
 
 
     //connect to the service
@@ -330,25 +323,22 @@ public class tutsPlayer extends Activity {
             albumart = (CircleImageView) findViewById(R.id.circlealbum);
 
 
-            if (imageurl != null && !imageurl.equals(""))
-                Picasso.with(tutsPlayer.this)
-                        .load(imageurl)
-                        .fit()
-                        .into(albumart)
-                        ;
 
 
             replay = (ImageView) findViewById(R.id.replay);
 
             hiddenBut = (Button) findViewById(R.id.hiddenbutton);
 
-            if (bitmap != null)
-                albumart.setImageBitmap(bitmap);
+
+            albumart.setVisibility(View.VISIBLE);
+
+            if (imageurl != null)
+                imageLoader.displayImage(imageurl, albumart);
+
 
             else {
                 albumart.setImageDrawable(getResources().getDrawable(R.drawable.albumart));
             }
-            albumart.setVisibility(View.VISIBLE);
             bar.setMax(musicSrv.getDur());
             bar.setProgress(0);
 
@@ -410,7 +400,7 @@ public class tutsPlayer extends Activity {
         mHandler.removeCallbacks(null);
 
         task.cancel(true);
-        task2.cancel(true);
+        if (task2 !=null)        task2.cancel(true);
 
         if (playIntent != null)
 
@@ -428,8 +418,6 @@ public class tutsPlayer extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
-
-
 
 
     @Override
@@ -454,12 +442,15 @@ public class tutsPlayer extends Activity {
     }
 
 
+
+
     public void songPicked(View view) {
         musicSrv.setUrl(url);
         musicSrv.playSong();
         if (playbackPaused) {
 
             playbackPaused = false;
+
         }
 
     }
@@ -473,9 +464,32 @@ public class tutsPlayer extends Activity {
     private Runnable mUpdateTimeTask = new Runnable() {
         public void run() {
 
+            if(  musicSrv != null && musicSrv.isPng())
+            {if (musicSrv.getPosn() >= musicSrv.getDur())
+
+            {
+                if (replay.getVisibility()==View.INVISIBLE)
+                {  replay.setVisibility(View.VISIBLE);
+                hiddenBut.setVisibility(View.INVISIBLE);}
+
+                replay.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        replay.setVisibility(View.INVISIBLE);
+                        hiddenBut.setVisibility(View.VISIBLE);
+                        musicSrv.seek(0);
+                        start();
+                    }
+                });
 
 
-            if (musicSrv != null && musicSrv.present() && musicSrv.isPng())  {
+            }
+
+
+            }
+
+
+            if (musicSrv != null && musicSrv.present() && musicSrv.isPng()) {
 
 
                 box.hideAll();
@@ -502,66 +516,6 @@ public class tutsPlayer extends Activity {
         }
     };
 
-
-
-
-    public class RetrieveArt extends AsyncTask<String, Void, String> {
-
-        protected String doInBackground(String... urls) {
-            String albumArtUrl = null;
-            try {
-                XMLParser parser = new XMLParser();
-                String xml = parser.getXmlFromUrl(urls[0]); // getting XML from URL
-                Document doc = parser.getDomElement(xml);
-                NodeList nl = doc.getElementsByTagName("image");
-                for (int i = 0; i < nl.getLength(); i++) {
-                    Element e = (Element) nl.item(i);
-
-                    if (e.getAttribute("size").contentEquals("large")) {
-                        albumArtUrl = parser.getElementValue(e);
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return albumArtUrl;
-        }
-
-
-        protected void onPostExecute(String url1) {
-
-            artUrl=url1;
-
-
-
-
-
-            if (url1 != null && !url1.equals("")) {
-
-                Picasso.with(getApplicationContext())
-                        .load(url1)
-                        .fit()
-                        .noFade()
-                        .into(albumart, new Callback.EmptyCallback() {
-                            @Override
-                            public void onSuccess() {
-
-
-                                YoYo.with(Techniques.RotateIn)
-                                        .duration(300)
-                                        .playOn(albumart);
-
-
-                            }
-
-
-                        });
-
-
-            }
-        }
-
-    }
 
     public class RetreiveUrl extends AsyncTask<String, Void, String> {
 
@@ -677,8 +631,52 @@ public class tutsPlayer extends Activity {
     }
 
 
+    public class RetrieveArt extends AsyncTask<String, Void, String> {
 
+        protected String doInBackground(String... urls) {
+            String albumArtUrl = null;
+            try {
+                XMLParser parser = new XMLParser();
+                String xml = parser.getXmlFromUrl(urls[0]); // getting XML from URL
+                Document doc = parser.getDomElement(xml);
+                NodeList nl = doc.getElementsByTagName("image");
+                for (int i = 0; i < nl.getLength(); i++) {
+                    Element e = (Element) nl.item(i);
+
+                    if (e.getAttribute("size").contentEquals("large")) {
+                        albumArtUrl = parser.getElementValue(e);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return albumArtUrl;
+        }
+
+
+        protected void onPostExecute(final String url1) {
+
+
+            if (url1 != null && !url1.equals("")) {
+
+                imageurl=url1;
+
+
+                       Log.d("there", url1);
+
+
+                   }
+
+
+               }
+            }
 }
+
+
+
+
+
+
 
 
 

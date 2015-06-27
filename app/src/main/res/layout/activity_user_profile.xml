@@ -115,6 +115,15 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Small Text"
+            android:id="@+id/nougen"
+            android:layout_marginLeft="15dp"
+            android:visibility="gone" />
+
         <View style="@style/Divider"
             android:layout_marginTop="10dp" />
 
@@ -132,8 +141,18 @@
             android:id="@+id/flowviewart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp" />
+            android:layout_marginTop="5dp"
+            android:visibility="invisible" />
 
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Small Text"
+            android:id="@+id/nouart"
+            android:layout_marginLeft="15dp"
+            android:visibility="gone" />
 
         <View style="@style/Divider"
             android:layout_marginTop="10dp" />
@@ -153,6 +172,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Small Text"
+            android:id="@+id/nouuser"
+            android:layout_marginLeft="15dp"
+            android:visibility="gone" />
 
 
     </LinearLayout>
