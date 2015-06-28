@@ -577,7 +577,7 @@ public class ExploreFreinds  extends Fragment implements AdapterView.OnItemClick
 
                 if (animationAdapter.isEmpty()) {
 
-                    list.setVisibility(View.INVISIBLE);
+                    list.setVisibility(View.GONE);
                     tv.setVisibility(View.VISIBLE);
                     tv.setText("You don't have any friends!");
 

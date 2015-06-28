@@ -27,7 +27,7 @@
 
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:gravity="center"
             android:layout_weight="2"
             android:id="@+id/relativ1">
@@ -63,7 +63,7 @@
                 seekarc:progressWidth="5dp"
                 seekarc:rotation="270"
                 seekarc:touchInside="true"
-                android:accessibilityLiveRegion="none"
+
                 android:visibility="visible"
                 android:paddingLeft="16dp"
                 android:layout_centerHorizontal="true"
@@ -139,8 +139,6 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Radioactive"
             android:id="@+id/player_song"
-            android:layout_below="@+id/seektime"
-            android:layout_centerHorizontal="true"
             android:textColor="@color/white"
             android:textSize="30dp"
             android:layout_marginTop="10dp"
@@ -153,8 +151,6 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Imagine Dragons"
             android:id="@+id/player_artist"
-            android:layout_below="@+id/player_song"
-            android:layout_centerHorizontal="true"
             android:textSize="26dp"
             android:textColor="@color/white"
             android:visibility="visible"
@@ -166,8 +162,6 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Night Visions"
             android:id="@+id/player_album"
-            android:layout_below="@+id/player_artist"
-            android:layout_centerHorizontal="true"
             android:textColor="@color/white"
             android:textSize="24dp"
             android:layout_marginTop="5dp"

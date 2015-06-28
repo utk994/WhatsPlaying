@@ -1,6 +1,5 @@
 package com.asc.neetk.whatsplaying;
 
-import android.animation.ValueAnimator;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -10,7 +9,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
@@ -19,7 +17,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
@@ -46,7 +43,7 @@ public class central extends ActionBarActivity {
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
-    private ActionBarDrawerToggle mDrawerToggle;
+    private android.support.v7.app.ActionBarDrawerToggle mDrawerToggle;
 
     private CharSequence mDrawerTitle;
     Drawable d;
@@ -138,26 +135,13 @@ public class central extends ActionBarActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
 
 
-        mDrawerToggle = new ActionBarDrawerToggle(
+        mDrawerToggle = new android.support.v7.app.ActionBarDrawerToggle(
                 this,
                 mDrawerLayout,
-                R.drawable.ic_drawer,
-                R.string.drawer_open,
+               R.string.drawer_open,
                 R.string.drawer_close
         ) {
             public void onDrawerClosed(View view) {
-                ValueAnimator anim = ValueAnimator.ofFloat(1, 0);
-                anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                        float slideOffset = (Float) valueAnimator.getAnimatedValue();
-                        mDrawerToggle.onDrawerSlide(mDrawerLayout, slideOffset);
-                    }
-                });
-                anim.setInterpolator(new DecelerateInterpolator());
-// You can change this duration to more closely match that of the default animation.
-                anim.setDuration(500);
-                anim.start();
 
                 getSupportActionBar().setTitle(mTitle);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu

@@ -286,8 +286,6 @@ public class tutsPlayer extends Activity {
             musicBound = true;
 
 
-            box.hideAll();
-
 
 
 
@@ -485,6 +483,9 @@ public class tutsPlayer extends Activity {
 
 
             if (musicSrv != null && musicSrv.present() && musicSrv.isPng()) {
+
+
+                box.hideAll();
 
 
 

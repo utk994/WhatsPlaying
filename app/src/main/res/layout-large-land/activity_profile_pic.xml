@@ -30,9 +30,6 @@
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
             android:text="Username:"
             android:id="@+id/textView6"
-            android:layout_alignParentTop="true"
-            android:layout_alignRight="@+id/pictureView"
-            android:layout_alignEnd="@+id/pictureView"
             android:textSize="30dp" />
 
         <TextView
@@ -52,9 +49,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:id="@+id/linearLayout"
-        android:layout_below="@+id/textView7"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:layout_marginTop="10dp"
         android:weightSum="1">
 
@@ -64,9 +58,6 @@
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
             android:text="Email Id:"
             android:id="@+id/textView9"
-            android:layout_alignParentTop="true"
-            android:layout_alignRight="@+id/pictureView"
-            android:layout_alignEnd="@+id/pictureView"
             android:textSize="30dp" />
 
         <TextView
@@ -84,7 +75,7 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="Change"
             android:id="@+id/change_email"
-            android:autoText="false"
+
             android:linksClickable="true"
             android:clickable="true"
             android:textColor="@color/darkpurple"
@@ -106,9 +97,6 @@
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
             android:text="Password:"
             android:id="@+id/textView11"
-            android:layout_alignParentTop="true"
-            android:layout_alignRight="@+id/pictureView"
-            android:layout_alignEnd="@+id/pictureView"
             android:textSize="30dp" />
 
         <TextView
@@ -127,7 +115,7 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="Change"
             android:id="@+id/change_password"
-            android:autoText="false"
+
             android:layout_marginLeft="20dp"
             android:layout_gravity="center"
             android:linksClickable="true"
@@ -180,8 +168,6 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Tap on the edit icon to change your profile pic."
         android:id="@+id/textView5"
-        android:layout_below="@+id/pictureView"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
         android:padding="10dp"
         android:gravity="center_vertical|center_horizontal" />
@@ -233,9 +219,6 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="Small Text"
             android:id="@+id/bioview"
-            android:layout_centerVertical="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
             android:padding="10dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"

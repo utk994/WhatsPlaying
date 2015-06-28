@@ -8,11 +8,12 @@
     android:clickable="true">
 
 
+
     <Button
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:id="@+id/listenbut1"
-        android:background="@drawable/listen2"
+        android:background="@drawable/listening"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:clickable="false"
@@ -23,7 +24,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="TapToStopListening"
-        android:id="@+id/textView"
+        android:id="@+id/listening"
         android:layout_below="@+id/listenbut1"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="5dp"

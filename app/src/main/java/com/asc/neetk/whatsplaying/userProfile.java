@@ -66,7 +66,8 @@ public class userProfile extends ActionBarActivity {
 
         this.setTitle(actuser);
         final ImageView profilePic = (ImageView) findViewById(R.id.viewpropic);
-        profilePic.setImageDrawable(getResources().getDrawable(R.drawable.profile));
+        Drawable d =getResources().getDrawable(R.drawable.profile);
+        profilePic.setImageDrawable(d);
 
 
 
@@ -131,7 +132,8 @@ public class userProfile extends ActionBarActivity {
                         follow.setVisibility(View.INVISIBLE);
 
                     } else if (currentUserfollows.contains(actuser)) {
-                        follow.setBackgroundResource(R.drawable.unfollow);
+                        Drawable d = getResources().getDrawable(R.drawable.unfollow);
+                        follow.setBackgroundDrawable(d);
 
                         follow.setVisibility(View.VISIBLE);
                         YoYo.with(Techniques.FadeIn).duration(500).playOn(follow);
@@ -139,7 +141,9 @@ public class userProfile extends ActionBarActivity {
 
 
                     } else {
-                        follow.setBackgroundResource(R.drawable.follow);
+                        Drawable d = getResources().getDrawable(R.drawable.follow);
+
+                                              follow.setBackgroundDrawable(d);
                         follow.setVisibility(View.VISIBLE);
                         YoYo.with(Techniques.FadeIn).duration(500).playOn(follow);
 
@@ -157,8 +161,12 @@ public class userProfile extends ActionBarActivity {
                                 if (currentUser.getUsername().equals(actuser)) {
                                     follow.setVisibility(View.INVISIBLE);
 
-                                } else if (currentUserfollows.contains(actuser)) {
-                                    follow.setBackgroundResource(R.drawable.follow);
+                                } else if (currentUserfollows.contains(actuser))
+                                {
+
+                                    Drawable d = getResources().getDrawable(R.drawable.follow);
+
+                                follow.setBackgroundDrawable(d);
                                     follow.setVisibility(View.VISIBLE);
                                     Toast.makeText(getApplicationContext(), "You unfollowed " + actuser, Toast.LENGTH_SHORT).show();
                                     currentuserfollowsID.remove(userId);
@@ -171,7 +179,10 @@ public class userProfile extends ActionBarActivity {
                                     currentUser.saveInBackground();
 
                                 } else {
-                                    follow.setBackgroundResource(R.drawable.unfollow);
+
+                                    Drawable d = getResources().getDrawable(R.drawable.unfollow);
+
+                                    follow.setBackgroundDrawable(d);
                                     follow.setVisibility(View.VISIBLE);
                                     currentUserfollows.add(actuser);
                                     // Log.d("Follows", userfollows.toString());
