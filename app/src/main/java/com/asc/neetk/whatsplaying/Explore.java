@@ -127,7 +127,8 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
 
 
         super.onCreate(savedState);
-        Drawable d = getActivity().getDrawable(R.drawable.albumart);
+
+        Drawable d = getActivity().getResources().getDrawable(R.drawable.albumart);
         Arrays.fill(albumart, d);
 
 

@@ -63,8 +63,7 @@
         android:layout_height="35dp"
         android:id="@+id/imageView6"
         android:layout_gravity="center_horizontal"
-        android:background="@drawable/logot"
-        android:backgroundTint="@color/purple" />
+        android:background="@drawable/logot" />
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -179,7 +178,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="15dp"
         android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp" />z
+        android:layout_marginRight="30dp" />
 
 
     </LinearLayout>
