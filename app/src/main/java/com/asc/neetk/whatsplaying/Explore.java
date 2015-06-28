@@ -79,7 +79,7 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
 
     RetrieveArt task;
 
-    String[] urls=new String [30];
+    String[] urls = new String[30];
 
     Integer[] likes = new Integer[60];
     String[] objId = new String[60];
@@ -106,9 +106,6 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
     ButtonFloat swap;
     DynamicBox box;
 
-    CircleImageView[] img= new CircleImageView[30];
-
-
     ActionBar mActionBar;
 
     ImageLoader imageLoader;
@@ -124,19 +121,14 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
     }
 
 
-
-
-
     @Override
 
     public void onCreate(Bundle savedState) {
 
 
-
         super.onCreate(savedState);
-        Drawable d= getActivity().getDrawable(R.drawable.albumart);
+        Drawable d = getActivity().getDrawable(R.drawable.albumart);
         Arrays.fill(albumart, d);
-
 
 
     }
@@ -148,15 +140,10 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
         View rootView = inflater.inflate(R.layout.list_fragment, null, false);
 
 
-
-
-
-
         imageLoader = ImageLoader.getInstance();
 
 
         list = (DynamicListView) rootView.findViewById(R.id.list);
-
 
 
         list.setDivider(null);
@@ -172,7 +159,7 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
             @Override
             public void onClick(View view) {
 
-               if (task != null) task.cancel(true);
+                if (task != null) task.cancel(true);
 
                 FragmentTransaction trans = getFragmentManager()
                         .beginTransaction();
@@ -212,6 +199,10 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
         box.addCustomView(customView, "noNet");
 
 
+        View loadingView = mActivity.getLayoutInflater().inflate(R.layout.loadinglayout, null, false);
+        box.addCustomView(loadingView, "loading");
+
+
         if (!(isOnline())) {
 
             box.showCustomView("noNet");
@@ -223,7 +214,8 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
                     @Override
                     public void onClick(View view) {
                         mTask = (RetreiveItems) new RetreiveItems().execute();
-                        box.showLoadingLayout();
+
+                        box.showCustomView("loading");
 
                     }
                 });
@@ -252,7 +244,7 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
         if (savedInstanceState == null) {
             swap.setVisibility(View.INVISIBLE);
             mTask = (RetreiveItems) new RetreiveItems().execute();
-            box.showLoadingLayout();
+            box.showCustomView("loading");
 
 
         }
@@ -271,7 +263,8 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
                 mSwipeRefreshLayout.setRefreshing(true);
                 swap.setVisibility(View.INVISIBLE);
                 mTask = (RetreiveItems) new RetreiveItems().execute();
-                box.showLoadingLayout();
+                box.showCustomView("loading");
+
 
 
                 mSwipeRefreshLayout.setRefreshing(false);
@@ -361,8 +354,8 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
 
     @Override
     public void onDestroy() {
-        mTask.cancel(true);
-       if (task != null) task.cancel(true);
+        if (mTask!=null)   mTask.cancel(true);
+        if (task != null) task.cancel(true);
 
         super.onDestroy();
 
@@ -401,7 +394,6 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
 
         @Override
         protected List<RowItem> doInBackground(String... urls) {
-
 
 
             if (!(isOnline())) {
@@ -470,7 +462,7 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
                         if (user[i].equals(user[j])) {
                             profiles[i] = profiles[j];
 
-                            RowItem items = new RowItem(user[i], actsongname[i], artist[i], album[i], time[i], profiles[i], likes[i], objId[i], actime[i],albumart[i],"");
+                            RowItem items = new RowItem(user[i], actsongname[i], artist[i], album[i], time[i], profiles[i], likes[i], objId[i], actime[i], albumart[i], "");
 
 
                             rowItems.add(items);
@@ -523,7 +515,7 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
                             }
 
 
-                            RowItem items = new RowItem(user[finalI], actsongname[finalI], artist[finalI], album[finalI], time[finalI], profiles[finalI], likes[finalI], objId[finalI], actime[finalI],albumart[i],"");
+                            RowItem items = new RowItem(user[finalI], actsongname[finalI], artist[finalI], album[finalI], time[finalI], profiles[finalI], likes[finalI], objId[finalI], actime[finalI], albumart[i], "");
 
 
                             rowItems.add(items);
@@ -593,20 +585,16 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
                     public void onItemExpanded(int i) {
 
 
-
                         pos = i;
 
 
-
-
-
-                        {    StringBuilder stringBuilder = new StringBuilder("http://ws.audioscrobbler.com/2.0/");
+                        {
+                            StringBuilder stringBuilder = new StringBuilder("http://ws.audioscrobbler.com/2.0/");
                             stringBuilder.append("?method=album.getinfo");
                             stringBuilder.append("&api_key=");
                             stringBuilder.append("3d4c79881824afd6b4c7544b753d1024");
 
 
-                            Log.d("Image", img.toString());
                             try {
                                 stringBuilder.append("&artist=" + URLEncoder.encode(artist[i], "UTF-8"));
                             } catch (UnsupportedEncodingException e) {
@@ -637,6 +625,7 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
 
 
             }
+
             box.hideAll();
 
 
@@ -656,10 +645,6 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
                 intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
                 startActivity(intent);
             }
-
-
-
-
 
 
         }
@@ -703,42 +688,43 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
                 urls[pos] = url1;
 
 
-               imageLoader.loadImage(url1, new SimpleImageLoadingListener() {
+                imageLoader.loadImage(url1, new SimpleImageLoadingListener() {
                     @Override
                     public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                         Drawable drawable = new BitmapDrawable(getResources(), loadedImage);
                         albumart[pos] = drawable;
 
-                        RowItem items = new RowItem(user[pos], actsongname[pos], artist[pos], album[pos], time[pos], profiles[pos], likes[pos], objId[pos], actime[pos],drawable,url1);
+                        RowItem items = new RowItem(user[pos], actsongname[pos], artist[pos], album[pos], time[pos], profiles[pos], likes[pos], objId[pos], actime[pos], drawable, url1);
 
-                        rowItems.set(pos,items);
+                        rowItems.set(pos, items);
 
-                        Log.d("checkthis",rowItems.get(pos).toString());
-
-
-
-
+                        Log.d("checkthis", rowItems.get(pos).toString());
 
 
                         adapter.notifyDataSetChanged();
 
                         animationAdapter.notifyDataSetChanged();
 
+                        CircleImageView img = (CircleImageView) adapter.getContentView(pos).findViewById(R.id.coverfor);
+
+                        if (img!=null)
+
+                        YoYo.with(Techniques.FadeIn).duration(300).playOn(img);
 
 
                     }
+
+
                 });
-
-
 
 
             }
 
 
+
+
         }
     }
-
-
 
 
     public boolean isOnline() {

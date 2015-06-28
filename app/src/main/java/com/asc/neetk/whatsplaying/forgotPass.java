@@ -37,8 +37,7 @@ public class forgotPass extends ActionBarActivity {
             public void onClick(View view) {
 
 
-
-                 final ProgressDialog progressDialog = ProgressDialog.show(forgotPass.this, "", "Sending you an email...");
+                final ProgressDialog progressDialog = ProgressDialog.show(forgotPass.this, "", "Sending you an email...");
 
                 new Thread() {
 
@@ -90,6 +89,7 @@ public class forgotPass extends ActionBarActivity {
 
 
                 }.start();
+
             }
         });
     }

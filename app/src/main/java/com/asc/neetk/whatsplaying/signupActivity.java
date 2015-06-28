@@ -105,6 +105,7 @@ public class signupActivity extends ActionBarActivity {
                 } else {
 
 
+
                     final ProgressDialog progressDialog1 = ProgressDialog.show(signupActivity.this, "", "Signing Up...");
                     new Thread() {
 
@@ -137,7 +138,7 @@ public class signupActivity extends ActionBarActivity {
                                             Toast.makeText(getApplicationContext(),
                                                     "Sign up Error", Toast.LENGTH_SHORT)
                                                     .show();
-                                                    progressDialog1.dismiss();
+                                            progressDialog1.dismiss();
 
                                         }
 

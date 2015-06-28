@@ -32,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:padding="10dp"
-                android:textSize="20dp"></TextView>
+                android:textSize="20dp"/>
 
 
 
@@ -48,7 +48,7 @@
             android:background="@color/purple"
             materialdesign:animate="true"
             materialdesign:iconDrawable="@drawable/viewallico"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="24dp" />
 
 
 

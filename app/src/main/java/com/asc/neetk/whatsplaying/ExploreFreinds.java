@@ -54,6 +54,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import mehdi.sakout.dynamicbox.DynamicBox;
 
 /**
@@ -209,6 +210,10 @@ public class ExploreFreinds  extends Fragment implements AdapterView.OnItemClick
         View customView = getActivity().getLayoutInflater().inflate(R.layout.nonet, null, false);
         box.addCustomView(customView, "noNet");
 
+        View loadingView = mActivity.getLayoutInflater().inflate(R.layout.loadinglayout, null, false);
+        box.addCustomView(loadingView, "loading");
+
+
         if (!(isOnline())) {
 
             box.showCustomView("noNet");
@@ -219,8 +224,9 @@ public class ExploreFreinds  extends Fragment implements AdapterView.OnItemClick
                 retry.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        box.showLoadingLayout();
+
                         mTask = (RetreiveItems) new RetreiveItems().execute();
+                        box.showCustomView("loading");
                     }
                 });
             }
@@ -232,7 +238,7 @@ public class ExploreFreinds  extends Fragment implements AdapterView.OnItemClick
 
 
         if (savedInstanceState == null) {
-            box.showLoadingLayout();
+            box.showCustomView("loading");
             swap.setVisibility(View.INVISIBLE);
 
             mTask = (RetreiveItems) new RetreiveItems().execute();
@@ -254,7 +260,7 @@ public class ExploreFreinds  extends Fragment implements AdapterView.OnItemClick
 
 
                 mSwipeRefreshLayout.setRefreshing(true);
-                box.showLoadingLayout();
+                box.showCustomView("loading");
                 swap.setVisibility(View.INVISIBLE);
 
                 mTask = (RetreiveItems) new RetreiveItems().execute();
@@ -693,7 +699,7 @@ public class ExploreFreinds  extends Fragment implements AdapterView.OnItemClick
 
                         rowItems.set(pos,items);
 
-                        Log.d("checkthis",rowItems.get(pos).toString());
+                        Log.d("checkthis", rowItems.get(pos).toString());
 
 
 
@@ -703,6 +709,10 @@ public class ExploreFreinds  extends Fragment implements AdapterView.OnItemClick
                         adapter.notifyDataSetChanged();
 
                         animationAdapter.notifyDataSetChanged();
+
+                        YoYo.with(Techniques.FadeIn).duration(300).playOn((CircleImageView) adapter.getContentView(pos).findViewById(R.id.coverfor));
+
+
 
 
 

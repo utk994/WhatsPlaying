@@ -113,6 +113,8 @@ public class LoginSignupActivity extends Activity {
                 // Retrieve the text entered from the EditText
 
             }
+
+
         });
         // Sign up Button Click Listener
 

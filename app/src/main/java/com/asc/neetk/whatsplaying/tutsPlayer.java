@@ -110,8 +110,16 @@ public class tutsPlayer extends Activity {
 
         View customView = getLayoutInflater().inflate(R.layout.songnotfound, null, false);
         box.addCustomView(customView, "noSong");
-        box.setLoadingMessage("Loding ...");
-        box.showLoadingLayout();
+
+        View customView1 = getLayoutInflater().inflate(R.layout.playerload, null, false);
+        box.addCustomView(customView1, "loading");
+
+
+
+
+
+
+        box.showCustomView("loading");
 
         Bundle extras = getIntent().getExtras();
         song = extras.getString("Songname");
@@ -160,103 +168,104 @@ public class tutsPlayer extends Activity {
         super.onConfigurationChanged(newConfig);
 
 
-        setContentView(R.layout.activity_circbartest);
+
+        if (musicSrv != null && musicSrv.present() && musicSrv.isPng()) {
 
 
-        songname = (TextView) findViewById(R.id.player_song);
-        artistname = (TextView) findViewById(R.id.player_artist);
-        albumname = (TextView) findViewById(R.id.player_album);
-
-        songname.setText(song);
-        artistname.setText(artist);
-        albumname.setText(album);
+            setContentView(R.layout.activity_circbartest);
 
 
-        bar = (SeekArc) findViewById(R.id.seekArc);
-        pause = (ImageView) findViewById(R.id.pauseicon);
-        play = (ImageView) findViewById(R.id.playicon);
-        play.setVisibility(View.INVISIBLE);
-        pause.setVisibility(View.INVISIBLE);
-        bar.setVisibility(View.VISIBLE);
+            songname = (TextView) findViewById(R.id.player_song);
+            artistname = (TextView) findViewById(R.id.player_artist);
+            albumname = (TextView) findViewById(R.id.player_album);
+
+            songname.setText(song);
+            artistname.setText(artist);
+            albumname.setText(album);
 
 
-        songname.setText(song);
-        artistname.setText(artist);
-        albumname.setText(album);
+            bar = (SeekArc) findViewById(R.id.seekArc);
+            pause = (ImageView) findViewById(R.id.pauseicon);
+            play = (ImageView) findViewById(R.id.playicon);
+            play.setVisibility(View.INVISIBLE);
+            pause.setVisibility(View.INVISIBLE);
+            bar.setVisibility(View.VISIBLE);
 
 
-        time = (TextView) findViewById(R.id.seektime);
+            songname.setText(song);
+            artistname.setText(artist);
+            albumname.setText(album);
 
 
-        time.setText("" + utils.milliSecondsToTimer(musicSrv.getPosn()));
+            time = (TextView) findViewById(R.id.seektime);
 
 
-        if (musicSrv != null) bar.setProgress(musicSrv.getPosn());
-
-        bar.setOnSeekArcChangeListener(new SeekArc.OnSeekArcChangeListener() {
-            @Override
-            public void onProgressChanged(SeekArc seekArc, int progress, boolean fromUser) {
+            time.setText("" + utils.milliSecondsToTimer(musicSrv.getPosn()));
 
 
-            }
+            if (musicSrv != null) bar.setProgress(musicSrv.getPosn());
 
-            @Override
-            public void onStartTrackingTouch(SeekArc seekBar) {
-                // remove message Handler from updating progress bar
-                mHandler.removeCallbacks(mUpdateTimeTask);
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekArc seekBar) {
-                mHandler.removeCallbacks(mUpdateTimeTask);
+            bar.setOnSeekArcChangeListener(new SeekArc.OnSeekArcChangeListener() {
+                @Override
+                public void onProgressChanged(SeekArc seekArc, int progress, boolean fromUser) {
 
 
-                // forward or backward to certain seconds
-                musicSrv.seek(seekBar.getProgress());
-
-                // update timer progress again
-                updateProgressBar();
-            }
-        });
-
-        albumart = (CircleImageView) findViewById(R.id.circlealbum);
-
-
-
-
-
-        replay = (ImageView) findViewById(R.id.replay);
-
-        hiddenBut = (Button) findViewById(R.id.hiddenbutton);
-
-
-
-        albumart.setVisibility(View.VISIBLE);
-
-
-        if (imageurl != null)
-            imageLoader.displayImage(imageurl, albumart);
-
-        else {
-            albumart.setImageDrawable(getResources().getDrawable(R.drawable.albumart));
-        }
-
-
-
-        hiddenBut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (musicSrv.isPng()) {
-
-                    pause();
-
-                } else {
-
-
-                    start();
                 }
+
+                @Override
+                public void onStartTrackingTouch(SeekArc seekBar) {
+                    // remove message Handler from updating progress bar
+                    mHandler.removeCallbacks(mUpdateTimeTask);
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekArc seekBar) {
+                    mHandler.removeCallbacks(mUpdateTimeTask);
+
+
+                    // forward or backward to certain seconds
+                    musicSrv.seek(seekBar.getProgress());
+
+                    // update timer progress again
+                    updateProgressBar();
+                }
+            });
+
+            albumart = (CircleImageView) findViewById(R.id.circlealbum);
+
+
+            replay = (ImageView) findViewById(R.id.replay);
+
+
+            hiddenBut = (Button) findViewById(R.id.hiddenbutton);
+
+
+            albumart.setVisibility(View.VISIBLE);
+
+
+            if (imageurl != null)
+                imageLoader.displayImage(imageurl, albumart);
+
+            else {
+                albumart.setImageDrawable(getResources().getDrawable(R.drawable.albumart));
             }
-        });
+
+
+            hiddenBut.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (musicSrv.isPng()) {
+
+                        pause();
+
+                    } else {
+
+
+                        start();
+                    }
+                }
+            });
+        }
 
     }
 
@@ -275,6 +284,11 @@ public class tutsPlayer extends Activity {
             musicSrv.setTitle(song);
 
             musicBound = true;
+
+
+            box.hideAll();
+
+
 
 
             songname = (TextView) findViewById(R.id.player_song);
@@ -326,6 +340,8 @@ public class tutsPlayer extends Activity {
 
 
             replay = (ImageView) findViewById(R.id.replay);
+
+
 
             hiddenBut = (Button) findViewById(R.id.hiddenbutton);
 
@@ -464,35 +480,12 @@ public class tutsPlayer extends Activity {
     private Runnable mUpdateTimeTask = new Runnable() {
         public void run() {
 
-            if(  musicSrv != null && musicSrv.isPng())
-            {if (musicSrv.getPosn() >= musicSrv.getDur())
-
-            {
-                if (replay.getVisibility()==View.INVISIBLE)
-                {  replay.setVisibility(View.VISIBLE);
-                hiddenBut.setVisibility(View.INVISIBLE);}
-
-                replay.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        replay.setVisibility(View.INVISIBLE);
-                        hiddenBut.setVisibility(View.VISIBLE);
-                        musicSrv.seek(0);
-                        start();
-                    }
-                });
 
 
-            }
-
-
-            }
 
 
             if (musicSrv != null && musicSrv.present() && musicSrv.isPng()) {
 
-
-                box.hideAll();
 
 
                 long totalDuration = musicSrv.getDur();

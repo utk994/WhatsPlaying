@@ -6,20 +6,19 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
 
-import wseemann.media.FFmpegMediaPlayer;
-
 /**
  * Created by utk994 on 03/06/15.
  */
 public class MusicService extends Service {
 
-private FFmpegMediaPlayer player;
+private MediaPlayer player;
 
 //song list
 public String url = "";
@@ -41,7 +40,7 @@ private int songPosn;
 
             songPosn=0;
 
-            player = new FFmpegMediaPlayer();
+            player = new MediaPlayer();
 
             initMusicPlayer();
         }
@@ -54,10 +53,10 @@ private int songPosn;
             player.setWakeMode(getApplicationContext(),
                     PowerManager.PARTIAL_WAKE_LOCK);
             player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            player.setOnPreparedListener(new FFmpegMediaPlayer.OnPreparedListener() {
+            player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
                 @Override
-                public void onPrepared(FFmpegMediaPlayer fFmpegMediaPlayer) {
+                public void onPrepared(MediaPlayer fFmpegMediaPlayer) {
                     present = true;
                     fFmpegMediaPlayer.start();
 
@@ -80,17 +79,17 @@ private int songPosn;
 
                 }
             });
-            player.setOnCompletionListener(new FFmpegMediaPlayer.OnCompletionListener() {
+            player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
-                public void onCompletion(FFmpegMediaPlayer fFmpegMediaPlayer) {
+                public void onCompletion(MediaPlayer fFmpegMediaPlayer) {
 
                     fFmpegMediaPlayer.pause();
 
                 }
             });
-            player.setOnErrorListener(new FFmpegMediaPlayer.OnErrorListener() {
+            player.setOnErrorListener(new MediaPlayer.OnErrorListener() {
                 @Override
-                public boolean onError(FFmpegMediaPlayer fFmpegMediaPlayer, int i, int i1) {
+                public boolean onError(MediaPlayer fFmpegMediaPlayer, int i, int i1) {
                     fFmpegMediaPlayer.reset();
                     return false;
                 }
