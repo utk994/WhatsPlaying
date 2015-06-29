@@ -22,8 +22,8 @@ public class MySongs extends ActionBarActivity implements
        super.onCreate(savedInstanceState);
         setContentView(R.layout.yoursongs_list_fragment);
 
-     if (getActionBar() != null)
-         getActionBar().setDisplayHomeAsUpEnabled(true);
+     if (getSupportActionBar() != null)
+         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
      displayListView();

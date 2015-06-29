@@ -52,8 +52,8 @@ public class userProfile extends ActionBarActivity {
         setContentView(R.layout.activity_user_profile);
 
 
-        if (getActionBar() != null)
-            getActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
         LinearLayout lay= (LinearLayout)findViewById(R.id.lin3);
@@ -79,7 +79,6 @@ public class userProfile extends ActionBarActivity {
 
 
         TextView viewuser = (TextView) findViewById(R.id.viewuname);
-        ;
         final TextView viewbio = (TextView) findViewById(R.id.viewuserbio);
         viewbio.setVisibility(View.INVISIBLE);
         TextView filler1 = (TextView) findViewById(R.id.filler1);
@@ -131,7 +130,7 @@ public class userProfile extends ActionBarActivity {
 
                         follow.setVisibility(View.INVISIBLE);
 
-                    } else if (currentUserfollows.contains(actuser)) {
+                    } else if (currentUserfollows!= null && currentUserfollows.contains(actuser)) {
                         Drawable d = getResources().getDrawable(R.drawable.unfollow);
                         follow.setBackgroundDrawable(d);
 
@@ -161,7 +160,7 @@ public class userProfile extends ActionBarActivity {
                                 if (currentUser.getUsername().equals(actuser)) {
                                     follow.setVisibility(View.INVISIBLE);
 
-                                } else if (currentUserfollows.contains(actuser))
+                                } else if (currentUserfollows != null && currentUserfollows.contains(actuser))
                                 {
 
                                     Drawable d = getResources().getDrawable(R.drawable.follow);
