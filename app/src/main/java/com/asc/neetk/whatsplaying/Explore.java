@@ -228,21 +228,42 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
 
         if (currentUser.get("genLikes") == null) {
             currentUser.add("genLikes", "");
+            ArrayList<String> init = new ArrayList<String>();
+            init.add("");
+
+            currentUser.put("genLikes", init);
+            currentUser.saveInBackground();
         }
 
 
         if (currentUser.get("Follows") == null) {
-            currentUser.add("Follows", "");
+            ArrayList<String> init = new ArrayList<String>();
+            init.add("");
+
+            currentUser.put("Follows", init);
+            currentUser.saveInBackground();
+
         }
 
         if (currentUser.get("artLikes") == null) {
-            currentUser.add("artLikes", "");
+            ArrayList<String> init = new ArrayList<String>();
+            init.add("");
+
+            currentUser.put("artLikes", init);
+            currentUser.saveInBackground();
+        }
+        if (currentUser.get("folo") == null) {
+            ArrayList<String> init = new ArrayList<String>();
+            init.add("");
+
+            currentUser.put("folo", init);
+            currentUser.saveInBackground();
         }
 
 
         tv = (TextView) mActivity.findViewById(R.id.empty);
 
-        if (savedInstanceState == null) {
+            if (savedInstanceState == null) {
             swap.setVisibility(View.INVISIBLE);
             mTask = (RetreiveItems) new RetreiveItems().execute();
             box.showCustomView("loading");
