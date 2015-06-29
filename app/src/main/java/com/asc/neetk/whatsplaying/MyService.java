@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Vibrator;
@@ -103,36 +104,43 @@ public class MyService extends Service {
             Log.v("tag1", song1);
 
 
-            
 
-
-                  r_Alerts = new Runnable() {
+                r_Alerts = new Runnable() {
                     public void run()
 
 
-                    {   if (vib)
+                    {
+                        AudioManager manager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+                        if (manager.isMusicActive())
+
 
                         {
-                            Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-                            // Vibrate for 500 milliseconds
-                            v.vibrate(500);
+                            if (vib)
+
+                            {
+                                Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+                                // Vibrate for 500 milliseconds
+                                v.vibrate(500);
+                            }
+
+
+                            Intent i = new Intent(getBaseContext(), fouract.class);
+
+
+                            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            i.putExtra("Track", track1);
+                            i.putExtra("Artist", artist1);
+                            i.putExtra("Album", album1);
+                            //c = Calendar.getInstance();
+                            // seconds = c.get(Calendar.SECOND);
+                            getApplication().startActivity(i);
                         }
-
-
-                        Intent i = new Intent(getBaseContext(), fouract.class);
-
-
-                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        i.putExtra("Track", track1);
-                        i.putExtra("Artist", artist1);
-                        i.putExtra("Album", album1);
-                        //c = Calendar.getInstance();
-                       // seconds = c.get(Calendar.SECOND);
-                        getApplication().startActivity(i);
                     }
                 };
 
-               handlerTimer.postDelayed(r_Alerts,timedur*1000);
+                handlerTimer.postDelayed(r_Alerts, timedur * 1000);
+
+
 
 
                 // do something - or do it not
@@ -151,17 +159,10 @@ public class MyService extends Service {
 
 
 
-
-/*
-            Intent dialogIntent = new Intent(getBaseContext(), fouract.class);
-            dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            getApplication().startActivity(dialogIntent);
-*/
-
         }
 
     };
-    ;
+
 
     @Override
     public void onDestroy() {

@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
@@ -32,8 +33,6 @@ import org.w3c.dom.NodeList;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import de.voidplus.soundcloud.SoundCloud;
@@ -49,6 +48,17 @@ public class tutsPlayer extends Activity {
     private static final String TAG = "AudioPlayer";
 
     Handler mHandler = new Handler();
+
+
+    private boolean doubleBackToExitPressedOnce;
+    private Handler mHandler2 = new Handler();
+
+    private final Runnable mRunnable = new Runnable() {
+        @Override
+        public void run() {
+            doubleBackToExitPressedOnce = false;
+        }
+    };
 
 
     private String url;
@@ -411,9 +421,12 @@ public class tutsPlayer extends Activity {
     protected void onDestroy() {
 
 
-        mHandler.removeCallbacks(null);
+        if (mHandler2 != null) { mHandler2.removeCallbacks(mRunnable); }
 
-        task.cancel(true);
+
+        if (mHandler !=null)mHandler.removeCallbacks(null);
+
+       if (task!=null) task.cancel(true);
         if (task2 !=null)        task2.cancel(true);
 
         if (playIntent != null)
@@ -431,6 +444,19 @@ public class tutsPlayer extends Activity {
         // automatically handle clicks on the Home/Up button, so long
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Please press back again to close player.", Toast.LENGTH_SHORT).show();
+
+        mHandler2.postDelayed(mRunnable, 2000);
     }
 
 
@@ -532,16 +558,16 @@ public class tutsPlayer extends Activity {
                         "filter", "downloadable",
 
                 });
-
+                    /*
                 Collections.sort(streamable_tracks, new Comparator<Track>() {
                     public int compare(Track o1, Track o2) {
-                        if (o1.getPlaybackCount() == o2.getPlaybackCount())
+                        if (o1.getFavoritingsCount() == o2.getFavoritingsCount())
                             return 0;
-                        return o1.getPlaybackCount() < o2.getPlaybackCount() ? -1 : 1;
+                        return o1.getFavoritingsCount() < o2.getFavoritingsCount()? -1 : 1;
                     }
                 });
 
-                Collections.reverse(streamable_tracks);
+                Collections.reverse(streamable_tracks); */
 
 
                 for (int j = 0; j < streamable_tracks.size(); j++)
@@ -558,8 +584,10 @@ public class tutsPlayer extends Activity {
 
 
                     if (!bool && !bool1 && !bool2 && !bool3) {
+
                         use = streamable_tracks.get(j).getStreamUrl();
-                        break;
+                        if (use!=null || !use.isEmpty())
+                            break;
                     }
 
                 }

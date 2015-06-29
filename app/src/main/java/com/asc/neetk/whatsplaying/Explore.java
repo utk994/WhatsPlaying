@@ -706,12 +706,17 @@ public class Explore extends Fragment implements AdapterView.OnItemClickListener
 
                         animationAdapter.notifyDataSetChanged();
 
-                        CircleImageView img = (CircleImageView) adapter.getContentView(pos).findViewById(R.id.coverfor);
 
-                        if (img!=null)
 
-                        YoYo.with(Techniques.FadeIn).duration(300).playOn(img);
+                        View abc=  adapter.getContentView(pos);
 
+                        if (abc!=null ) {
+                            CircleImageView img = (CircleImageView) abc.findViewById(R.id.coverfor);
+
+                            if (img != null)
+
+                                YoYo.with(Techniques.FadeIn).duration(300).playOn(img);
+                        }
 
                     }
 

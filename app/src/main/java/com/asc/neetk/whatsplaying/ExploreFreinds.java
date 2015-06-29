@@ -710,8 +710,16 @@ public class ExploreFreinds  extends Fragment implements AdapterView.OnItemClick
 
                         animationAdapter.notifyDataSetChanged();
 
-                        YoYo.with(Techniques.FadeIn).duration(300).playOn((CircleImageView) adapter.getContentView(pos).findViewById(R.id.coverfor));
 
+                        View abc=  adapter.getContentView(pos);
+
+                        if (abc!=null ) {
+                            CircleImageView img = (CircleImageView) abc.findViewById(R.id.coverfor);
+
+                            if (img != null)
+
+                                YoYo.with(Techniques.FadeIn).duration(300).playOn(img);
+                        }
 
 
 
